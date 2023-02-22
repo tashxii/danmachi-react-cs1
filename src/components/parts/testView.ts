@@ -1,7 +1,9 @@
-import { CsTextBoxItem, CsView, CsViewBuilder } from "../../framework/cs";
+import React, { useState } from "react";
+import { CsCallback, CsEffect, CsItemBase, CsTextBoxItem, CsView } from "../../framework/cs";
 import { CsCheckBoxItem, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
+import { useInitView } from "../../framework/cs/CsView";
 
-export class TestView extends CsView {
+export default class TestView extends CsView {
     name = CsTextBoxItem.Default
     password = CsPasswordBoxItem.Default
     adminCheck = CsCheckBoxItem.Default
@@ -17,30 +19,37 @@ export class TestView extends CsView {
     other7 = CsTextBoxItem.Default
     other8 = CsTextBoxItem.Default
     other9 = CsTextBoxItem.Default
+    add = CsTextAreaItem.Default
 }
 
-const builder =new CsViewBuilder
-const testView = builder.build<TestView>(
-    TestView,
-    undefined,
-    {
-        readonly: false,
-        name: new CsTextBoxItem(""),
-        password: new CsPasswordBoxItem(""),
-        adminCheck: new CsCheckBoxItem(false, "管理者"),
-        contactWay: new CsRadioBoxItem("contactWay", "mail", ["mail","tel"]),
-        genderSelect: new CsSelectBoxItem("no answer", ["man","woman","no answer"]),
-        memo: new CsTextAreaItem(""),
-        other1: new CsTextBoxItem("1"),
-        other2: new CsTextBoxItem("2"),
-        other3: new CsTextBoxItem("3"),
-        other4: new CsTextBoxItem("4"),
-        other5: new CsTextBoxItem("5"),
-        other6: new CsTextBoxItem("6"),
-        other7: new CsTextBoxItem("7"),
-        other8: new CsTextBoxItem("8"),
-        other9: new CsTextBoxItem("9")
-    }
-)
+export function useTestView(): TestView {
+    const items: TestViewItems = { readonly: false } as TestViewItems
+    items.adminCheck = CsCheckBoxItem.New("管理者権限")
+        .set(useState<boolean>(false))
+    items.contactWay = CsRadioBoxItem.New("連絡方法", ["メール", "電話", "訪問"], "メール")
+        .set(useState<string>(""))
+    items.name = CsTextBoxItem.New()
+        .set(useState<string>(""))
+    items.genderSelect = CsSelectBoxItem.New(["男性", "女性", "未回答"], "未回答")
+        .set(useState<string>(""))
+    items.memo = CsTextAreaItem.New().set(useState<string>(""))
+    items.other1 = CsTextBoxItem.New().set(useState<string>("1"))
+    items.other2 = CsTextBoxItem.New().set(useState<string>("2"))
+    items.other3 = CsTextBoxItem.New().set(useState<string>("3"))
+    items.other4 = CsTextBoxItem.New().set(useState<string>("4"))
+    items.other5 = CsTextBoxItem.New().set(useState<string>("5"))
+    items.other6 = CsTextBoxItem.New().set(useState<string>("6"))
+    items.other7 = CsTextBoxItem.New().set(useState<string>("7"))
+    items.other8 = CsTextBoxItem.New().set(useState<string>("8"))
+    items.other9 = CsTextBoxItem.New().set(useState<string>("9"))
+    items.add = CsTextAreaItem.New().set(useState<string>("こんにちわ"))
+    const view = useInitView<TestView>(
+        TestView,
+        undefined,
+        items,
+        undefined,
+    )
+    return view
+}
 
-export default testView;
+export type TestViewItems = Extract<TestView, CsItemBase>

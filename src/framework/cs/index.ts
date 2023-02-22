@@ -1,10 +1,9 @@
 import CsEvent, { CsCallback, CsEffect } from "./CsEvent"
 import CsItem, { CsCheckBoxItem, CsItemBase, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem } from "./CsItem"
-import CsView, { CsViewBuilder } from "./CsView"
+import CsView from "./CsView"
 
 export namespace Cs {
     export type View = CsView
-    export type ViewBuilder = CsViewBuilder
     export namespace Item {
         export type Base = CsItemBase
         export type Item<T> = CsItem<T>
@@ -35,5 +34,4 @@ export {
     CsEffect,
     CsCallback,
     CsView,
-    CsViewBuilder,
 }
