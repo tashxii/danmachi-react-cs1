@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { CsCheckBoxItem, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem } from "../../framework/cs"
+import { CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem } from "../../framework/cs"
 import { useInitView } from "../../framework/cs/CsView"
 import { CxLayoutProps, CxTableLayout } from "../../framework/cx/CxLayout"
 import TestView, { TestViewItems, useTestView } from "./testView"

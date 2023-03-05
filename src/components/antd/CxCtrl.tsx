@@ -1,6 +1,6 @@
 import React from 'react'
 import { Input, Select, Radio, Checkbox } from "antd"
-import { CsCheckBoxItem, CsItemBase, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem } from '../../framework/cs'
+import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem } from '../../framework/cs'
 import { CxCheckBox, CxLabel, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxTextBox } from '../../framework/cx/CxCtrl'
 
 class AntdProps<I extends CsItemBase> extends CxProps<I> {
@@ -17,14 +17,14 @@ export const AntdLabel: React.FC<{ label: string }> = (props) => {
     )
 }
 
-export const AntdTextBox: React.FC<CxProps<CsTextBoxItem>> = (props) => {
+export const AntdTextBox: React.FC<CxProps<CsInputTextItem>> = (props) => {
     const { item } = props
     return (
         <Input onChange={(e) => { item.setValue(e.target.value) }} />
     )
 }
 
-export const AntdPasswordBox: React.FC<CxProps<CsPasswordBoxItem>> = (props) => {
+export const AntdPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
     const { item } = props
     return (
         <Input.Password readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />

@@ -1,6 +1,6 @@
 import { Col, Row } from "antd"
 import { AntdCheckBox, AntdPasswordBox, AntdRadioBox, AntdSelectBox, AntdTextArea, AntdTextBox } from "../../components/antd/CxCtrl"
-import { CsCheckBoxItem, CsItemBase, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem, CsView } from "../cs"
+import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView } from "../cs"
 import { CxCheckBox, CxLabel, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxTextBox } from "./CxCtrl"
 
 
@@ -64,20 +64,20 @@ export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
 }
 
 export const selectComponent = (item: CsItemBase, useAntd: boolean): JSX.Element => {
-  if (item instanceof CsTextBoxItem) {
-    const props: CxProps<CsTextBoxItem> = { item: item }
+  if (item instanceof CsInputTextItem) {
+    const props: CxProps<CsInputTextItem> = { item: item }
     return (useAntd) ? (<CxTextBox {...props} />) : (<AntdTextBox {...props} />)
   }
   if (item instanceof CsTextAreaItem) {
-    const props: CxProps<CsTextBoxItem> = { item: item }
+    const props: CxProps<CsInputTextItem> = { item: item }
     return (useAntd) ? (<CxTextArea {...props} />) : (<AntdTextArea {...props} />)
   }
   if (item instanceof CsCheckBoxItem) {
     const props: CxProps<CsCheckBoxItem> = { item: item }
     return (useAntd) ? (<CxCheckBox {...props} />) : (<AntdCheckBox {...props} />)
   }
-  if (item instanceof CsPasswordBoxItem) {
-    const props: CxProps<CsPasswordBoxItem> = { item: item }
+  if (item instanceof CsPasswordItem) {
+    const props: CxProps<CsPasswordItem> = { item: item }
     return (useAntd) ? (<CxPasswordBox {...props} />) : (<AntdPasswordBox {...props} />)
   }
   if (item instanceof CsRadioBoxItem) {

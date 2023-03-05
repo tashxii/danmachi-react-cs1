@@ -1,53 +1,51 @@
 import React, { useState } from "react";
-import { CsCallback, CsEffect, CsItemBase, CsTextBoxItem, CsView } from "../../framework/cs";
-import { CsCheckBoxItem, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
+import { CsCallback, CsEffect, CsItemBase, CsInputTextItem, CsView } from "../../framework/cs";
+import { CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
+import { strValOpt, boolValOpt, RW, useCsInputTextItem, useCsSelectBoxItem, useCsCheckBoxItem, numValOpt, useCsInputNumberItem, useCsRadioBoxItem, useCsTextAreaItem } from "../../framework/cs/CsHooks";
+import { CsInputNumberItem } from "../../framework/cs/CsItem";
 import { useInitView } from "../../framework/cs/CsView";
 
-export default class TestView extends CsView {
-    name = CsTextBoxItem.Default
-    password = CsPasswordBoxItem.Default
-    adminCheck = CsCheckBoxItem.Default
-    genderSelect = CsSelectBoxItem.Default
-    contactWay = CsRadioBoxItem.Default
-    memo = CsTextAreaItem.Default
-    other1 = CsTextBoxItem.Default
-    other2 = CsTextBoxItem.Default
-    other3 = CsTextBoxItem.Default
-    other4 = CsTextBoxItem.Default
-    other5 = CsTextBoxItem.Default
-    other6 = CsTextBoxItem.Default
-    other7 = CsTextBoxItem.Default
-    other8 = CsTextBoxItem.Default
-    other9 = CsTextBoxItem.Default
-    add = CsTextAreaItem.Default
+export default interface TestView extends CsView {
+    nameItem: CsInputTextItem
+    password: CsPasswordItem
+    adminCheck: CsCheckBoxItem
+    genderSelect: CsSelectBoxItem
+    contactWay: CsRadioBoxItem
+    age: CsInputNumberItem
+    memo: CsTextAreaItem
+    other1: CsInputTextItem
+    other2: CsInputTextItem
+    other3: CsInputTextItem
+    other4: CsInputTextItem
+    other5: CsInputTextItem
+    other6: CsInputTextItem
+    other7: CsInputTextItem
+    other8: CsInputTextItem
+    other9: CsInputTextItem
 }
 
 export function useTestView(): TestView {
-    const items: TestViewItems = { readonly: false } as TestViewItems
-    items.adminCheck = CsCheckBoxItem.New("管理者権限")
-        .set(useState<boolean>(false))
-    items.contactWay = CsRadioBoxItem.New("連絡方法", ["メール", "電話", "訪問"], "メール")
-        .set(useState<string>(""))
-    items.name = CsTextBoxItem.New()
-        .set(useState<string>(""))
-    items.genderSelect = CsSelectBoxItem.New(["男性", "女性", "未回答"], "未回答")
-        .set(useState<string>(""))
-    items.memo = CsTextAreaItem.New().set(useState<string>(""))
-    items.other1 = CsTextBoxItem.New().set(useState<string>("1"))
-    items.other2 = CsTextBoxItem.New().set(useState<string>("2"))
-    items.other3 = CsTextBoxItem.New().set(useState<string>("3"))
-    items.other4 = CsTextBoxItem.New().set(useState<string>("4"))
-    items.other5 = CsTextBoxItem.New().set(useState<string>("5"))
-    items.other6 = CsTextBoxItem.New().set(useState<string>("6"))
-    items.other7 = CsTextBoxItem.New().set(useState<string>("7"))
-    items.other8 = CsTextBoxItem.New().set(useState<string>("8"))
-    items.other9 = CsTextBoxItem.New().set(useState<string>("9"))
-    items.add = CsTextAreaItem.New().set(useState<string>("こんにちわ"))
+    const testView: TestView = {
+        nameItem: useCsInputTextItem("名前", useState(""), strValOpt(true, 1, 30)),
+        password: useCsInputTextItem("パスワード", useState(""), strValOpt(true, 1, 16)),
+        adminCheck: useCsCheckBoxItem("管理者権限", useState(false), boolValOpt(true)),
+        genderSelect: useCsSelectBoxItem("性別", useState("未回答"), strValOpt(true), { options: ["男性", "女性", "未回答"] }),
+        contactWay: useCsRadioBoxItem("連絡方法", useState("メール"), strValOpt(true), { options: ["メール", "電話", "訪問"] }),
+        age: useCsInputNumberItem("年齢", useState(20), numValOpt(true, 18, 70)),
+        memo: useCsTextAreaItem("メモ", useState(""), strValOpt(true, 1, 4000)),
+        other1: useCsInputTextItem("ほか１", useState("ほか１"), strValOpt(false, 1, 30)),
+        other2: useCsInputTextItem("ほか２", useState("ほか２"), strValOpt(false, 1, 30)),
+        other3: useCsInputTextItem("ほか３", useState("ほか３"), strValOpt(false, 1, 30)),
+        other4: useCsInputTextItem("ほか４", useState("ほか４"), strValOpt(false, 1, 30)),
+        other5: useCsInputTextItem("ほか５", useState("ほか５"), strValOpt(false, 1, 30)),
+        other6: useCsInputTextItem("ほか６", useState("ほか６"), strValOpt(false, 1, 30)),
+        other7: useCsInputTextItem("ほか７", useState("ほか７"), strValOpt(false, 1, 30)),
+        other8: useCsInputTextItem("ほか８", useState("ほか８"), strValOpt(false, 1, 30)),
+        other9: useCsInputTextItem("ほか９", useState("ほか９"), strValOpt(false, 1, 30)),
+        readonly: false
+    }
     const view = useInitView<TestView>(
-        TestView,
-        undefined,
-        items,
-        undefined,
+        testView
     )
     return view
 }

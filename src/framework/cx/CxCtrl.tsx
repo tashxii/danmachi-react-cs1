@@ -1,7 +1,7 @@
 import React from 'react'
-import { CsCheckBoxItem, CsItemBase, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem } from '../cs'
+import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem } from '../cs'
 
-export class CxProps<I extends CsItemBase> {
+export class CxProps<I extends CsCheckBoxItem|CsPasswordItem|CsRadioBoxItem|CsSelectBoxItem|CsTextAreaItem|CsInputTextItem> {
     item: I = {} as I
 }
 
@@ -9,18 +9,19 @@ export const CxCtrl = <I extends CsItemBase, P extends CxProps<I>>(props: P) => 
     return (<></>)
 }
 
-export const CxLabel: React.FC<{ label: string }> = (props) => {
+export const CxLabel: React.FC<{ label: string }> = (props : ) => {
     return (<>{props.label}</>)
 }
 
-export const CxTextBox: React.FC<CxProps<CsTextBoxItem>> = (props) => {
+export const CxTextBox: React.FC<CxProps<CsInputTextItem>> = (props) => {
     const { item } = props
     return (
-        <input className="Input" {...props} readOnly={item.readonly} onChange={(e: { target: { value: React.SetStateAction<string> } }) => { item.setValue(e.target.value) }} />
+        <input className="Input" {...props} readOnly={item.readonly} value={item.value}
+            onChange={(e: { target: { value: React.SetStateAction<string> } }) => { item.setValue(e.target.value) }} />
     )
 }
 
-export const CxPasswordBox: React.FC<CxProps<CsPasswordBoxItem>> = (props) => {
+export const CxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
     const { item } = props
     return (
         <input type="password" className="Input" readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />

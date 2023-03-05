@@ -1,5 +1,5 @@
 import CsEvent, { CsCallback, CsEffect } from "./CsEvent"
-import CsItem, { CsCheckBoxItem, CsItemBase, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem } from "./CsItem"
+import CsItem, { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem } from "./CsItem"
 import CsView from "./CsView"
 
 export namespace Cs {
@@ -7,8 +7,8 @@ export namespace Cs {
     export namespace Item {
         export type Base = CsItemBase
         export type Item<T> = CsItem<T>
-        export type TextBox = CsTextBoxItem
-        export type PasswordBox = CsPasswordBoxItem
+        export type TextBox = CsInputTextItem
+        export type PasswordBox = CsPasswordItem
         export type TextArea = CsTextAreaItem
         export type SelectBox = CsSelectBoxItem
         export type CheckBox = CsCheckBoxItem
@@ -24,9 +24,9 @@ export namespace Cs {
 export {
     CsItemBase,
     CsItem,
-    CsTextBoxItem,
+    CsInputTextItem,
     CsTextAreaItem,
-    CsPasswordBoxItem,
+    CsPasswordItem,
     CsCheckBoxItem,
     CsSelectBoxItem,
     CsRadioBoxItem,
