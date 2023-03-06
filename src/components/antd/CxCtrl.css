@@ -1,0 +1,34 @@
+.Label {
+  display: block;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.Input {
+  width: 80%;
+  min-width: 40px;
+  border-radius: 5px;
+  padding: 8px;
+  border: solid 1px lightgray;
+  background-color: #fafbfc;
+  font-size: 16px;
+  outline: none;
+}
+
+.Input:focus {
+  background-color: white;
+}
+
+.Textarea {
+  width: 400px;
+  border-radius: 5px;
+  padding: 8px;
+  border: solid 1px lightgray;
+  background-color: #fafbfc;
+  font-size: 16px;
+  outline: none;
+}
+
+.Textarea:focus {
+  background-color: white;
+}

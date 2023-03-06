@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { CsCallback, CsEffect, CsItemBase, CsInputTextItem, CsView } from "../../framework/cs";
 import { CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
-import { strValOpt, boolValOpt, RW, useCsInputTextItem, useCsSelectBoxItem, useCsCheckBoxItem, numValOpt, useCsInputNumberItem, useCsRadioBoxItem, useCsTextAreaItem } from "../../framework/cs/CsHooks";
+import { strValOpt, boolValOpt, RW, useCsInputTextItem, useCsSelectBoxItem, useCsCheckBoxItem, numValOpt, useCsInputNumberItem, useCsRadioBoxItem, useCsTextAreaItem, selectOpt, selectOptStr } from "../../framework/cs/CsHooks";
 import { CsInputNumberItem } from "../../framework/cs/CsItem";
-import { useInitView } from "../../framework/cs/CsView";
+import { useCsView } from "../../framework/cs/CsView";
 
 export default interface TestView extends CsView {
     nameItem: CsInputTextItem
@@ -11,7 +11,7 @@ export default interface TestView extends CsView {
     adminCheck: CsCheckBoxItem
     genderSelect: CsSelectBoxItem
     contactWay: CsRadioBoxItem
-    age: CsInputNumberItem
+    //    age: CsInputNumberItem
     memo: CsTextAreaItem
     other1: CsInputTextItem
     other2: CsInputTextItem
@@ -22,6 +22,7 @@ export default interface TestView extends CsView {
     other7: CsInputTextItem
     other8: CsInputTextItem
     other9: CsInputTextItem
+    otherA: CsInputTextItem
 }
 
 export function useTestView(): TestView {
@@ -29,9 +30,9 @@ export function useTestView(): TestView {
         nameItem: useCsInputTextItem("名前", useState(""), strValOpt(true, 1, 30)),
         password: useCsInputTextItem("パスワード", useState(""), strValOpt(true, 1, 16)),
         adminCheck: useCsCheckBoxItem("管理者権限", useState(false), boolValOpt(true)),
-        genderSelect: useCsSelectBoxItem("性別", useState("未回答"), strValOpt(true), { options: ["男性", "女性", "未回答"] }),
-        contactWay: useCsRadioBoxItem("連絡方法", useState("メール"), strValOpt(true), { options: ["メール", "電話", "訪問"] }),
-        age: useCsInputNumberItem("年齢", useState(20), numValOpt(true, 18, 70)),
+        genderSelect: useCsSelectBoxItem("性別", useState("未回答"), strValOpt(true), selectOptStr(["男性", "女性", "未回答"], "未回答")),
+        contactWay: useCsRadioBoxItem("連絡方法", useState("メール"), strValOpt(true), selectOptStr(["メール", "電話", "訪問"], "メール")),
+        //      age: useCsInputNumberItem("年齢", useState(20), numValOpt(true, 18, 70)),
         memo: useCsTextAreaItem("メモ", useState(""), strValOpt(true, 1, 4000)),
         other1: useCsInputTextItem("ほか１", useState("ほか１"), strValOpt(false, 1, 30)),
         other2: useCsInputTextItem("ほか２", useState("ほか２"), strValOpt(false, 1, 30)),
@@ -42,9 +43,11 @@ export function useTestView(): TestView {
         other7: useCsInputTextItem("ほか７", useState("ほか７"), strValOpt(false, 1, 30)),
         other8: useCsInputTextItem("ほか８", useState("ほか８"), strValOpt(false, 1, 30)),
         other9: useCsInputTextItem("ほか９", useState("ほか９"), strValOpt(false, 1, 30)),
-        readonly: false
+        otherA: useCsInputTextItem("ほか亜", useState("ほかあ"), strValOpt(false, 1, 30)),
+        readonly: false,
+        onValidate: () => { }
     }
-    const view = useInitView<TestView>(
+    const view = useCsView<TestView>(
         testView
     )
     return view

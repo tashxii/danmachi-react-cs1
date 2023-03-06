@@ -4,9 +4,9 @@ import testView, { useTestView } from "./testView"
 export const TestTab3PaneA: React.FC = () => {
   const view = useTestView()
   const props: CxLayoutProps = {
-    colSize: 4,
+    colSize: 2,
     rowSize: 10,
-    useAntd: true,
+    useAx: true,
     view: view
   }
   return (

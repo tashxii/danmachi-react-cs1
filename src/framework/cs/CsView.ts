@@ -1,5 +1,5 @@
 import CsEvent, { CsCallback, CsEffect } from "./CsEvent"
-import CsItem, { BooleanValidateOption, CsItemBase, NumberValidateOption, StringValidateOption } from "./CsItem"
+import { CsItem, BooleanValidateOption, CsItemBase, NumberValidateOption, StringValidateOption } from "./CsItem"
 import React, { useState } from "react"
 import { stringField } from "../validation"
 import FieldConstraint from "../validation/field/FieldConstraint"
@@ -8,7 +8,7 @@ import NumberFieldConstraint, { numberField } from "../validation/field/NumberFi
 
 export default abstract class CsView {
     readonly: boolean = false
-    onValidate: Function = () => void
+    onValidate: Function = (): void => { }
 }
 
 export function useCsView<T extends CsView>(
@@ -19,8 +19,22 @@ export function useCsView<T extends CsView>(
     keys.forEach(key => {
         const item = instance[key as keyof T]
         if (!(item instanceof CsItem)) return
-        const csItem = item as CsItem
-        const valOpt = csItem.validateOption
+        let csItem, valOpt
+        if (item instanceof CsItem<string>) {
+            csItem = item as CsItem<string>
+            valOpt = csItem.validateOption
+        }
+        if (item instanceof CsItem<number>) {
+            csItem = item as CsItem<number>
+            valOpt = csItem.validateOption
+        }
+        if (item instanceof CsItem<boolean>) {
+            csItem = item as CsItem<boolean>
+            valOpt = csItem.validateOption
+        }
+        else {
+            return
+        }
         if (valOpt instanceof StringValidateOption) {
             const sValOpt = valOpt as StringValidateOption
             const sf = stringField();

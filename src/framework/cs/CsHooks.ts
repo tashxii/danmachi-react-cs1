@@ -22,9 +22,34 @@ export function boolValOpt(required: boolean) {
     return new BooleanValidateOption().setRequired(required)
 }
 
-class SelectOptions { options: any[] = []; valueKey: string = ""; labelKey: string = "" }
-class SelectOptionStrings { options: string[] = [] }
+class SelectOptions {
+    options: any[]
+    valueKey: string = "value"
+    labelKey: string = "label"
+    selected?: string
+    constructor(options: any[], valueKey: string = "value", labelKey: string = "label", selected?: string) {
+        this.options = options
+        this.valueKey = valueKey
+        this.labelKey = labelKey
+        this.selected = selected
+    }
+}
+export function selectOpt(options: any[], valueKey: string = "value", labelKey: string = "label", selected?: string)
+    : SelectOptions {
+    return new SelectOptions(options, valueKey, labelKey, selected)
+}
+class SelectOptionStrings {
+    options: string[] = []
+    selected?: string
+    constructor(options: any[], selected?: string) {
+        this.options = options
+        this.selected = selected
+    }
+}
 
+export function selectOptStr(options: string[], selected?: string) {
+    return new SelectOptionStrings(options, selected)
+}
 
 export enum RW {
     Readonly,
@@ -38,24 +63,32 @@ export function useCsItem<T, I extends CsItem<T>>(
     readonly: RW = RW.Editable,
 ): I {
     const item = new type()
+    item.label = label
     item.setState(state)
     item.setValidateOption(valOpt)
     if (selOpt) {
+        console.log(selOpt)
         if (item instanceof CsRadioBoxItem) {
             const radio = item as CsRadioBoxItem
+            console.warn(radio)
             if (selOpt instanceof SelectOptions) {
                 radio.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
             } else if (selOpt instanceof SelectOptionStrings) {
                 radio.setOptionStrings(selOpt.options)
             }
+            console.warn(radio)
         }
         if (item instanceof CsSelectBoxItem) {
             const select = item as CsSelectBoxItem
+            console.warn(select, selOpt)
             if (selOpt instanceof SelectOptions) {
-                select.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
+                console.error("here")
+                select.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey, selOpt.selected)
             } else if (selOpt instanceof SelectOptionStrings) {
-                select.setOptionStrings(selOpt.options)
+                console.error("here")
+                select.setOptionStrings(selOpt.options, selOpt.selected)
             }
+            console.warn(select, selOpt)
         }
     }
     item.readonly = (readonly === RW.Readonly)

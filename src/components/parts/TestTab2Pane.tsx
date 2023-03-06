@@ -6,7 +6,7 @@ export const TestTab2Pane: React.FC = () => {
   const props: CxLayoutProps = {
     colSize: 6,
     rowSize: 10,
-    useAntd: false,
+    useAx: false,
     view: view,
   }
   return (

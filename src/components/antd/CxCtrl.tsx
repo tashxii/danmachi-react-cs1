@@ -1,82 +1,107 @@
 import React from 'react'
-import { Input, Select, Radio, Checkbox } from "antd"
+import { Input, Select, Radio, Checkbox, InputNumber, Typography } from "antd"
 import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem } from '../../framework/cs'
-import { CxCheckBox, CxLabel, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxTextBox } from '../../framework/cx/CxCtrl'
-
-class AntdProps<I extends CsItemBase> extends CxProps<I> {
+import { CxCheckBox, CxLabel, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from '../../framework/cx/CxCtrl'
+import { CsInputNumberItem } from '../../framework/cs/CsItem'
+const { Text } = Typography
+class AxProps<I extends CsInputTextItem | CsInputNumberItem | CsCheckBoxItem |
+    CsPasswordItem | CsRadioBoxItem | CsSelectBoxItem | CsTextAreaItem> extends CxProps<I> {
     item: I = {} as I
 }
 
-export const AntdCtrl = <I extends CsItemBase, P extends CxProps<I>>(props: P) => {
-    return (<></>)
-}
-
-export const AntdLabel: React.FC<{ label: string }> = (props) => {
+export const AxLabel: React.FC<{ label: string }> = (props) => {
     return (
-        <CxLabel {...{ label: props.label }} />
+        <div><Text style={{ color: "#1867dcce" }}>{props.label}</Text></div>
     )
 }
 
-export const AntdTextBox: React.FC<CxProps<CsInputTextItem>> = (props) => {
+export const AxInputText: React.FC<CxProps<CsInputTextItem>> = (props) => {
     const { item } = props
-    return (
-        <Input onChange={(e) => { item.setValue(e.target.value) }} />
-    )
-}
-
-export const AntdPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
-    const { item } = props
-    return (
-        <Input.Password readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />
-    )
-}
-
-export const AntdTextArea: React.FC<CxProps<CsTextAreaItem>> = (props) => {
-    const { item } = props
-    return (
-        <Input.TextArea readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />
-    )
-}
-
-export const AntdSelectBox: React.FC<CxProps<CsSelectBoxItem>> = (props) => {
-    const { item } = props
-    const selectOptions = item.options.map(o => {
-        return { key: o, value: o, label: o }
-    })
-    return (
-        <Select
-            value={item.selected}
-            aria-readonly={item.readonly}
-            onChange={(value: string) => { item.setValue(value) }}
-            options={selectOptions} />
-    )
-}
-
-export const AntdRadioBox: React.FC<CxProps<CsRadioBoxItem>> = (props) => {
-    const { item } = props
-    const selectOptions = item.options.map(o => {
-        return { value: o, label: o }
-    })
     return (
         <>
-            <AntdLabel label={item.name} ></AntdLabel>
+            <AxLabel label={item.label}></AxLabel>
+            <Input value={item.value} defaultValue={item.value} readOnly={item.readonly}
+                onChange={(e) => { item.setValue(e.target.value) }} />
+        </>
+    )
+}
+
+export const AxInputNumber: React.FC<CxProps<CsInputNumberItem>> = (props) => {
+    const { item } = props
+    return (
+        <>
+            <AxLabel label={item.label}></AxLabel>
+            <InputNumber value={item.value} defaultValue={item.value} readOnly={item.readonly}
+                onChange={(value: number | null) => { if (value) { item.setValue(value) } }} />
+        </>
+    )
+}
+
+export const AxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
+    const { item } = props
+    return (
+        <>
+            <AxLabel label={item.label}></AxLabel>
+            <Input.Password value={item.value} defaultValue={item.value} readOnly={item.readonly}
+                onChange={(e) => { item.setValue(e.target.value) }} />
+        </>
+    )
+}
+
+export const AxTextArea: React.FC<CxProps<CsTextAreaItem>> = (props) => {
+    const { item } = props
+    return (
+        <>
+            <AxLabel label={item.label}></AxLabel>
+            <Input.TextArea value={item.value} defaultValue={item.value} readOnly={item.readonly}
+                onChange={(e) => { item.setValue(e.target.value) }} />
+        </>
+    )
+}
+
+export const AxSelectBox: React.FC<CxProps<CsSelectBoxItem>> = (props) => {
+    const { item } = props
+    return (
+        <>
+            <AxLabel label={item.label}></AxLabel>
+            <Select
+                value={item.value}
+                defaultValue={item.selected}
+                aria-readonly={item.readonly}
+                onChange={(value: string) => { item.setValue(value) }}
+            >
+                {item.options.map(o => {
+                    return (<Select.Option key={o[item.valueKey]} value={o[item.valueKey]}>{o[item.labelKey]}</Select.Option>)
+                })}
+            </Select>
+        </>
+    )
+}
+
+export const AxRadioBox: React.FC<CxProps<CsRadioBoxItem>> = (props) => {
+    const { item } = props
+    return (
+        <>
+            <AxLabel label={item.label} ></AxLabel>
             <Radio.Group
-                value={item.selected}
+                value={item.value}
                 aria-readonly={item.readonly}
                 onChange={(e) => { item.setValue(e.target.value) }}
             >
                 {item.options.map(o => {
-                    return (<Radio key={o} value={o}>o</Radio>)
-                })
-                }
+                    return (<Radio key={o[item.valueKey]} value={o[item.valueKey]}>{o[item.labelKey]}</Radio>)
+                })}
             </Radio.Group>
         </>
     )
 }
 
-export const AntdCheckBox: React.FC<CxProps<CsCheckBoxItem>> = (props) => {
+export const AxCheckBox: React.FC<CxProps<CsCheckBoxItem>> = (props) => {
     const { item } = props
     return (
-        <Checkbox checked={item.value} onChange={(e) => item.setValue(e.target.value)} />
+        <>
+            <AxLabel label={item.label} ></AxLabel>
+            <Checkbox value={item.value} checked={item.value} onChange={(e) => item.setValue(e.target.checked)} />
+        </>
     )
 }
