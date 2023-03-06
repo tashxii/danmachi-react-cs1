@@ -16,11 +16,11 @@ import NumberFieldConstraint from './field/NumberFieldConstraint';
  * それぞれの項目が正常であった場合に相関バリデーションを行うのがよいため、単項目バリデーションでエラーが発生しなかった場合にコールバックされる関数内にて実装する。
  */
 // stringは検証できるが他の型を考慮していないので型制約をつける
-type AvailableFiledType = { [key: string]: string | number | string[] };
+export type AvailableFiledType = { [key: string]: string | number | string[] };
 
 // IDEで補完が効くように、Genericsで検証対象フィールドを指定させてそれに基づいた型制約をつける
 type FieldConstraintSchema<T> = Record<keyof T, Constraint<any>>;
-type ValidationError<T> = Record<keyof T, string>;
+export type ValidationError<T> = Record<keyof T, string>;
 type SetValidationError<T> = (name: keyof T, message: string) => void;
 type ConstraintValidatorList<T> = { [K in keyof T]: ConstraintValidator<T[K]> }
 

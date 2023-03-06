@@ -1,5 +1,6 @@
+import React from "react"
 import { CxLayoutProps, CxTableLayout } from "../../framework/cx/CxLayout"
-import testView, { useTestView } from "./testView"
+import { useTestView } from "./testView"
 
 export const TestTab2PaneA: React.FC = () => {
   const view = useTestView()

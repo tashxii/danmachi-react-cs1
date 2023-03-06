@@ -1,9 +1,11 @@
+import React from "react"
 import { Col, Row } from "antd"
-import { AxCheckBox, AxPasswordBox, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } from "../../components/antd/CxCtrl"
-import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView } from "../cs"
-import { CsInputNumberItem } from "../cs/CsItem"
-import { CxCheckBox, CxLabel, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
-
+import Antd from "../../components/antd"
+import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../cs"
+import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
+import { CsMultiCheckBoxItem } from "../cs/CsItem"
+import { AxMultiCheckBox } from "../../components/antd/AxCtrl"
+const { AxCheckBox, AxInputNumber, AxPasswordBox, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
 
 
 export class CxLayoutProps {
@@ -16,7 +18,7 @@ export class CxLayoutProps {
 export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
   const v = props.view
   const items: CsItemBase[] = []
-  for (const [key, value] of Object.entries(v)) {
+  for (const value of Object.values(v)) {
     if (value instanceof CsItemBase) {
       items.push(value)
     }
@@ -31,7 +33,8 @@ export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
     cols.push(i + 1)
   }
   const colSpan = 24 / props.colSize
-  let x = 0;
+  let x = 0
+  let k = 0
   return (
     <>
       {
@@ -43,7 +46,7 @@ export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
                   return (
                     <Col span={colSpan}>
                       {
-                        <SelectComponent item={items[x++]} useAx={props.useAx} />
+                        <SelectComponent key={k++} item={items[x++]} useAx={props.useAx} />
                       }
                     </Col>
                   )
@@ -63,10 +66,10 @@ export const selectComponent = (item: CsItemBase, useAx: boolean): JSX.Element =
     const props: CxProps<CsInputTextItem> = { item: item }
     return (!useAx) ? (<CxInputText {...props} />) : (<AxInputText {...props} />)
   }
-  // if (item instanceof CsInputNumberItem) {
-  //   const props: CxProps<CsInputNumberItem> = { item: item }
-  //   return (!useAx) ? (<CxInputNumber {...props} />) : (<AxInputNumber {...props} />)
-  // }
+  if (item instanceof CsInputNumberItem) {
+    const props: CxProps<CsInputNumberItem> = { item: item }
+    return (!useAx) ? (<CxInputNumber {...props} />) : (<AxInputNumber {...props} />)
+  }
   if (item instanceof CsTextAreaItem) {
     const props: CxProps<CsInputTextItem> = { item: item }
     return (!useAx) ? (<CxTextArea {...props} />) : (<AxTextArea {...props} />)
@@ -86,6 +89,10 @@ export const selectComponent = (item: CsItemBase, useAx: boolean): JSX.Element =
   if (item instanceof CsSelectBoxItem) {
     const props: CxProps<CsSelectBoxItem> = { item: item }
     return (!useAx) ? (<CxSelectBox {...props} />) : (<AxSelectBox {...props} />)
+  }
+  if (item instanceof CsMultiCheckBoxItem) {
+    const props: CxProps<CsMultiCheckBoxItem> = { item: item }
+    return (!useAx) ? (<NullElement />) : (<AxMultiCheckBox {...props} />)
   }
   return <NullElement />
 }

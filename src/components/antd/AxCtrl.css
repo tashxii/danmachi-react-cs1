@@ -1,11 +1,16 @@
-.Label {
+.label {
   display: block;
+  margin-left: 5%;
+  margin-top: 5px;
   margin-bottom: 5px;
   text-align: left;
 }
 
-.Input {
-  width: 80%;
+.ctrl {
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 5px;
   min-width: 40px;
   border-radius: 5px;
   padding: 8px;
@@ -15,12 +20,12 @@
   outline: none;
 }
 
-.Input:focus {
+.ctrl:focus {
   background-color: white;
 }
 
-.Textarea {
-  width: 400px;
+.textarea {
+  width: 90%;
   border-radius: 5px;
   padding: 8px;
   border: solid 1px lightgray;
@@ -29,6 +34,9 @@
   outline: none;
 }
 
-.Textarea:focus {
-  background-color: white;
+.fit-content {
+  width: -moz-fit-content;
+  /* Firefox */
+  width: fit-content;
+  /* other browsers */
 }

@@ -1,0 +1,6 @@
+.ValidationError {
+    color: red;
+    text-align: left;
+    font-size: 80%;
+    margin-left: 5%;
+}
