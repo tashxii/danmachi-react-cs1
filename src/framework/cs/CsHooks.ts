@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react"
 
 import { BooleanValidateOption, CsCheckBoxItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, NumberValidateOption, StringValidateOption, ValidateOption } from "./CsItem"
 
-export function strValOpt(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string): StringValidateOption {
+export function strValOpt(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string): ValidateOption<string> {
     const valOpt = new StringValidateOption()
     valOpt.setRequired(required)
     if (min && max) valOpt.setLength(min, max)
@@ -11,14 +11,14 @@ export function strValOpt(required: boolean, min?: number, max?: number, email?:
     return valOpt
 }
 
-export function numValOpt(required: boolean, min?: number, max?: number): NumberValidateOption {
+export function numValOpt(required: boolean, min?: number, max?: number): ValidateOption<number> {
     const valOpt = new NumberValidateOption()
     valOpt.setRequired(required)
     if (min && max) valOpt.setRange(min, max)
     return valOpt
 }
 
-export function boolValOpt(required: boolean) {
+export function boolValOpt(required: boolean): ValidateOption<boolean> {
     return new BooleanValidateOption().setRequired(required)
 }
 

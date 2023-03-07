@@ -5,7 +5,7 @@ import {
     CsSelectBoxItem, CsTextAreaItem, CsInputTextItem
 } from '../../framework/cs'
 import { CxProps } from '../../framework/cx/CxCtrl'
-import { CsInputNumberItem, CsItem, CsMultiCheckBoxItem } from '../../framework/cs/CsItem'
+import { CsInputNumberItem, CsItem, CsItemBase, CsMultiCheckBoxItem } from '../../framework/cs/CsItem'
 import "./AxCtrl.css"
 import { ValidationError } from '../basics/ValidationError'
 
@@ -23,6 +23,16 @@ export const AxLabel: React.FC<{ label: string, color?: string }> = (props: { la
     )
 }
 
+const getClassName = (item: CsItemBase, add?: string): string => {
+    const names = ["ctrl"]
+    if (add) {
+        names.push(add)
+    }
+    if (item.readonly) {
+        names.push("readonly")
+    }
+    return names.join(" ")
+}
 const getMessageKey = <T,>(item: CsItem<T>): string => {
     if (!item.parentView) return ""
     if (!item.parentView.validateEvent) return ""
@@ -35,130 +45,126 @@ const getMessageKey = <T,>(item: CsItem<T>): string => {
     }
     return ""
 }
-const getValidateionError = <T,>(key: string, item: CsItem<T>): string => {
-    console.warn(key, item.parentView?.validateEvent?.validationError)
-    console.warn(item.parentView?.validateEvent?.validationError[key])
+
+const getValidateionError = <T,>(item: CsItem<T>): string => {
+    const key = getMessageKey<T>(item)
     return item.parentView?.validateEvent?.validationError[key] ?? ""
 }
+
 export const AxInputText: React.FC<CxProps<CsInputTextItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<string>(item)
+    console.log(getClassName(item, "fit-content"))
     return (
         <div>
             <AxLabel label={item.label}></AxLabel>
-            <Input className="ctrl" value={item.value} defaultValue={item.value} readOnly={item.readonly}
+            <Input className={getClassName(item)} value={item.value} defaultValue={item.value} readOnly={item.readonly}
                 onChange={(e) => { item.setValue(e.target.value) }} />
-            <ValidationError message={getValidateionError<string>(key, item)} />
+            <ValidationError message={getValidateionError<string>(item)} />
         </div>
     )
 }
 
 export const AxInputNumber: React.FC<CxProps<CsInputNumberItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<number>(item)
     return (
         <div>
             <AxLabel label={item.label}></AxLabel>
-            <InputNumber className="ctrl" value={item.value} defaultValue={item.value} readOnly={item.readonly}
+            <InputNumber className={getClassName(item)} value={item.value} defaultValue={item.value} readOnly={item.readonly}
                 onChange={(value: number | null) => { if (value != null) { item.setValue(value) } }} />
-            <ValidationError message={getValidateionError<number>(key, item)} />
+            <ValidationError message={getValidateionError<number>(item)} />
         </div>
     )
 }
 
 export const AxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<string>(item)
     return (
         <div>
             <AxLabel label={item.label}></AxLabel>
-            <Input.Password className="ctrl" value={item.value} defaultValue={item.value} readOnly={item.readonly}
+            <Input.Password className={getClassName(item)} value={item.value} defaultValue={item.value} readOnly={item.readonly}
                 onChange={(e) => { item.setValue(e.target.value) }} />
-            <ValidationError message={getValidateionError<string>(key, item)} />
+            <ValidationError message={getValidateionError<string>(item)} />
         </div>
     )
 }
 
 export const AxTextArea: React.FC<CxProps<CsTextAreaItem>> = (props: CxProps<CsTextAreaItem>) => {
     const { item } = props
-    const key = getMessageKey<string>(item)
     return (
         <div>
             <AxLabel label={item.label}></AxLabel>
             <Input.TextArea className="ctrl textarea" value={item.value} defaultValue={item.value} readOnly={item.readonly}
                 onChange={(e) => { item.setValue(e.target.value) }} />
-            <ValidationError message={getValidateionError<string>(key, item)} />
+            <ValidationError message={getValidateionError<string>(item)} />
         </div>
     )
 }
 
 export const AxSelectBox: React.FC<CxProps<CsSelectBoxItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<string>(item)
     return (
         <div>
             <AxLabel label={item.label}></AxLabel>
             <Select
-                className="ctrl fit-content"
+                className={getClassName(item, "fit-content")}
                 value={item.value}
                 defaultValue={item.value}
                 aria-readonly={item.readonly}
                 onChange={(value: string) => { item.setValue(value) }}
+                disabled={item.readonly}
             >
                 {item.options.map(o => {
                     return (<Select.Option key={o[item.valueKey]} value={o[item.valueKey]}>{o[item.labelKey]}</Select.Option>)
                 })}
             </Select>
-            <ValidationError message={getValidateionError<string>(key, item)} />
-        </div>
+            <ValidationError message={getValidateionError<string>(item)} />
+        </div >
     )
 }
 
 export const AxRadioBox: React.FC<CxProps<CsRadioBoxItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<string>(item)
     return (
         <div>
             <AxLabel label={item.label} ></AxLabel>
             <Radio.Group
-                className="ctrl fit-content"
+                className={getClassName(item, "fit-content")}
                 value={item.value}
                 aria-readonly={item.readonly}
                 onChange={(e) => { item.setValue(e.target.value) }}
+                disabled={item.readonly}
             >
                 {item.options.map(o => {
                     return (<Radio key={o[item.valueKey]} value={o[item.valueKey]}>{o[item.labelKey]}</Radio>)
                 })}
             </Radio.Group>
-            <ValidationError message={getValidateionError<string>(key, item)} />
+            <ValidationError message={getValidateionError<string>(item)} />
         </div>
     )
 }
 
 export const AxCheckBox: React.FC<CxProps<CsCheckBoxItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<boolean>(item)
     return (
         <div>
             <AxLabel label={item.label} ></AxLabel>
-            <Checkbox className="ctrl fit-content" value={item.value} checked={item.value}
-                onChange={(e) => item.setValue(e.target.checked)}>
+            <Checkbox className={getClassName(item, "fit-content")} value={item.value} checked={item.value}
+                onChange={(e) => item.setValue(e.target.checked)} disabled={item.readonly}>
                 {item.checkBoxText}
             </Checkbox>
-            <ValidationError message={getValidateionError<boolean>(key, item)} />
+            <ValidationError message={getValidateionError<boolean>(item)} />
         </div>
     )
 }
 
 export const AxMultiCheckBox: React.FC<CxProps<CsMultiCheckBoxItem>> = (props) => {
     const { item } = props
-    const key = getMessageKey<string[]>(item)
     return (
         <>
             <AxLabel label={item.label} ></AxLabel>
             <div>
 
-                <div className="ctrl fit-content">
+                <div className={getClassName(item, "fit-content")}>
                     {item.options.map(o => {
                         const value = o[item.valueKey]
                         const text = o[item.labelKey]
@@ -176,7 +182,7 @@ export const AxMultiCheckBox: React.FC<CxProps<CsMultiCheckBoxItem>> = (props) =
                         )
                     })}
                 </div>
-                <ValidationError message={getValidateionError<string[]>(key, item)} />
+                <ValidationError message={getValidateionError<string[]>(item)} />
             </div>
         </>
     )

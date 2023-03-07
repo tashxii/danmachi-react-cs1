@@ -20,6 +20,11 @@
   outline: none;
 }
 
+.readonly {
+  background-color: #7f818683;
+  pointer-events: none;
+}
+
 .ctrl:focus {
   background-color: white;
 }

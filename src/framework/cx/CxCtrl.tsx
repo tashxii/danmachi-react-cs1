@@ -45,7 +45,7 @@ export const CxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
-            <input type="password" className="Input" readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />
+            <input type="password" value={item.value} className="Input" readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />
         </div>
     )
 }

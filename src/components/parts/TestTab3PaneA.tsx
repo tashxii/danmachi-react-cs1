@@ -8,7 +8,7 @@ import { Form } from "../basics/Form"
 export const TestTab3PaneA: React.FC = () => {
   const view = useTestView()
   const props: CxLayoutProps = {
-    colSize: 2,
+    colSize: 3,
     rowSize: 10,
     useAx: true,
     view: view
