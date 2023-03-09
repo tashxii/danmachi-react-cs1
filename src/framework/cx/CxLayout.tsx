@@ -71,7 +71,7 @@ export const selectComponent = (item: CsItemBase, useAx: boolean): JSX.Element =
     return (!useAx) ? (<CxInputNumber {...props} />) : (<AxInputNumber {...props} />)
   }
   if (item instanceof CsTextAreaItem) {
-    const props: CxProps<CsInputTextItem> = { item: item }
+    const props: CxProps<CsTextAreaItem> = { item: item }
     return (!useAx) ? (<CxTextArea {...props} />) : (<AxTextArea {...props} />)
   }
   if (item instanceof CsCheckBoxItem) {

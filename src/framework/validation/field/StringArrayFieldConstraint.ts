@@ -7,6 +7,11 @@ export default class StringArrayFieldConstraint extends FieldConstraint<string[]
             if (value === null || value.length === 0) {
                 return message;
             }
+            for (const v of value) {
+                if (v === null || v.length === 0) {
+                    return message;
+                }
+            }
         });
     }
 }

@@ -1,8 +1,13 @@
 import { Dispatch, SetStateAction } from "react"
 
-import { BooleanValidateOption, CsCheckBoxItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, NumberValidateOption, StringValidateOption, ValidateOption } from "./CsItem"
+import { BooleanValidateOption, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, NumberValidateOption, StringArrayValidationOption, StringValidateOption, ValidateOption } from "./CsItem"
 
-export function strValOpt(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string): ValidateOption<string> {
+export type StateResultOptional<T> = [val: T | undefined, setVal: Dispatch<SetStateAction<T | undefined>>]
+export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>>]
+export type StateResult<T> = StateResultRequired<T> | StateResultOptional<T>
+
+
+export function strValOpt(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string) {
     const valOpt = new StringValidateOption()
     valOpt.setRequired(required)
     if (min && max) valOpt.setLength(min, max)
@@ -11,7 +16,7 @@ export function strValOpt(required: boolean, min?: number, max?: number, email?:
     return valOpt
 }
 
-export function numValOpt(required: boolean, min?: number, max?: number): ValidateOption<number> {
+export function numValOpt(required: boolean, min?: number, max?: number) {
     const valOpt = new NumberValidateOption()
     valOpt.setRequired(required)
     if (min && max) valOpt.setRange(min, max)
@@ -20,6 +25,10 @@ export function numValOpt(required: boolean, min?: number, max?: number): Valida
 
 export function boolValOpt(required: boolean): ValidateOption<boolean> {
     return new BooleanValidateOption().setRequired(required)
+}
+
+export function strArrValOpt(required: boolean): ValidateOption<string[]> {
+    return new StringArrayValidationOption().setRequired(required)
 }
 
 class SelectOptions {
@@ -36,26 +45,21 @@ export function selectOpt(options: any[], valueKey: string = "value", labelKey: 
     : SelectOptions {
     return new SelectOptions(options, valueKey, labelKey)
 }
-class SelectOptionStrings {
-    options: string[] = []
-    constructor(options: any[]) {
-        this.options = options
-    }
-}
 
 export function selectOptStr(options: string[]) {
-    return new SelectOptionStrings(options)
+    return new SelectOptions(options.map((o) => ({ value: o, label: o })))
 }
 
 export enum RW {
     Readonly,
     Editable,
 }
+
 export function useCsItem<T, I extends CsItem<T>>(
     type: { new(): I }, label: string,
-    state: [val: T, setVal: Dispatch<SetStateAction<T>>],
+    state: StateResult<T>,
     valOpt?: ValidateOption<T>,
-    selOpt?: SelectOptions | SelectOptionStrings | undefined,
+    selOpt?: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): I {
     const item = new type()
@@ -63,29 +67,9 @@ export function useCsItem<T, I extends CsItem<T>>(
     item.setState(state)
     if (valOpt) item.setValidateOption(valOpt)
     if (selOpt) {
-        if (item instanceof CsRadioBoxItem) {
-            const radio = item as CsRadioBoxItem
-            if (selOpt instanceof SelectOptions) {
-                radio.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
-            } else if (selOpt instanceof SelectOptionStrings) {
-                radio.setOptionStrings(selOpt.options)
-            }
-        }
-        if (item instanceof CsSelectBoxItem) {
-            const select = item as CsSelectBoxItem
-            if (selOpt instanceof SelectOptions) {
-                select.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
-            } else if (selOpt instanceof SelectOptionStrings) {
-                select.setOptionStrings(selOpt.options)
-            }
-        }
-        if (item instanceof CsMultiCheckBoxItem) {
-            const multiCheck = item as CsMultiCheckBoxItem
-            if (selOpt instanceof SelectOptions) {
-                multiCheck.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
-            } else if (selOpt instanceof SelectOptionStrings) {
-                multiCheck.setOptionStrings(selOpt.options)
-            }
+        if (item instanceof CsHasOptionsItem<T>) {
+            const hasOptItem = item as CsHasOptionsItem<T>
+            hasOptItem.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
         }
     }
     item.readonly = (readonly === RW.Readonly)
@@ -93,39 +77,39 @@ export function useCsItem<T, I extends CsItem<T>>(
 }
 
 export function useCsInputTextItem(label: string,
-    state: [val: string, setVal: Dispatch<SetStateAction<string>>],
-    valOpt: ValidateOption<string>,
+    state: StateResult<string>,
+    valOpt: StringValidateOption,
     readonly: RW = RW.Editable,
 ): CsInputTextItem {
     return useCsItem(CsInputTextItem, label, state, valOpt, undefined, readonly);
 }
 
 export function useCsInputNumberItem(label: string,
-    state: [val: number, setVal: Dispatch<SetStateAction<number>>],
-    valOpt: ValidateOption<number>,
+    state: StateResult<number>,
+    valOpt: NumberValidateOption,
     readonly: RW = RW.Editable,
 ): CsInputNumberItem {
     return useCsItem(CsInputNumberItem, label, state, valOpt, undefined, readonly);
 }
 
 export function useCsPasswordItem(label: string,
-    state: [val: string, setVal: Dispatch<SetStateAction<string>>],
-    valOpt: ValidateOption<string>,
+    state: StateResult<string>,
+    valOpt: StringValidateOption,
     readonly: RW = RW.Editable,
 ): CsPasswordItem {
     return useCsItem(CsPasswordItem, label, state, valOpt, undefined, readonly);
 }
 
 export function useCsTextAreaItem(label: string,
-    state: [val: string, setVal: Dispatch<SetStateAction<string>>],
-    valOpt: ValidateOption<string>,
+    state: StateResult<string>,
+    valOpt: StringValidateOption,
     readonly: RW = RW.Editable,
 ): CsTextAreaItem {
     return useCsItem(CsTextAreaItem, label, state, valOpt, undefined, readonly);
 }
 
 export function useCsCheckBoxItem(label: string,
-    state: [val: boolean, setVal: Dispatch<SetStateAction<boolean>>],
+    state: StateResult<boolean>,
     checkBoxText: string, readonly: RW = RW.Editable,
 ): CsCheckBoxItem {
     const item = useCsItem(CsCheckBoxItem, label, state, undefined, undefined, readonly);
@@ -134,25 +118,26 @@ export function useCsCheckBoxItem(label: string,
 }
 
 export function useCsSelectBoxItem(label: string,
-    state: [val: string, setVal: Dispatch<SetStateAction<string>>],
-    valOpt: ValidateOption<string>, selOpt: SelectOptions | SelectOptionStrings | undefined,
+    state: StateResult<string>,
+    valOpt: StringValidateOption, selOpt: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): CsSelectBoxItem {
     return useCsItem(CsSelectBoxItem, label, state, valOpt, selOpt, readonly);
 }
 
 export function useCsRadioBoxItem(label: string,
-    state: [val: string, setVal: Dispatch<SetStateAction<string>>],
-    valOpt: ValidateOption<string>, selOpt: SelectOptions | SelectOptionStrings | undefined,
+    state: StateResult<string>,
+    valOpt: StringValidateOption, selOpt: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): CsRadioBoxItem {
     return useCsItem(CsRadioBoxItem, label, state, valOpt, selOpt, readonly);
 }
 
 export function useCsMultiCheckBoxItem(label: string,
-    state: [val: string[], setVal: Dispatch<SetStateAction<string[]>>],
-    selOpt: SelectOptions | SelectOptionStrings | undefined,
+    state: StateResult<string[]>,
+    valOpt: StringArrayValidationOption,
+    selOpt: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): CsMultiCheckBoxItem {
-    return useCsItem(CsMultiCheckBoxItem, label, state, undefined, selOpt, readonly);
+    return useCsItem(CsMultiCheckBoxItem, label, state, valOpt, selOpt, readonly);
 }

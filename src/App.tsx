@@ -1,11 +1,15 @@
-import React from 'react';
-import './App.css';
-import TestTab from './components/pages/TestTab';
+import React from "react"
+import { QueryClient, QueryClientProvider } from "react-query"
+import "./App.css"
+import TestTab from "./components/pages/TestTab"
+const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <React.Fragment>
-        <TestTab/>
+      <QueryClientProvider client={queryClient}>
+        <TestTab />
+      </QueryClientProvider>
     </React.Fragment>
   );
 };

@@ -79,7 +79,7 @@ const useValidation = <T extends AvailableFiledType>(schema: FieldConstraintSche
 };
 
 // 全ての制約をまとめて一括検証できるクラス
-class ConstraintValidators<T extends AvailableFiledType> {
+export class ConstraintValidators<T extends AvailableFiledType> {
 
   constraint: ConstraintValidatorList<T>;
 

@@ -24,7 +24,7 @@ export const CxInputText: React.FC<CxProps<CsInputTextItem>> = (props) => {
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
             <input className="Input" {...props} readOnly={item.readonly} value={item.value}
-                onChange={(e: { target: { value: React.SetStateAction<string> } }) => { item.setValue(e.target.value) }} />
+                onChange={(e) => { { item.setValue(e.target.value) } }} />
         </div>
     )
 }
@@ -62,12 +62,13 @@ export const CxTextArea: React.FC<CxProps<CsTextAreaItem>> = (props) => {
 
 export const CxSelectBox: React.FC<CxProps<CsSelectBoxItem>> = (props) => {
     const { item } = props
+    let key = 0
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
             <select className="Select" {...props} onChange={(e) => { item.setValue(e.target.value) }}>
                 {item.options.map(o => {
-                    return (<option value={o[item.valueKey]}>{o[item.labelKey]}</option>)
+                    return (<option key={key++} value={o[item.valueKey]}>{o[item.labelKey]}</option>)
                 })}
             </select>
         </div>
@@ -75,15 +76,15 @@ export const CxSelectBox: React.FC<CxProps<CsSelectBoxItem>> = (props) => {
 }
 
 export const CxRadioBox: React.FC<CxProps<CsRadioBoxItem>> = (props) => {
-
     const { item } = props
+    let key = 0
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
             {item.options.map(o => {
                 return (
-                    <div className="ctrl">
-                        <input type="radio" className="Input" id={o[item.valueKey]} name="contact" value={o[item.valueKey]} />
+                    <div className="ctrl" key={key}>
+                        <input type="radio" key={key++} className="Input" id={o[item.valueKey]} name="contact" value={o[item.valueKey]} />
                         <label>{o[item.labelKey]}</label>
                     </div>
                 )

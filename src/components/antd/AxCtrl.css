@@ -45,3 +45,18 @@
   width: fit-content;
   /* other browsers */
 }
+
+.buttonArea {
+  /* text-align: right;
+  max-width: fit-content;*/
+  margin-top: 5px;
+  width: auto;
+  margin-bottom: 5px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button {
+  text-align: right;
+}
