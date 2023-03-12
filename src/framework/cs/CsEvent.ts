@@ -46,50 +46,6 @@ export class CsValidationEvent extends CsEvent {
     }
 }
 
-export class CsButtonClickEvent<
-    TApiRequest = unknown, TApiResponse = unknown, TApiError = unknown, TContext = unknown
-> extends CsEvent {
-    callApiAsync: (apiRequest: TApiRequest) => Promise<void>
-    result: CsEventResult<TApiResponse, TApiError>
-    isLoading: boolean
-    apiRequest?: TApiRequest
-    constructor(
-        callApiAsync: (apiRequest: TApiRequest) => Promise<void>,
-        result: CsEventResult<TApiResponse, TApiError>,
-        isLoading: boolean,
-    ) {
-        super()
-        this.callApiAsync = callApiAsync
-        this.result = result
-        this.isLoading = isLoading
-    }
-
-    setApiRequest(data: TApiRequest) {
-        this.apiRequest = data
-    }
-}
-
-export function useRQCsButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
-    (
-        mutateKey: string,
-        mutateTargetFunction: MutationFunction<TApiResponse, TApiRequest>
-    )
-    : CsButtonClickEvent<TApiRequest, TApiResponse, TApiError> {
-    const result = useCsEventResult<TApiResponse, TApiError>()
-    const mutate = useMutation<TApiResponse, TApiError, TApiRequest>(mutateKey, mutateTargetFunction, {
-        onSuccess: useOnApiSuccess(result),
-        onError: useOnApiError(result),
-    })
-
-    const callApiAync = async (apiRequest: TApiRequest) => {
-        await mutate.mutateAsync(apiRequest)
-    }
-
-    return new CsButtonClickEvent<TApiRequest, TApiResponse, TApiError>(
-        callApiAync, result, mutate.isLoading,
-    )
-}
-
 export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
     isSuccess: boolean
     setIsSuccess: SetValueType<boolean>
@@ -155,14 +111,47 @@ function useCsEventResult<TApiResponse, TApiError>() {
     )
 }
 
-export function useOnApiSuccess<TApiResponse, TApiError>(status: CsEventResult<TApiResponse, TApiError>) {
-    return useCallback((data: TApiResponse) => {
-        status.onApiSuccess(data)
-    }, [status])
+
+export class CsButtonClickEvent<
+    TApiRequest = unknown, TApiResponse = unknown, TApiError = unknown, TContext = unknown
+> extends CsEvent {
+    callApiAsync: (apiRequest: TApiRequest) => Promise<void>
+    result: CsEventResult<TApiResponse, TApiError>
+    isLoading: boolean
+    apiRequest?: TApiRequest
+    constructor(
+        callApiAsync: (apiRequest: TApiRequest) => Promise<void>,
+        result: CsEventResult<TApiResponse, TApiError>,
+        isLoading: boolean,
+    ) {
+        super()
+        this.callApiAsync = callApiAsync
+        this.result = result
+        this.isLoading = isLoading
+    }
+
+    setApiRequest(data: TApiRequest) {
+        this.apiRequest = data
+    }
 }
 
-export function useOnApiError<TApiResponse, TApiError>(status: CsEventResult<TApiResponse, TApiError>) {
-    return useCallback((data: TApiError) => {
-        status.onApiError(data)
-    }, [status])
+export function useRQCsButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
+    (
+        mutateKey: string,
+        mutateTargetFunction: MutationFunction<TApiResponse, TApiRequest>
+    )
+    : CsButtonClickEvent<TApiRequest, TApiResponse, TApiError> {
+    const result = useCsEventResult<TApiResponse, TApiError>()
+    const mutate = useMutation<TApiResponse, TApiError, TApiRequest>(mutateKey, mutateTargetFunction, {
+        onSuccess: useOnApiSuccess(result),
+        onError: useOnApiError(result),
+    })
+
+    const callApiAync = async (apiRequest: TApiRequest) => {
+        await mutate.mutateAsync(apiRequest)
+    }
+
+    return new CsButtonClickEvent<TApiRequest, TApiResponse, TApiError>(
+        callApiAync, result, mutate.isLoading,
+    )
 }
