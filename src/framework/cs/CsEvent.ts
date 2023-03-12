@@ -111,6 +111,17 @@ function useCsEventResult<TApiResponse, TApiError>() {
     )
 }
 
+export function useOnApiSuccess<TApiResponse, TApiError>(status: CsEventResult<TApiResponse, TApiError>) {
+    return useCallback((data: TApiResponse) => {
+        status.onApiSuccess(data)
+    }, [status])
+}
+
+export function useOnApiError<TApiResponse, TApiError>(status: CsEventResult<TApiResponse, TApiError>) {
+    return useCallback((data: TApiError) => {
+        status.onApiError(data)
+    }, [status])
+}
 
 export class CsButtonClickEvent<
     TApiRequest = unknown, TApiResponse = unknown, TApiError = unknown, TContext = unknown
