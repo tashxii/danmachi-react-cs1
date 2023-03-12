@@ -3,16 +3,15 @@ import { Col, Row } from "antd"
 import Antd from "../../components/antd"
 import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../cs"
 import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
-import { CsMultiCheckBoxItem } from "../cs/CsItem"
+import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../cs/CsItem"
 import { AxMultiCheckBox } from "../../components/antd/AxCtrl"
 const { AxCheckBox, AxInputNumber, AxPasswordBox, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
 
 
-export class CxLayoutProps {
-  view: CsView = {} as CsView
-  rowSize: number = 10
-  colSize: 1 | 2 | 3 | 4 | 6 | 12 | 24 = 3
-  useAx: boolean = false
+export interface CxLayoutProps {
+  view: CsView
+  colSize: 1 | 2 | 3 | 4 | 6 | 12 | 24
+  componentType: "standard" | "antd" | "fluent"
 }
 
 export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
@@ -40,13 +39,13 @@ export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
       {
         rows.map((r) => {
           return (
-            <Row>
+            <Row key={k++}>
               {
                 cols.map((c) => {
                   return (
-                    <Col span={colSpan}>
+                    <Col key={k++} span={colSpan}>
                       {
-                        <SelectComponent key={k++} item={items[x++]} useAx={props.useAx} />
+                        <SelectComponent key={k++} item={items[x++]} componentType={props.componentType} />
                       }
                     </Col>
                   )
@@ -61,46 +60,113 @@ export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
   )
 }
 
-export const selectComponent = (item: CsItemBase, useAx: boolean): JSX.Element => {
+export const selectComponent = (item: CsItemBase, componentType: "standard" | "antd" | "fluent"): JSX.Element => {
   if (item instanceof CsInputTextItem) {
     const props: CxProps<CsInputTextItem> = { item: item }
-    return (!useAx) ? (<CxInputText {...props} />) : (<AxInputText {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxInputText {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxInputText {...props} />)
+    }
   }
   if (item instanceof CsInputNumberItem) {
     const props: CxProps<CsInputNumberItem> = { item: item }
-    return (!useAx) ? (<CxInputNumber {...props} />) : (<AxInputNumber {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxInputNumber {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxInputNumber {...props} />)
+    }
   }
   if (item instanceof CsTextAreaItem) {
     const props: CxProps<CsTextAreaItem> = { item: item }
-    return (!useAx) ? (<CxTextArea {...props} />) : (<AxTextArea {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxTextArea {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxTextArea {...props} />)
+    }
   }
   if (item instanceof CsCheckBoxItem) {
     const props: CxProps<CsCheckBoxItem> = { item: item }
-    return (!useAx) ? (<CxCheckBox {...props} />) : (<AxCheckBox {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxCheckBox {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxCheckBox {...props} />)
+    }
   }
   if (item instanceof CsPasswordItem) {
     const props: CxProps<CsPasswordItem> = { item: item }
-    return (!useAx) ? (<CxPasswordBox {...props} />) : (<AxPasswordBox {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxPasswordBox {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxPasswordBox {...props} />)
+    }
   }
   if (item instanceof CsRadioBoxItem) {
     const props: CxProps<CsRadioBoxItem> = { item: item }
-    return (!useAx) ? (<CxRadioBox {...props} />) : (<AxRadioBox {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxRadioBox {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxRadioBox {...props} />)
+    }
   }
-  if (item instanceof CsSelectBoxItem) {
+  if (item instanceof CsSelectBoxItem<number>) {
+    const props: CxProps<CsSelectNumberBoxItem> = { item: item }
+    switch (componentType) {
+      case "standard":
+        return (<NullElement />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxSelectBox<number> {...props} />)
+    }
+  }
+  if (item instanceof CsSelectBoxItem<string>) {
     const props: CxProps<CsSelectBoxItem> = { item: item }
-    return (!useAx) ? (<CxSelectBox {...props} />) : (<AxSelectBox {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<CxSelectBox {...props} />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxSelectBox {...props} />)
+    }
   }
   if (item instanceof CsMultiCheckBoxItem) {
     const props: CxProps<CsMultiCheckBoxItem> = { item: item }
-    return (!useAx) ? (<NullElement />) : (<AxMultiCheckBox {...props} />)
+    switch (componentType) {
+      case "standard":
+        return (<NullElement />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxMultiCheckBox {...props} />)
+    }
   }
   return <NullElement />
 }
 
-const NullElement: React.FC<{}> = ({ }) => {
+const NullElement = () => {
   return <div></div>;
-};
+}
 
-const SelectComponent: React.FC<{ item: CsItemBase, useAx: boolean }> = (props) => {
-  return selectComponent(props.item, props.useAx)
+const SelectComponent: React.FC<{ item: CsItemBase, componentType: "standard" | "antd" | "fluent" }> = (props) => {
+  return selectComponent(props.item, props.componentType)
 }

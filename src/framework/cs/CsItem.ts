@@ -4,11 +4,18 @@ import CsView from "./CsView"
 
 export abstract class CsItemBase {
     label: string = ""
-    readonly: boolean = false
+    private readonly: boolean = false
     parentView?: CsView = undefined
+    isReadonly() {
+        return (this.readonly) ? this.readonly : this.parentView?.readonly ?? false;
+    }
+    setReadonly(value: boolean) {
+        this.readonly = value
+    }
 }
 
-export class ValidateOption<T> {
+//@ts-ignore no-unused-vars
+export class ValidationRule<T> {
     required: boolean = false
     setRequired(required: boolean = true) {
         this.required = required
@@ -16,20 +23,20 @@ export class ValidateOption<T> {
     }
 }
 
-export class BooleanValidateOption extends ValidateOption<boolean> {
+export class BooleanValidationRule extends ValidationRule<boolean> {
 }
 
-export class NumberValidateOption extends ValidateOption<number> {
+export class NumberValidationRule extends ValidationRule<number> {
     min: number = 0
     max: number = 0
-    setRange(min: number, max: number): NumberValidateOption {
+    setRange(min: number, max: number): NumberValidationRule {
         this.min = min
         this.max = max
         return this
     }
 }
 
-export class StringValidateOption extends ValidateOption<string> {
+export class StringValidationRule extends ValidationRule<string> {
     min: number = 0
     max: number = 0
     email: boolean = false
@@ -48,18 +55,21 @@ export class StringValidateOption extends ValidateOption<string> {
         return this
     }
 }
-export class StringArrayValidationOption extends ValidateOption<string[]> {
+export class StringArrayValidationOption extends ValidationRule<string[]> {
 }
 
-export type SetValueType<T> = Dispatch<SetStateAction<T | undefined>> | Dispatch<SetStateAction<T>>
+export type SetValueTypeRquired<T> = Dispatch<SetStateAction<T>>
+export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
+export type SetValueType<T> = SetValueTypeRquired<T> | SetValueTypeOptional<T>
 export type ValueType<T> = T | undefined
+
 export abstract class CsItem<T> extends CsItemBase {
     value: ValueType<T> = undefined
     setValue: SetValueType<T> = {} as SetValueType<T>
-    validateOption: ValidateOption<T> = new ValidateOption<T>()
+    ValidationRule: ValidationRule<T> = new ValidationRule<T>()
     init(label: string, readonly: boolean = false) {
         this.label = label
-        this.readonly = readonly
+        this.setReadonly(readonly)
         return this
     }
     setState(state: StateResult<T>) {
@@ -67,34 +77,34 @@ export abstract class CsItem<T> extends CsItemBase {
         this.setValue = state[1]
         return this
     }
-    setValidateOption<T>(valOpt: ValidateOption<T>) {
-        this.validateOption = valOpt
+    setValidationRule<T>(valOpt: ValidationRule<T>) {
+        this.ValidationRule = valOpt
         return this
     }
 }
 
 export class CsInputTextItem extends CsItem<string> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsInputTextItem
 }
 
 export class CsInputNumberItem extends CsItem<number> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsInputNumberItem
 }
 
 export class CsPasswordItem extends CsItem<string> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsPasswordItem
 }
 
 export class CsTextAreaItem extends CsItem<string> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsTextAreaItem
 }
 
 export class CsCheckBoxItem extends CsItem<boolean> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsCheckBoxItem
     checkBoxText: string = ""
     setCheckBoxText(checkBoxText: string) {
@@ -117,7 +127,7 @@ export abstract class CsHasOptionsItem<T> extends CsItem<T> {
     }
 }
 export class CsMultiCheckBoxItem extends CsHasOptionsItem<string[]> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsMultiCheckBoxItem
     getCheckedValues(): string[] {
         return this.value ?? []
@@ -127,9 +137,9 @@ export class CsMultiCheckBoxItem extends CsHasOptionsItem<string[]> {
     }
 }
 
-export class CsSelectBoxItem extends CsHasOptionsItem<string> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
-    private identifier?: CsSelectBoxItem
+export class CsSelectBoxItem<T extends string | number = string> extends CsHasOptionsItem<T> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsSelectBoxItem<T>
     isSelected(): boolean {
         return (this.value !== undefined)
     }
@@ -138,8 +148,10 @@ export class CsSelectBoxItem extends CsHasOptionsItem<string> {
     }
 }
 
+export type CsSelectNumberBoxItem = CsSelectBoxItem<number>
+
 export class CsRadioBoxItem extends CsHasOptionsItem<string> {
-    //Genericで一致した場合に型互換とみなされ混同回避のための識別子
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
     private identifier?: CsRadioBoxItem
     isSelected(): boolean {
         return (this.value !== undefined)

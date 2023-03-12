@@ -1,5 +1,6 @@
 import React from "react"
 import { CxPasswordBox, CxRadioBox, CxSelectBox, CxInputText } from "../../framework/cx/CxCtrl"
+import { AxInputText, AxPasswordBox } from "../antd/AxCtrl"
 import testView, { useTestView } from "./testView"
 
 export const AsIsWayPane: React.FC = () => {
@@ -10,7 +11,7 @@ export const AsIsWayPane: React.FC = () => {
         名前：
       </div>
       <div>
-        <CxInputText {...{ item: view.nameItem }}></CxInputText>
+        <AxPasswordBox {...{ item: view.password }}></AxPasswordBox>
       </div>
 
       <div>

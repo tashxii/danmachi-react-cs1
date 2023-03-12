@@ -16,15 +16,15 @@ export interface CxButtonProps {
 export const CxButton: React.FC<CxButtonProps> = (props) => {
   const { event } = props
   const onClick = useCallback(async () => {
-    await event.mutateAsync(event.requestData)
-  }, [event.mutateAsync, event.requestData])
+    await event.callApiAsync(event.apiRequest)
+  }, [event.callApiAsync, event.apiRequest])
   return (
     <>
+      {event.result.isSuccess && props.successMessage} && <Alert message={props.successMessage} type="success" showIcon closable />
+      {event.result.isError && props.errorMessage} && <Alert message={props.errorMessage} type="error" showIcon closable />
       <Button loading={event.isLoading} onClick={() => { onClick() }}>
         {props.children}
       </Button>
-      {event.isSuccess && props.successMessage} && <Alert message={props.successMessage} type="success" showIcon closable />
-      {event.isError && props.errorMessage} && <Alert message={props.errorMessage} type="error" showIcon closable />
     </>
   )
 }

@@ -3,12 +3,10 @@ import {
     CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem,
     CsSelectBoxItem, CsTextAreaItem, CsInputTextItem
 } from '../cs'
-import { CsInputNumberItem, CsMultiCheckBoxItem } from '../cs/CsItem'
+import { CsInputNumberItem, CsItemBase } from '../cs/CsItem'
 import "./CxCtrl.css"
 
-export class CxProps<I extends CsInputNumberItem | CsCheckBoxItem | CsPasswordItem |
-    CsRadioBoxItem | CsSelectBoxItem | CsTextAreaItem |
-    CsMultiCheckBoxItem | CsInputTextItem> {
+export class CxProps<I extends CsItemBase> {
     item: I = {} as I
 }
 
@@ -23,8 +21,8 @@ export const CxInputText: React.FC<CxProps<CsInputTextItem>> = (props) => {
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
-            <input className="Input" {...props} readOnly={item.readonly} value={item.value}
-                onChange={(e) => { { item.setValue(e.target.value) } }} />
+            <input className="Input" {...props} readOnly={item.isReadonly()} value={item.value}
+                onChange={(e) => { item.setValue(e.target.value) }} />
         </div>
     )
 }
@@ -34,7 +32,7 @@ export const CxInputNumber: React.FC<CxProps<CsInputNumberItem>> = (props) => {
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
-            <input type="number" className="Input" {...props} readOnly={item.readonly} value={item.value}
+            <input type="number" className="Input" {...props} readOnly={item.isReadonly()} value={item.value}
                 onChange={(e) => { item.setValue(Number(e.target.value)) }} />
         </div>
     )
@@ -45,7 +43,7 @@ export const CxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
-            <input type="password" value={item.value} className="Input" readOnly={item.readonly} onChange={(e) => { item.setValue(e.target.value) }} />
+            <input type="password" value={item.value} className="Input" readOnly={item.isReadonly()} onChange={(e) => { item.setValue(e.target.value) }} />
         </div>
     )
 }
@@ -55,7 +53,7 @@ export const CxTextArea: React.FC<CxProps<CsTextAreaItem>> = (props) => {
     return (
         <div className="ctrl">
             <CxLabel>{item.label}</CxLabel>
-            <textarea className="Input" {...props} readOnly={item.readonly} rows={3} onChange={(e) => { item.setValue(e.target.value) }} />
+            <textarea className="Input" {...props} readOnly={item.isReadonly()} rows={3} onChange={(e) => { item.setValue(e.target.value) }} />
         </div>
     )
 }

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 
-import { BooleanValidateOption, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, NumberValidateOption, StringArrayValidationOption, StringValidateOption, ValidateOption } from "./CsItem"
+import { BooleanValidationRule as BooleanValidationOption, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsSelectNumberBoxItem, CsTextAreaItem, NumberValidationRule, StringArrayValidationOption, StringValidationRule, ValidationRule } from "./CsItem"
 
 export type StateResultOptional<T> = [val: T | undefined, setVal: Dispatch<SetStateAction<T | undefined>>]
 export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>>]
@@ -8,7 +8,7 @@ export type StateResult<T> = StateResultRequired<T> | StateResultOptional<T>
 
 
 export function strValOpt(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string) {
-    const valOpt = new StringValidateOption()
+    const valOpt = new StringValidationRule()
     valOpt.setRequired(required)
     if (min && max) valOpt.setLength(min, max)
     if (email) valOpt.setEmail(true)
@@ -17,18 +17,20 @@ export function strValOpt(required: boolean, min?: number, max?: number, email?:
 }
 
 export function numValOpt(required: boolean, min?: number, max?: number) {
-    const valOpt = new NumberValidateOption()
+    const valOpt = new NumberValidationRule()
     valOpt.setRequired(required)
     if (min && max) valOpt.setRange(min, max)
     return valOpt
 }
 
-export function boolValOpt(required: boolean): ValidateOption<boolean> {
-    return new BooleanValidateOption().setRequired(required)
+export function strArrValOpt(required: boolean) {
+    const valOpt = new StringArrayValidationOption()
+    valOpt.setRequired(required)
+    return valOpt
 }
 
-export function strArrValOpt(required: boolean): ValidateOption<string[]> {
-    return new StringArrayValidationOption().setRequired(required)
+export function boolValOpt(required: boolean) {
+    return new BooleanValidationOption().setRequired(required)
 }
 
 class SelectOptions {
@@ -41,12 +43,17 @@ class SelectOptions {
         this.labelKey = labelKey
     }
 }
+
 export function selectOpt(options: any[], valueKey: string = "value", labelKey: string = "label")
     : SelectOptions {
     return new SelectOptions(options, valueKey, labelKey)
 }
 
 export function selectOptStr(options: string[]) {
+    return new SelectOptions(options.map((o) => ({ value: o, label: o })))
+}
+
+export function selectOptNum(options: number[]) {
     return new SelectOptions(options.map((o) => ({ value: o, label: o })))
 }
 
@@ -58,27 +65,27 @@ export enum RW {
 export function useCsItem<T, I extends CsItem<T>>(
     type: { new(): I }, label: string,
     state: StateResult<T>,
-    valOpt?: ValidateOption<T>,
+    valOpt?: ValidationRule<T>,
     selOpt?: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): I {
     const item = new type()
     item.label = label
     item.setState(state)
-    if (valOpt) item.setValidateOption(valOpt)
+    if (valOpt) item.setValidationRule(valOpt)
     if (selOpt) {
         if (item instanceof CsHasOptionsItem<T>) {
             const hasOptItem = item as CsHasOptionsItem<T>
             hasOptItem.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
         }
     }
-    item.readonly = (readonly === RW.Readonly)
+    item.setReadonly((readonly === RW.Readonly))
     return item
 }
 
 export function useCsInputTextItem(label: string,
     state: StateResult<string>,
-    valOpt: StringValidateOption,
+    valOpt: StringValidationRule,
     readonly: RW = RW.Editable,
 ): CsInputTextItem {
     return useCsItem(CsInputTextItem, label, state, valOpt, undefined, readonly);
@@ -86,7 +93,7 @@ export function useCsInputTextItem(label: string,
 
 export function useCsInputNumberItem(label: string,
     state: StateResult<number>,
-    valOpt: NumberValidateOption,
+    valOpt: NumberValidationRule,
     readonly: RW = RW.Editable,
 ): CsInputNumberItem {
     return useCsItem(CsInputNumberItem, label, state, valOpt, undefined, readonly);
@@ -94,7 +101,7 @@ export function useCsInputNumberItem(label: string,
 
 export function useCsPasswordItem(label: string,
     state: StateResult<string>,
-    valOpt: StringValidateOption,
+    valOpt: StringValidationRule,
     readonly: RW = RW.Editable,
 ): CsPasswordItem {
     return useCsItem(CsPasswordItem, label, state, valOpt, undefined, readonly);
@@ -102,7 +109,7 @@ export function useCsPasswordItem(label: string,
 
 export function useCsTextAreaItem(label: string,
     state: StateResult<string>,
-    valOpt: StringValidateOption,
+    valOpt: StringValidationRule,
     readonly: RW = RW.Editable,
 ): CsTextAreaItem {
     return useCsItem(CsTextAreaItem, label, state, valOpt, undefined, readonly);
@@ -119,15 +126,23 @@ export function useCsCheckBoxItem(label: string,
 
 export function useCsSelectBoxItem(label: string,
     state: StateResult<string>,
-    valOpt: StringValidateOption, selOpt: SelectOptions | undefined,
+    valOpt: StringValidationRule, selOpt: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): CsSelectBoxItem {
     return useCsItem(CsSelectBoxItem, label, state, valOpt, selOpt, readonly);
 }
 
+export function useCsSelectNumberBoxItem(label: string,
+    state: StateResult<number>,
+    valOpt: NumberValidationRule, selOpt: SelectOptions | undefined,
+    readonly: RW = RW.Editable,
+): CsSelectNumberBoxItem {
+    return useCsItem(CsSelectBoxItem<number>, label, state, valOpt, selOpt, readonly);
+}
+
 export function useCsRadioBoxItem(label: string,
     state: StateResult<string>,
-    valOpt: StringValidateOption, selOpt: SelectOptions | undefined,
+    valOpt: StringValidationRule, selOpt: SelectOptions | undefined,
     readonly: RW = RW.Editable,
 ): CsRadioBoxItem {
     return useCsItem(CsRadioBoxItem, label, state, valOpt, selOpt, readonly);

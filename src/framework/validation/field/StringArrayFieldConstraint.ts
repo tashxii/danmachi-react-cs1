@@ -1,11 +1,16 @@
-import FieldConstraint from './FieldConstraint';
+import FieldConstraint from "./FieldConstraint"
 
 export default class StringArrayFieldConstraint extends FieldConstraint<string[]>{
 
     required(message: string): StringArrayFieldConstraint {
         return this.define((value) => {
             if (value === null || value.length === 0) {
-                return message;
+                return message
+            }
+            for (const v of value) {
+                if (v === null || v.length === 0) {
+                    return message
+                }
             }
             for (const v of value) {
                 if (v === null || v.length === 0) {
@@ -16,4 +21,4 @@ export default class StringArrayFieldConstraint extends FieldConstraint<string[]
     }
 }
 
-export const stringArrayField = () => new StringArrayFieldConstraint();
+export const stringArrayField = () => new StringArrayFieldConstraint()
