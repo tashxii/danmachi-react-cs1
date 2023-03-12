@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { Button, Card, Col, Row, Table } from "antd"
 import { CxLayoutProps, CxTableLayout } from "../../framework/cx/CxLayout"
 import testView, { useTestView } from "./testView"
@@ -9,7 +9,7 @@ import { AxInputText, AxLabel } from "../antd/AxCtrl"
 import { CsButtonClickEvent, useRQCsButtonClickEvent } from "../../framework/cs/CsEvent"
 import { selectOptStr, strValOpt, useCsInputTextItem, useCsSelectBoxItem } from "../../framework/cs/CsHooks"
 import Search from "antd/es/input/Search"
-import { TestApi, User } from "./testApi"
+import { TestApi, User, UserCreateRequest } from "./testApi"
 import { useCsView } from "../../framework/cs/CsView"
 
 interface TestSearchView extends CsView {
@@ -20,7 +20,7 @@ interface TestSearchView extends CsView {
 interface TestMakeView extends CsView {
   name: CsInputTextItem
   job: CsSelectBoxItem
-  makeButton: CsButtonClickEvent<User, User>
+  makeButton: CsButtonClickEvent<UserCreateRequest, User>
 }
 
 export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "fluent" }>
@@ -48,11 +48,14 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
 
     searchView.searchButton.setApiRequest(searchView.keyword.value ?? "")
 
-    if (makeView.name.value && makeView.job.value) {
-      makeView.makeButton.setApiRequest(
-        new User(makeView.name.value, makeView.job.value)
-      )
-    }
+    useMemo(() => {
+      if (makeView.name.value && makeView.job.value
+        && makeView.name.value !== "" && makeView.job.value !== "") {
+        makeView.makeButton.setApiRequest(
+          new UserCreateRequest(makeView.name.value, makeView.job.value)
+        )
+      }
+    }, [makeView.name.value, makeView.job.value, makeView.makeButton.setApiRequest])
 
     return (
       <>

@@ -16,9 +16,9 @@ export const TestTabXPane: React.FC<{ colSize: number, componentType: "standard"
       <Form onSubmit={view.validateEvent?.onHandleSubmit(view, () => { alert("submit!") }, () => { })}>
         <CxTableLayout {...layoutProps} />
         <Row>
-          <Col span={4} offset={16}>
+          <Col span={4} offset={20}>
             <Button type="primary" htmlType="submit">バリデーションテスト</Button>
-            <Button type="dashed" onClick={() => { console.log(view) }}>コンソールダンプ</Button>
+            <Button type="default" onClick={() => { console.log(view) }}>コンソールダンプ</Button>
           </Col>
         </Row>
       </Form>

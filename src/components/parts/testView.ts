@@ -23,12 +23,10 @@ export default interface TestView extends CsView {
     other4: CsInputTextItem
     other5: CsInputTextItem
     otherA: CsInputTextItem
-    userKeyword: CsInputTextItem
-    onTestButtonClick: CsButtonClickEvent<string, User[]>
 }
 
 export function useTestView(): TestView {
-    const testView: TestView = {
+    const view = useCsView<TestView>({
         nameItem: useCsInputTextItem("名前", useState("a"), strValOpt(true, 1, 30)),
         password: useCsPasswordItem("パスワード", useState("a"), strValOpt(true, 1, 16)),
         adminCheck: useCsCheckBoxItem("管理者権限", useState(true), "付与する"),
@@ -44,13 +42,8 @@ export function useTestView(): TestView {
         other4: useCsInputTextItem("ほか４", useState("ほか４"), strValOpt(false, 1, 10)),
         other5: useCsInputTextItem("ほか５", useState("ほか５"), strValOpt(false, 1, 10)),
         otherA: useCsInputTextItem("ほか亜", useState("ほかあ"), strValOpt(false, 1, 10), RW.Readonly),
-        userKeyword: useCsInputTextItem("検索keyword", useState(""), strValOpt(false, 1, 20)),
-        onTestButtonClick: useRQCsButtonClickEvent("listUsers", TestApi.listUsers),
         readonly: false,
-    }
-    const view = useCsView<TestView>(
-        testView
-    )
+    })
     return view
 }
 
