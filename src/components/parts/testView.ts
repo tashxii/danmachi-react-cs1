@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import { useMutation, MutateFunction } from "react-query";
+import { useState } from "react";
 import { CsItemBase, CsInputTextItem, CsView } from "../../framework/cs";
 import { CsInputNumberItem, CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
-import { CsEventResult, CsButtonClickEvent, useRQCsButtonClickEvent } from "../../framework/cs/CsEvent";
 import { strValOpt, RW, useCsInputTextItem, useCsSelectBoxItem, useCsCheckBoxItem, numValOpt, useCsInputNumberItem, useCsRadioBoxItem, useCsTextAreaItem, selectOpt, selectOptStr, useCsMultiCheckBoxItem, useCsPasswordItem, strArrValOpt } from "../../framework/cs/CsHooks";
 import { CsMultiCheckBoxItem } from "../../framework/cs/CsItem";
 import { useCsView } from "../../framework/cs/CsView";
-import { TestApi, User } from "./testApi";
 
 export default interface TestView extends CsView {
     nameItem: CsInputTextItem

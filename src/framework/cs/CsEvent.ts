@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { MutationFunction, useMutation, UseMutationResult } from "react-query";
+import { MutationFunction, useMutation } from "react-query";
 import { AvailableFiledType, ConstraintValidators, ValidationError } from "../validation/Validation";
 import { ValueType, SetValueType, SetValueTypeOptional } from "./CsItem";
 import CsView from "./CsView";
@@ -38,7 +38,7 @@ export class CsValidationEvent extends CsEvent {
         return result
     }
 
-    /** XxButtonから呼び出すためのバリデーションメソッド 
+    /** XxButtonから呼び出すためのバリデーションメソッド
      *  エラーがあったか、なかったかをbooleanとして返す */
     onValidateHasError = (view: CsView): boolean => {
         const value = Object.fromEntries(view.validateFieldMap!)
@@ -111,20 +111,32 @@ function useCsEventResult<TApiResponse, TApiError>() {
     )
 }
 
-export function useOnApiSuccess<TApiResponse, TApiError>(status: CsEventResult<TApiResponse, TApiError>) {
-    return useCallback((data: TApiResponse) => {
+export function useOnApiSuccess<TApiResponse, TApiRequest, TApiError, TContext = unknown>(
+    status: CsEventResult<TApiResponse, TApiError>,
+    onSuccessCallback?: (data: TApiResponse, variables: TApiRequest, context: TContext | undefined) => void | Promise<unknown>,
+) {
+    return useCallback((data: TApiResponse, variables: TApiRequest, context: TContext | undefined) => {
         status.onApiSuccess(data)
-    }, [status])
+        if (onSuccessCallback) {
+            onSuccessCallback(data, variables, context)
+        }
+    }, [status, onSuccessCallback])
 }
 
-export function useOnApiError<TApiResponse, TApiError>(status: CsEventResult<TApiResponse, TApiError>) {
-    return useCallback((data: TApiError) => {
-        status.onApiError(data)
+export function useOnApiError<TApiResponse, TApiRequest, TApiError, TContext>(
+    status: CsEventResult<TApiResponse, TApiError>,
+    onErrorCallback?: (error: TApiError, variables: TApiRequest, context: TContext | undefined) => void | Promise<unknown>
+) {
+    return useCallback((error: TApiError, variables: TApiRequest, context: TContext | undefined) => {
+        status.onApiError(error)
+        if (onErrorCallback) {
+            onErrorCallback(error, variables, context)
+        }
     }, [status])
 }
 
 export class CsButtonClickEvent<
-    TApiRequest = unknown, TApiResponse = unknown, TApiError = unknown, TContext = unknown
+    TApiRequest = unknown, TApiResponse = unknown, TApiError = unknown,
 > extends CsEvent {
     callApiAsync: (apiRequest: TApiRequest) => Promise<void>
     result: CsEventResult<TApiResponse, TApiError>
@@ -149,13 +161,17 @@ export class CsButtonClickEvent<
 export function useRQCsButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
     (
         mutateKey: string,
-        mutateTargetFunction: MutationFunction<TApiResponse, TApiRequest>
+        mutateTargetFunction: MutationFunction<TApiResponse, TApiRequest>,
+        callback?: {
+            onSuccessCallback?: (data: TApiResponse, variables: TApiRequest, context: TContext | undefined) => void | Promise<unknown>
+            onErrorCallback?: (error: TApiError, variables: TApiRequest, context: TContext | undefined) => void | Promise<unknown>
+        }
     )
     : CsButtonClickEvent<TApiRequest, TApiResponse, TApiError> {
     const result = useCsEventResult<TApiResponse, TApiError>()
-    const mutate = useMutation<TApiResponse, TApiError, TApiRequest>(mutateKey, mutateTargetFunction, {
-        onSuccess: useOnApiSuccess(result),
-        onError: useOnApiError(result),
+    const mutate = useMutation<TApiResponse, TApiError, TApiRequest, TContext | undefined>(mutateKey, mutateTargetFunction, {
+        onSuccess: useOnApiSuccess(result, callback?.onSuccessCallback),
+        onError: useOnApiError(result, callback?.onErrorCallback),
     })
 
     const callApiAync = async (apiRequest: TApiRequest) => {

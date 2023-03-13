@@ -14,7 +14,7 @@ export abstract class CsItemBase {
     }
 }
 
-//@ts-ignore no-unused-vars
+// eslint-disable-next-line
 export class ValidationRule<T> {
     required: boolean = false
     setRequired(required: boolean = true) {
