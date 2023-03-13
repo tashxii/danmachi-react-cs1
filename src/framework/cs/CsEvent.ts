@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { MutationFunction, useMutation } from "react-query";
+import { MutationFunction, useMutation, UseMutationResult, UseQueryResult } from "react-query";
 import { AvailableFiledType, ConstraintValidators, ValidationError } from "../validation/Validation";
 import { ValueType, SetValueType, SetValueTypeOptional } from "./CsItem";
 import CsView from "./CsView";
@@ -47,6 +47,8 @@ export class CsValidationEvent extends CsEvent {
 }
 
 export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
+    isProcessing: boolean
+    setIsProcessing: SetValueType<boolean>
     isSuccess: boolean
     setIsSuccess: SetValueType<boolean>
     response: ValueType<TApiResponse>
@@ -56,11 +58,14 @@ export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
     error: ValueType<TApiError>
     setError: SetValueTypeOptional<TApiError>
     constructor(
+        isProcessing: boolean, setIsProcessing: SetValueType<boolean>,
         isSuccess: boolean, setIsSuccess: SetValueType<boolean>,
         response: ValueType<TApiResponse>, setResponse: SetValueTypeOptional<TApiResponse>,
         isError: boolean, setIsError: SetValueType<boolean>,
         error: ValueType<TApiError>, setError: SetValueTypeOptional<TApiError>,
     ) {
+        this.isProcessing = isProcessing
+        this.setIsProcessing = setIsProcessing
         this.isSuccess = isSuccess
         this.setIsSuccess = setIsSuccess
         this.response = response
@@ -71,14 +76,14 @@ export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
         this.setError = setError
     }
 
-    onApiSuccess = (data: TApiResponse) => {
+    onSuccess = (data: TApiResponse | undefined) => {
         //複数回実行時に両方設定されないようresetする
         this.reset()
         this.setIsSuccess(true)
         this.setResponse(data)
     }
 
-    onApiError = (error: TApiError) => {
+    onError = (error: TApiError | undefined) => {
         //複数回実行時に両方設定されないようresetする
         this.reset()
         this.setIsError(true)
@@ -99,11 +104,13 @@ export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
 }
 
 function useCsEventResult<TApiResponse, TApiError>() {
+    const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [isSuccess, setIsSuccess] = useState<boolean>(false)
     const [response, setResponse] = useState<TApiResponse>()
     const [isError, setIsError] = useState<boolean>(false)
     const [error, setError] = useState<TApiError>()
     return new CsEventResult<TApiResponse, TApiError>(
+        isProcessing, setIsProcessing,
         isSuccess, setIsSuccess,
         response, setResponse,
         isError, setIsError,
@@ -116,7 +123,7 @@ export function useOnApiSuccess<TApiResponse, TApiRequest, TApiError, TContext =
     onSuccessCallback?: (data: TApiResponse, variables: TApiRequest, context: TContext | undefined) => void | Promise<unknown>,
 ) {
     return useCallback((data: TApiResponse, variables: TApiRequest, context: TContext | undefined) => {
-        status.onApiSuccess(data)
+        status.onSuccess(data)
         if (onSuccessCallback) {
             onSuccessCallback(data, variables, context)
         }
@@ -128,15 +135,15 @@ export function useOnApiError<TApiResponse, TApiRequest, TApiError, TContext>(
     onErrorCallback?: (error: TApiError, variables: TApiRequest, context: TContext | undefined) => void | Promise<unknown>
 ) {
     return useCallback((error: TApiError, variables: TApiRequest, context: TContext | undefined) => {
-        status.onApiError(error)
+        status.onError(error)
         if (onErrorCallback) {
             onErrorCallback(error, variables, context)
         }
-    }, [status])
+    }, [onErrorCallback, status])
 }
 
 export class CsButtonClickEvent<
-    TApiRequest = unknown, TApiResponse = unknown, TApiError = unknown,
+    TApiRequest, TApiResponse, TApiError = unknown,
 > extends CsEvent {
     callApiAsync: (apiRequest: TApiRequest) => Promise<void>
     result: CsEventResult<TApiResponse, TApiError>
@@ -156,6 +163,130 @@ export class CsButtonClickEvent<
     setApiRequest(data: TApiRequest) {
         this.apiRequest = data
     }
+}
+
+export class CsRQMutateButtonClickEvent<
+    TApiRequest, TApiResponse, TApiError = unknown, TContext = unknown
+> extends CsEvent {
+    private mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>
+    result: CsEventResult<TApiResponse, TApiError>
+    apiRequest?: TApiRequest
+    constructor(
+        mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
+        result: CsEventResult<TApiResponse, TApiError>,
+    ) {
+        super()
+        this.mutationResult = mutationResult
+        this.result = result
+    }
+
+    setRequest(data: TApiRequest) {
+        this.apiRequest = data
+    }
+
+    get isLoading() {
+        return this.mutationResult.isLoading
+    }
+
+    get isError() {
+        return this.mutationResult.isError
+    }
+
+    get isSuccess() {
+        return this.mutationResult.isSuccess
+    }
+
+    get isProccessing() {
+        return this.result.isProcessing
+    }
+
+    onClick = async () => {
+        if(this.apiRequest) {
+            this.reset()
+            try{
+                //this.result.setIsProcessing(true)
+                await this.mutationResult.mutateAsync(this.apiRequest)
+                console.log("!!!", this)
+            } finally {
+                //this.result.setIsProcessing(false)
+            }
+        }
+    }
+
+    setError() {
+        this.result.onError(this.mutationResult.error ?? undefined)
+        this.mutationResult.reset()
+    }
+
+    setResponse() {
+        this.result.onSuccess(this.mutationResult.data)
+        this.mutationResult.reset()
+    }
+
+    reset() {
+        this.result.resetFlag()
+        this.result.setError(undefined)
+        this.result.setResponse(undefined)
+    }
+}
+
+export class CsRQQueryButtonClickEvent<
+    TApiResponse, TApiError = unknown,
+> extends CsEvent {
+    private queryResult: UseQueryResult<TApiResponse, TApiError>
+    result: CsEventResult<TApiResponse, TApiError>
+    // apiRequest?: TApiParam
+    constructor(
+        queryResult: UseQueryResult<TApiResponse, TApiError>,
+        result: CsEventResult<TApiResponse, TApiError>,
+    ) {
+        super()
+        this.queryResult = queryResult
+        this.result = result
+    }
+
+    // setParam(data: TApiParam) {
+    //     this.apiRequest = data
+    // }
+
+    get isRefetching() {
+        return this.queryResult.isRefetching
+    }
+    
+    get isError() {
+        return this.queryResult.isError
+    }
+
+    get isSuccess() {
+        return this.queryResult.isSuccess
+    }
+
+    get response() {
+        return this.result.response
+    }
+
+    onClick = async () => {
+        this.reset()
+        this.queryResult.isSuccess = false
+        this.queryResult.isError = false
+        this.result.setIsProcessing(true)
+        await this.queryResult.refetch()
+        this.result.setIsProcessing(false)
+    } 
+
+    setError() {
+        this.result.onError(this.queryResult.error ?? undefined)
+    }
+
+    setResponse() {
+        this.result.onSuccess(this.queryResult.data)
+    }
+
+    reset() {
+        this.result.resetFlag()
+        this.result.setError(undefined)
+        this.result.setResponse(undefined)
+    }    
 }
 
 export function useRQCsButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
@@ -180,5 +311,29 @@ export function useRQCsButtonClickEvent<TApiRequest, TApiResponse, TApiError, TC
 
     return new CsButtonClickEvent<TApiRequest, TApiResponse, TApiError>(
         callApiAync, result, mutate.isLoading,
+    )
+}
+
+
+export function useCsRQMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
+    (
+        mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
+    )
+    : CsRQMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext> {
+    const result = useCsEventResult<TApiResponse, TApiError>()
+    return new CsRQMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext>(
+        mutationResult, result,
+    )
+}
+
+
+export function useCsRQQueryButtonClickEvent<TApiResponse, TApiError>
+    (
+        queryResult: UseQueryResult<TApiResponse, TApiError>,
+    )
+    : CsRQQueryButtonClickEvent<TApiResponse, TApiError> {
+    const result = useCsEventResult<TApiResponse, TApiError>()
+    return new CsRQQueryButtonClickEvent<TApiResponse, TApiError>(
+        queryResult, result,
     )
 }

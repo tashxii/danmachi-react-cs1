@@ -1,42 +1,49 @@
-import React, { useCallback, useMemo, useState } from "react"
-import { Button, Card, Col, Row, Table } from "antd"
+import React, { useMemo, useState } from "react"
+import { Card, Col, Row, Table } from "antd"
 import { CxLayoutProps, CxTableLayout } from "../../framework/cx/CxLayout"
-import testView, { useTestView } from "./testView"
-import { CsInputTextItem, CsItem, CsSelectBoxItem, CsView } from "../../framework/cs"
+import { CsInputTextItem, CsSelectBoxItem, CsView } from "../../framework/cs"
 import { Form } from "../basics/Form"
-import { AxButton } from "../antd/AxEventCtrl"
-import { AxInputText, AxLabel } from "../antd/AxCtrl"
-import { CsButtonClickEvent, useRQCsButtonClickEvent } from "../../framework/cs/CsEvent"
+import { AxButton, AxMutateButton, AxQueryButton } from "../antd/AxEventCtrl"
+import { AxInputText} from "../antd/AxCtrl"
+import { 
+  CsRQMutateButtonClickEvent, CsRQQueryButtonClickEvent, useCsRQMutateButtonClickEvent, useCsRQQueryButtonClickEvent, useRQCsButtonClickEvent
+ } from "../../framework/cs/CsEvent"
 import { selectOptStr, strValOpt, useCsInputTextItem, useCsSelectBoxItem } from "../../framework/cs/CsHooks"
-import Search from "antd/es/input/Search"
 import { TestApi, User, UserCreateRequest } from "./testApi"
 import { useCsView } from "../../framework/cs/CsView"
+import { useMutation, useQuery } from "react-query"
 
 interface TestSearchView extends CsView {
   keyword: CsInputTextItem
-  searchButton: CsButtonClickEvent<string, User[]>
+  searchButton2: CsRQQueryButtonClickEvent<User[]>
 }
 
 interface TestMakeView extends CsView {
   name: CsInputTextItem
   job: CsSelectBoxItem
-  makeButton: CsButtonClickEvent<UserCreateRequest, User>
+  makeButton2: CsRQMutateButtonClickEvent<UserCreateRequest, User>
 }
 
 export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "fluent" }>
   = (props: { colSize: number, componentType: "standard" | "antd" | "fluent" }) => {
+    const keywordItem = useCsInputTextItem("検索キーワード", useState(""), strValOpt(false, 1, 100))
     const searchView = useCsView<TestSearchView>({
       readonly: false,
-      keyword: useCsInputTextItem("検索キーワード", useState(""), strValOpt(false, 1, 100)),
-      searchButton: useRQCsButtonClickEvent("listUsers", TestApi.listUsers)
+      keyword: keywordItem,
+      searchButton2: useCsRQQueryButtonClickEvent(
+        useQuery(
+          "listUsers", 
+          () => TestApi.listUsers(keywordItem.value ?? ""),
+          {enabled:false, refetchOnWindowFocus:false, retry:2}
+        )
+      ),
     })
-
     const makeView = useCsView<TestMakeView>({
       readonly: false,
       name: useCsInputTextItem("名前", useState(""), strValOpt(true, 1, 16)),
       job: useCsSelectBoxItem("職業", useState(), strValOpt(true),
         selectOptStr(["無職", "戦士", "魔術師", "僧侶", "遊び人", "ギャンブラー", "勇者"])),
-      makeButton: useRQCsButtonClickEvent("createUser", TestApi.createUser)
+      makeButton2: useCsRQMutateButtonClickEvent(useMutation(TestApi.createUser)),
     })
 
 
@@ -46,58 +53,55 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       view: makeView
     }
 
-    searchView.searchButton.setApiRequest(searchView.keyword.value ?? "")
-
     useMemo(() => {
       if (makeView.name.value && makeView.job.value
         && makeView.name.value !== "" && makeView.job.value !== "") {
-        makeView.makeButton.setApiRequest(
+        makeView.makeButton2.setRequest(
           new UserCreateRequest(makeView.name.value, makeView.job.value)
         )
       }
-    }, [makeView.name.value, makeView.job.value, makeView.makeButton.setApiRequest])
+    }, [makeView.name.value, makeView.job.value, makeView.makeButton2])
 
     return (
       <>
         <Card title="検索" style={{ width: "auto" }}>
           <Row>
-
             <Col span={18}>
               <AxInputText item={searchView.keyword}></AxInputText>
             </Col>
             <Col span={6}>
-              <AxButton
-                type="primary"
-                validationViews={[searchView]}
-                event={searchView.searchButton}
-                addClassNames={["left"]}
-                successMessage="6割くらいの確率で成功しました"
-                errorMessage="4割くらいの確率で失敗しました"
-                validateErrorMessage="入力項目に不備があります"
-              >
-                検索
-              </AxButton>
+                <AxQueryButton
+                  type="primary"
+                  validationViews={[searchView]}
+                  event={searchView.searchButton2}
+                  addClassNames={["left"]}
+                  successMessage="6割くらいの確率で成功しました"
+                  errorMessage="4割くらいの確率で失敗しました"
+                  validateErrorMessage="入力項目に不備があります"
+                >
+                  検索2
+                </AxQueryButton>              
             </Col>
           </Row>
         </Card>
         <Card title="新規ユーザー登録" style={{ width: "auto" }}>
           <Form onSubmit={makeView.validateEvent?.onHandleSubmit(makeView, () => { alert("submit!") }, () => { })}>
             <CxTableLayout {...layoutProps} />
-            <AxButton
-              type="primary"
-              validationViews={[makeView]}
-              event={makeView.makeButton}
-              successMessage="6割くらいの確率で成功しました"
-              errorMessage="4割くらいの確率で失敗しました"
-              validateErrorMessage="入力項目に不備があります"
-            >
-              登録
-            </AxButton>
+              <AxMutateButton
+                type="primary"
+                validationViews={[makeView]}
+                event={makeView.makeButton2}
+                successMessage="6割くらいの確率で成功しました"
+                errorMessage="4割くらいの確率で失敗しました"
+                validateErrorMessage="入力項目に不備があります"
+              >
+                登録2
+              </AxMutateButton>
           </Form>
         </Card>
         <Card title="ユーザーの一覧" style={{ width: "auto" }}>
           <Table
-            dataSource={searchView.searchButton.result.response ?? []}
+            dataSource={searchView.searchButton2.response ?? []}
             columns={[
               { title: "ID", dataIndex: "id", key: "1" },
               { title: "名前", dataIndex: "name", key: "2" },

@@ -5,7 +5,7 @@ import { useCallback } from "react"
 import { CsView } from "../cs"
 
 export interface CxButtonProps {
-  event: CsButtonClickEvent<unknown>
+  event: CsButtonClickEvent<unknown,unknown>
   validationViews?: CsView[],
   successMessage?: string
   errorMessage?: string
@@ -17,7 +17,7 @@ export const CxButton: React.FC<CxButtonProps> = (props) => {
   const { event } = props
   const onClick = useCallback(async () => {
     await event.callApiAsync(event.apiRequest)
-  }, [event.callApiAsync, event.apiRequest])
+  }, [event])
   return (
     <>
       {event.result.isSuccess && props.successMessage} && <Alert message={props.successMessage} type="success" showIcon closable />
