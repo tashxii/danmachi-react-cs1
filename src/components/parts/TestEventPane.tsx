@@ -5,7 +5,7 @@ import { CsInputTextItem, CsSelectBoxItem, CsView } from "../../framework/cs"
 import { Form } from "../basics/Form"
 import { AxButton, AxMutateButton, AxQueryButton } from "../antd/AxEventCtrl"
 import { AxInputText} from "../antd/AxCtrl"
-import { 
+import {
   CsRQMutateButtonClickEvent, CsRQQueryButtonClickEvent, useCsRQMutateButtonClickEvent, useCsRQQueryButtonClickEvent, useRQCsButtonClickEvent
  } from "../../framework/cs/CsEvent"
 import { selectOptStr, strValOpt, useCsInputTextItem, useCsSelectBoxItem } from "../../framework/cs/CsHooks"
@@ -32,7 +32,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       keyword: keywordItem,
       searchButton2: useCsRQQueryButtonClickEvent(
         useQuery(
-          "listUsers", 
+          "listUsers",
           () => TestApi.listUsers(keywordItem.value ?? ""),
           {enabled:false, refetchOnWindowFocus:false, retry:2}
         )
@@ -42,7 +42,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       readonly: false,
       name: useCsInputTextItem("名前", useState(""), strValOpt(true, 1, 16)),
       job: useCsSelectBoxItem("職業", useState(), strValOpt(true),
-        selectOptStr(["無職", "戦士", "魔術師", "僧侶", "遊び人", "ギャンブラー", "勇者"])),
+        selectOptStr(["無職", "戦士", "魔術師", "僧侶", "盗賊", "山賊", "海賊", "遊び人", "ギャンブラー", "博徒","勇者","修羅"])),
       makeButton2: useCsRQMutateButtonClickEvent(useMutation(TestApi.createUser)),
     })
 
@@ -79,8 +79,8 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                   errorMessage="4割くらいの確率で失敗しました"
                   validateErrorMessage="入力項目に不備があります"
                 >
-                  検索2
-                </AxQueryButton>              
+                  検索
+                </AxQueryButton>
             </Col>
           </Row>
         </Card>
@@ -95,7 +95,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                 errorMessage="4割くらいの確率で失敗しました"
                 validateErrorMessage="入力項目に不備があります"
               >
-                登録2
+                登録
               </AxMutateButton>
           </Form>
         </Card>
@@ -111,6 +111,12 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
               { title: "知力", dataIndex: "int", key: "6" },
               { title: "器用", dataIndex: "dex", key: "7" },
               { title: "幸運", dataIndex: "luc", key: "8" },
+              { title: <span style={{color: "red"}}>† 合計 †</span>,
+                render:(i,row:User)=>
+                (<span style={{color:"blue"}}>
+                    {row.str + row.vit + row.int + row.dex + row.luc}
+                 </span>)
+              }
             ]}
             pagination={false}
             rowKey="id"

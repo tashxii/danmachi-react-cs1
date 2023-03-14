@@ -11,7 +11,7 @@ export const AsIsWayPane: React.FC = () => {
         名前：
       </div>
       <div>
-        <AxPasswordBox {...{ item: view.password }}></AxPasswordBox>
+        <AxInputText {...{ item: view.nameItem }}></AxInputText>
       </div>
 
       <div>

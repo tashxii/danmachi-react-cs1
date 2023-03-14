@@ -47,8 +47,6 @@ export class CsValidationEvent extends CsEvent {
 }
 
 export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
-    isProcessing: boolean
-    setIsProcessing: SetValueType<boolean>
     isSuccess: boolean
     setIsSuccess: SetValueType<boolean>
     response: ValueType<TApiResponse>
@@ -58,14 +56,11 @@ export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
     error: ValueType<TApiError>
     setError: SetValueTypeOptional<TApiError>
     constructor(
-        isProcessing: boolean, setIsProcessing: SetValueType<boolean>,
         isSuccess: boolean, setIsSuccess: SetValueType<boolean>,
         response: ValueType<TApiResponse>, setResponse: SetValueTypeOptional<TApiResponse>,
         isError: boolean, setIsError: SetValueType<boolean>,
         error: ValueType<TApiError>, setError: SetValueTypeOptional<TApiError>,
     ) {
-        this.isProcessing = isProcessing
-        this.setIsProcessing = setIsProcessing
         this.isSuccess = isSuccess
         this.setIsSuccess = setIsSuccess
         this.response = response
@@ -104,13 +99,11 @@ export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
 }
 
 function useCsEventResult<TApiResponse, TApiError>() {
-    const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [isSuccess, setIsSuccess] = useState<boolean>(false)
     const [response, setResponse] = useState<TApiResponse>()
     const [isError, setIsError] = useState<boolean>(false)
     const [error, setError] = useState<TApiError>()
     return new CsEventResult<TApiResponse, TApiError>(
-        isProcessing, setIsProcessing,
         isSuccess, setIsSuccess,
         response, setResponse,
         isError, setIsError,
@@ -196,10 +189,6 @@ export class CsRQMutateButtonClickEvent<
         return this.mutationResult.isSuccess
     }
 
-    get isProccessing() {
-        return this.result.isProcessing
-    }
-
     onClick = async () => {
         if(this.apiRequest) {
             this.reset()
@@ -235,7 +224,7 @@ export class CsRQQueryButtonClickEvent<
 > extends CsEvent {
     private queryResult: UseQueryResult<TApiResponse, TApiError>
     result: CsEventResult<TApiResponse, TApiError>
-    // apiRequest?: TApiParam
+
     constructor(
         queryResult: UseQueryResult<TApiResponse, TApiError>,
         result: CsEventResult<TApiResponse, TApiError>,
@@ -245,14 +234,10 @@ export class CsRQQueryButtonClickEvent<
         this.result = result
     }
 
-    // setParam(data: TApiParam) {
-    //     this.apiRequest = data
-    // }
-
     get isRefetching() {
         return this.queryResult.isRefetching
     }
-    
+
     get isError() {
         return this.queryResult.isError
     }
@@ -269,10 +254,8 @@ export class CsRQQueryButtonClickEvent<
         this.reset()
         this.queryResult.isSuccess = false
         this.queryResult.isError = false
-        this.result.setIsProcessing(true)
         await this.queryResult.refetch()
-        this.result.setIsProcessing(false)
-    } 
+    }
 
     setError() {
         this.result.onError(this.queryResult.error ?? undefined)
@@ -286,7 +269,7 @@ export class CsRQQueryButtonClickEvent<
         this.result.resetFlag()
         this.result.setError(undefined)
         this.result.setResponse(undefined)
-    }    
+    }
 }
 
 export function useRQCsButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
