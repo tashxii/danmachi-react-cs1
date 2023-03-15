@@ -57,6 +57,11 @@
   background: linear-gradient(to right, #a5bed73c, #c5def75c);
 }
 
+.checkbox-item {
+  margin-right: 5px;
+  margin-left: 3px;
+  margin-inline-start: 0px !important; /* for-antd */
+}
 
 .textarea {
   width: 90%;

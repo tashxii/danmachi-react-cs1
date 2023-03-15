@@ -200,13 +200,13 @@ export const AxMultiCheckBox: React.FC<AxProps<CsMultiCheckBoxItem>> = (props) =
                     const text = o[item.labelKey]
                     return (
                         <Checkbox
-                            className="checkboxItem" key={value} value={value}
+                            className="checkbox-item" key={value} value={value}
                             checked={item.value?.includes(value)}
                             onChange={(e) => {
                                 if (item.isReadonly()) return
                                 if (e.target.checked) {
                                     if (item.value) {
-                                        item.setValue(item.value?.concat([value]))
+                                        item.setValue(item.value?.concat(value))
                                     } else {
                                         item.setValue([])
                                     }
