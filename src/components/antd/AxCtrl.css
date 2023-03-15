@@ -1,0 +1,110 @@
+.label {
+  display: block;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-align: left;
+  font-size: 90%;
+}
+
+.label .ant-tag {
+  font-size: 40%;
+  vertical-align: top;
+  margin-left: 10px;
+  padding-inline: 4px;
+}
+
+.ctrl {
+  width: 90%;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  min-width: 40px;
+  border-radius: 5px;
+  padding: 8px;
+  border: solid 1px lightgray;
+  background-color: #fafbfc;
+  font-size: 16px;
+  outline: none;
+}
+
+.ctrl:focus {
+  background-color: white;
+}
+
+.readonly {
+  background: linear-gradient(to right, #ccd0d95c, #cdd3de83);
+  /* pointer-events: none; */
+}
+
+.readonly .ant-select-selector {
+  background-color: #abafb783 !important;
+}
+
+.readonly .ant-input {
+  background-color: #abafb783 !important;
+}
+
+.readonly .ant-radio-checked .ant-radio-inner {
+  background-color: #93abe9;
+}
+
+.readonly .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #93abe9;
+}
+
+.readonly:focus {
+  background: linear-gradient(to right, #a5bed73c, #c5def75c);
+}
+
+.checkbox-item {
+  margin-right: 5px;
+  margin-left: 3px;
+  margin-inline-start: 0px !important; /* for-antd */
+}
+
+.textarea {
+  width: 90%;
+  border-radius: 5px;
+  padding: 8px;
+  border: solid 1px lightgray;
+  font-size: 16px;
+  outline: none;
+}
+
+.fit-content {
+  width: -moz-fit-content;
+  /* Firefox */
+  width: fit-content;
+  /* other browsers */
+  min-width: 120px;
+}
+
+.button-area {
+  /* text-align: right;
+  max-width: fit-content;*/
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 10px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  vertical-align: bottom;
+}
+
+.button-area .left {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.button {
+  text-align: right;
+  position: absolute;
+  bottom: 10px;
+}
+
+.button .left {
+  text-align: left;
+  align-items: flex-start;
+  justify-content: flex-start;
+}

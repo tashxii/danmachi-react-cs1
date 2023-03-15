@@ -1,80 +1,105 @@
 import React from 'react'
-import { CsCheckBoxItem, CsItemBase, CsPasswordBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsTextBoxItem } from '../cs'
+import {
+    CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem,
+    CsSelectBoxItem, CsTextAreaItem, CsInputTextItem
+} from '../cs'
+import { CsInputNumberItem, CsItemBase } from '../cs/CsItem'
+import "./CxCtrl.css"
 
 export class CxProps<I extends CsItemBase> {
     item: I = {} as I
-    render?: (props:CxProps<I>) => JSX.Element
 }
 
-export const CxCtrl = <I extends CsItemBase, P extends CxProps<I>>(props : P) => {
-    return (<></>)
-}
-
-export const CxLabel : React.FC<{label:string, render?:React.FC}> = (props) => {
-    if (props.render) return props.render(props)
-    return(<>{props.label}</>)
-}
-
-export const CxTextBox : React.FC<CxProps<CsTextBoxItem>> = (props) => {
-  if (props.render) return props.render(props)
-  const { item } = props
-  return (
-    <input className="Input" {...props} readOnly={item.readonly} onChange={(e)=>{item.setValue(e.target.value)}}/>
-  )
-}
-
-export const CxPasswordBox : React.FC<CxProps<CsPasswordBoxItem>> = (props) => {
-    if (props.render) return props.render(props)
-    const { item } = props
+export const CxLabel: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = (props: React.LabelHTMLAttributes<HTMLLabelElement>) => {
     return (
-        <input type="password" className="Input"readOnly={item.readonly} onChange={(e)=>{item.setValue(e.target.value)}}/>
-    )
-  }
-
-export const CxTextArea : React.FC<CxProps<CsTextAreaItem>> = (props) => {
-    if (props.render) return props.render(props)
-    const { item } = props
-    return (
-      <textarea className="Input" {...props} readOnly={item.readonly} rows={3} onChange={(e)=>{item.setValue(e.target.value)}}/>
+        <label className="label" {...props}>{props.children}</label>
     )
 }
 
-export const CxSelectBox : React.FC<CxProps<CsSelectBoxItem>> = (props) => {
-    if (props.render) return props.render(props)
+export const CxInputText: React.FC<CxProps<CsInputTextItem>> = (props) => {
     const { item } = props
     return (
-      <select className="Select" {...props} onChange={(e)=>{item.setValue(e.target.value)}}>
-        {item.options.map(o => {
-            return (<option value={o}>{o}</option>)
-        })}
-      </select>
+        <div className="ctrl">
+            <CxLabel>{item.label}</CxLabel>
+            <input className="Input" {...props} readOnly={item.isReadonly()} value={item.value}
+                onChange={(e) => { item.setValue(e.target.value) }} />
+        </div>
     )
 }
 
-export const CxRadioBox : React.FC<CxProps<CsRadioBoxItem>> = (props) => {
-    if (props.render) return props.render(props)
+export const CxInputNumber: React.FC<CxProps<CsInputNumberItem>> = (props) => {
     const { item } = props
     return (
-        <div>
+        <div className="ctrl">
+            <CxLabel>{item.label}</CxLabel>
+            <input type="number" className="Input" {...props} readOnly={item.isReadonly()} value={item.value}
+                onChange={(e) => { item.setValue(Number(e.target.value)) }} />
+        </div>
+    )
+}
+
+export const CxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
+    const { item } = props
+    return (
+        <div className="ctrl">
+            <CxLabel>{item.label}</CxLabel>
+            <input type="password" value={item.value} className="Input" readOnly={item.isReadonly()} onChange={(e) => { item.setValue(e.target.value) }} />
+        </div>
+    )
+}
+
+export const CxTextArea: React.FC<CxProps<CsTextAreaItem>> = (props) => {
+    const { item } = props
+    return (
+        <div className="ctrl">
+            <CxLabel>{item.label}</CxLabel>
+            <textarea className="Input" {...props} readOnly={item.isReadonly()} rows={3} onChange={(e) => { item.setValue(e.target.value) }} />
+        </div>
+    )
+}
+
+export const CxSelectBox: React.FC<CxProps<CsSelectBoxItem>> = (props) => {
+    const { item } = props
+    let key = 0
+    return (
+        <div className="ctrl">
+            <CxLabel>{item.label}</CxLabel>
+            <select className="Select" {...props} onChange={(e) => { item.setValue(e.target.value) }}>
+                {item.options.map(o => {
+                    return (<option key={key++} value={o[item.valueKey]}>{o[item.labelKey]}</option>)
+                })}
+            </select>
+        </div>
+    )
+}
+
+export const CxRadioBox: React.FC<CxProps<CsRadioBoxItem>> = (props) => {
+    const { item } = props
+    let key = 0
+    return (
+        <div className="ctrl">
+            <CxLabel>{item.label}</CxLabel>
             {item.options.map(o => {
                 return (
-                    <>
-                        <input type="radio" className="Input" id={o} name="contact" value={o} />
-                        <label>{o}</label>
-                    </>
-                )}
+                    <div className="ctrl" key={key}>
+                        <input type="radio" key={key++} className="Input" id={o[item.valueKey]} name="contact" value={o[item.valueKey]} />
+                        <label>{o[item.labelKey]}</label>
+                    </div>
+                )
+            }
             )}
         </div>
     )
 }
 
-export const CxCheckBox : React.FC<CxProps<CsCheckBoxItem>> = (props) => {
-    if (props.render) return props.render(props)
+//export const CxCheckBox = (props: CxProps<CsCheckBoxItem>): => {
+export const CxCheckBox: React.FC<CxProps<CsCheckBoxItem>> = (props) => {
+
     const { item } = props
     return (
-        <div>
-            <input type="checkbox" checked={item.value} onChange={(e)=>{item.setValue(e.target.checked)}}/>
-            <label>{item.text}</label>
+        <div className="ctrl">
+            <label>{item.label}</label>
+            <input type="checkbox" checked={item.value} onChange={(e) => { item.setValue(e.target.checked) }} />
         </div>
     )
 }

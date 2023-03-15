@@ -1,115 +1,162 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction } from "react"
+import { StateResult } from "./CsHooks"
+import CsView from "./CsView"
 
 export abstract class CsItemBase {
-    readonly: boolean = false
-}
-
-export default abstract class CsItem<T> extends CsItemBase {
-    value: T | undefined
-    setValue: Dispatch<SetStateAction<T>>
-    validateOption: ValidateOption = new ValidateOption()
-    constructor(initialValue:T) {
-        super()
-        const [val, set] = useState(initialValue)
-        this.value = val
-        this.setValue = set
+    label: string = ""
+    private readonly: boolean = false
+    parentView?: CsView = undefined
+    isReadonly() {
+        return (this.readonly) ? this.readonly : this.parentView?.readonly ?? false;
+    }
+    setReadonly(value: boolean) {
+        this.readonly = value
     }
 }
 
-export class ValidateOption {
-    isRequired: boolean = false
-    min : number = 0
-    max : number = 0
-    isEmail: boolean = false
+// eslint-disable-next-line
+export class ValidationRule<T> {
+    required: boolean = false
+    setRequired(required: boolean = true) {
+        this.required = required
+        return this
+    }
+}
+
+export class BooleanValidationRule extends ValidationRule<boolean> {
+}
+
+export class NumberValidationRule extends ValidationRule<number> {
+    min: number = 0
+    max: number = 0
+    setRange(min: number, max: number): NumberValidationRule {
+        this.min = min
+        this.max = max
+        return this
+    }
+}
+
+export class StringValidationRule extends ValidationRule<string> {
+    min: number = 0
+    max: number = 0
+    email: boolean = false
     regExp: string | null = null
+    setLength(min: number, max: number) {
+        this.min = min
+        this.max = max
+        return this
+    }
+    setRegExp(regExp: string) {
+        this.regExp = regExp
+        return this
+    }
+    setEmail(b: boolean = true) {
+        this.email = b
+        return this
+    }
+}
+export class StringArrayValidationOption extends ValidationRule<string[]> {
 }
 
-export class CsTextBoxItem extends CsItem<string> {
-    constructor(initialValue:string) {
-        super(initialValue)
+export type SetValueTypeRquired<T> = Dispatch<SetStateAction<T>>
+export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
+export type SetValueType<T> = SetValueTypeRquired<T> | SetValueTypeOptional<T>
+export type ValueType<T> = T | undefined
+
+export abstract class CsItem<T> extends CsItemBase {
+    value: ValueType<T> = undefined
+    setValue: SetValueType<T> = {} as SetValueType<T>
+    ValidationRule: ValidationRule<T> = new ValidationRule<T>()
+    init(label: string, readonly: boolean = false) {
+        this.label = label
+        this.setReadonly(readonly)
+        return this
     }
-    static Default = {} as CsTextBoxItem
-    static New(initialValue:string) {
-        return new CsTextBoxItem(initialValue)
+    setState(state: StateResult<T>) {
+        this.value = state[0]
+        this.setValue = state[1]
+        return this
+    }
+    setValidationRule<T>(valOpt: ValidationRule<T>) {
+        this.ValidationRule = valOpt
+        return this
     }
 }
 
-export class CsPasswordBoxItem extends CsItem<string> {
-    constructor(initialValue:string) {
-        super(initialValue)
-    }
-    static Default = {} as CsPasswordBoxItem
-    static New(initialValue:string) {
-        return new CsPasswordBoxItem(initialValue)
-    }
+export class CsInputTextItem extends CsItem<string> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsInputTextItem
+}
+
+export class CsInputNumberItem extends CsItem<number> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsInputNumberItem
+}
+
+export class CsPasswordItem extends CsItem<string> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsPasswordItem
 }
 
 export class CsTextAreaItem extends CsItem<string> {
-    constructor(initialValue:string) {
-        super(initialValue)
-    }
-    static Default = {} as CsTextAreaItem
-    static New(initialValue:string) {
-        return new CsTextAreaItem(initialValue)
-    }
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsTextAreaItem
 }
 
 export class CsCheckBoxItem extends CsItem<boolean> {
-    text: string
-    constructor(initialValue:boolean, text: string) {
-        super(initialValue)
-        this.text = text
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsCheckBoxItem
+    checkBoxText: string = ""
+    setCheckBoxText(checkBoxText: string) {
+        this.checkBoxText = checkBoxText
     }
-    static Default = {} as CsCheckBoxItem
-    static New(initialValue:boolean, text:string) {
-        return new CsCheckBoxItem(initialValue, text)
-    }
-}
-
-export class CsSelectBoxItem extends CsItem<string> {
-    options : string[]
-    selected? : string
-    constructor(initialValue: string, options:string[], selected?: string) {
-        super(initialValue)
-        this.selected = selected
-        this.options = options
-    }
-
-    setOptions(options:string[]) :void {
-        this.options = options
-        this.selected = undefined
-    }
-
-    isSelected() : boolean {
-        return (this.isSelected !== undefined)
-    }
-    static Default = {} as CsSelectBoxItem
-    static New(initialValue: string, options:string[], selected?: string) {
-        return new CsSelectBoxItem(initialValue, options, selected)
+    isChecked(): boolean {
+        return this.value ?? false;
     }
 }
 
-export class CsRadioBoxItem extends CsItem<string> {
-    name: string
-    options : string[]
-    selected? : string
-    constructor(name:string, initialValue: string, options:string[], selected?: string) {
-        super(initialValue)
-        this.name = name
-        this.selected = selected
+export abstract class CsHasOptionsItem<T> extends CsItem<T> {
+    options: any[] = []
+    valueKey: string = "value"
+    labelKey: string = "label"
+    setOptions(options: any[], valueKey: string, labelKey: string) {
         this.options = options
+        this.valueKey = valueKey
+        this.labelKey = labelKey
+        return this
     }
+}
+export class CsMultiCheckBoxItem extends CsHasOptionsItem<string[]> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsMultiCheckBoxItem
+    getCheckedValues(): string[] {
+        return this.value ?? []
+    }
+    getCheckedOption(): any[] {
+        return this.options.filter((o => this.value?.includes(o[this.valueKey])))
+    }
+}
 
-    setOptions(options:string[]) :void {
-        this.options = options
-        this.selected = undefined
+export class CsSelectBoxItem<T extends string | number = string> extends CsHasOptionsItem<T> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsSelectBoxItem<T>
+    isSelected(): boolean {
+        return (this.value !== undefined)
     }
+    getSelectedOption(): any {
+        return this.options.find(o => o[this.valueKey] === this.value)
+    }
+}
 
-    isSelected() : boolean {
-        return (this.isSelected !== undefined)
+export type CsSelectNumberBoxItem = CsSelectBoxItem<number>
+
+export class CsRadioBoxItem extends CsHasOptionsItem<string> {
+    //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+    private identifier?: CsRadioBoxItem
+    isSelected(): boolean {
+        return (this.value !== undefined)
     }
-    static Default = {} as CsRadioBoxItem
-    static New(name: string, initialValue: string, options:string[], selected?: string) {
-        return new CsRadioBoxItem(name, initialValue, options, selected)
+    getSelectedOption(): any {
+        return this.options.find(o => o[this.valueKey] === this.value)
     }
 }

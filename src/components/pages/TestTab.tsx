@@ -1,36 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
-import testView from '../parts/testView';
+import { AsIsWayPane } from '../parts/AsIsWayPane';
+import { TestTabXPane } from '../parts/TestTabXPane';
+import { AxSelectNumberBox } from '../antd/AxCtrl';
+import { numValOpt, selectOptNum, useCsSelectNumberBoxItem } from '../../framework/cs/CsHooks';
+import { TestEventPane } from '../parts/TestEventPane';
 
-const onChange = (key: string) => {
-  console.log(key);
-};
-
-
-const TestTab : React.FC = () => {
-    const view = testView
-    const items: TabsProps['items'] = [
-        {
-          key: '1',
-          label: `Tab 1`,
-          children: `Content of Tab Pane 1`,
-        },
-        {
-          key: '2',
-          label: `Tab 2`,
-          children: `Content of Tab Pane 2`,
-        },
-        {
-          key: '3',
-          label: `Tab 3`,
-          children: `Content of Tab Pane 3`,
-        },
-      ];
-
-    return (
-        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
-    )
+const TestTab: React.FC = () => {
+  const colSize = useCsSelectNumberBoxItem("表示列数", useState(2), numValOpt(false),
+    selectOptNum([1, 2, 3, 4, 6]))
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: `現状の実装`,
+      children: <AsIsWayPane />,
+    },
+    {
+      key: '2',
+      label: `x列の自動デザイン（標準）`,
+      children: <TestTabXPane colSize={colSize.value ?? 1} componentType="standard" />,
+    },
+    {
+      key: '3',
+      label: `x列の自動デザイン（Ant Design）`,
+      children: <TestTabXPane colSize={colSize.value ?? 1} componentType="antd" />,
+    },
+    {
+      key: '4',
+      label: `x列の自動デザイン（Fluent UI）`,
+      children: <TestTabXPane colSize={colSize.value ?? 1} componentType="fluent" />,
+    },
+    {
+      key: '5',
+      label: `イベントテスト（ReactQuery ⁺ Ant Design）`,
+      children: <TestEventPane colSize={colSize.value ?? 1} componentType="antd" />,
+    },
+  ];
+  return (
+    <>
+      <AxSelectNumberBox item={colSize} />
+      <Tabs defaultActiveKey="1" items={items} />
+    </>
+  )
 }
 
 export default TestTab;
+
+function valOpt(arg0: boolean): any {
+  throw new Error('Function not implemented.');
+}
