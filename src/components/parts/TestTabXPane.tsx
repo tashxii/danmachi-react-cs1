@@ -4,9 +4,10 @@ import { CxLayoutProps, CxTableLayout } from "../../framework/cx/CxLayout"
 import { Form } from "../basics/Form"
 import { useTestView } from "./testView"
 
-export const TestTabXPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "fluent" }>
-  = (props: { colSize: number, componentType: "standard" | "antd" | "fluent" }) => {
+export const TestTabXPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "fluent", readonly?: boolean }>
+  = (props: { colSize: number, componentType: "standard" | "antd" | "fluent" }, readonly?: boolean) => {
     const view = useTestView()
+    view.readonly = readonly ?? false
     const layoutProps: CxLayoutProps = {
       colSize: props.colSize as 1 | 2 | 3 | 4 | 6 | 12 | 24,
       componentType: props.componentType,

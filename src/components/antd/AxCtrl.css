@@ -59,7 +59,7 @@
 
 .checkbox-item {
   margin-right: 5px;
-  margin-left: 3px;
+  margin-left: 0px !important; /* for-antd */
   margin-inline-start: 0px !important; /* for-antd */
 }
 
