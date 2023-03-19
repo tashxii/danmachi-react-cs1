@@ -1,13 +1,15 @@
-import React, { ReactNode, useEffect, useState } from 'react'
-import { Input, Select, Radio, Checkbox, InputNumber, Typography, Tag } from "antd"
+import React, { ChangeEvent, ReactNode, useEffect, useState } from 'react'
+import { Input, Select, Radio, Checkbox, InputNumber, Typography, Tag, InputProps, InputNumberProps, InputRef, SelectProps, RadioGroupProps, CheckboxProps } from "antd"
 import {
-  CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem,
+  CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
-  CsMultiCheckBoxItem, CsSelectNumberBoxItem
+  CsMultiCheckBoxItem,
 } from '../../framework/cs'
 import "./AxCtrl.css"
 import { ValidationError } from '../basics/ValidationError'
+import { ValueType } from '@rc-component/mini-decimal'
+import { TextAreaProps, TextAreaRef } from 'antd/es/input/TextArea'
 
 const { Text } = Typography
 
@@ -17,7 +19,12 @@ interface AxProps<I extends CsItemBase> {
   addClassNames?: string[]
 }
 
-export const AxLabel: React.FC<{ label: string | ReactNode, color?: string }> = (props: { label: string | ReactNode, color?: string }) => {
+interface AxLabelProp {
+  label: string | ReactNode
+  color?: string
+}
+
+export const AxLabel = (props: AxLabelProp) => {
   const color = props.color ?? "#1867dcce"
   return (
     <div className="label"><Text style={{ color: color }}>{props.label}</Text></div>
@@ -99,8 +106,12 @@ export const AxEditCtrl = <T,>(props: AxEditCtrlProps<CsItem<T>>) => {
   )
 }
 
-export const AxInputText: React.FC<AxProps<CsInputTextItem>> = (props) => {
-  const { item } = props
+export interface AxInputTextProps extends AxProps<CsInputTextItem> {
+  antdProps?: InputProps & React.RefAttributes<InputRef>
+}
+
+export const AxInputText = (props: AxInputTextProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
@@ -113,34 +124,46 @@ export const AxInputText: React.FC<AxProps<CsInputTextItem>> = (props) => {
               setRefresh(true)
             }
           }}
+          {...antdProps}
         />
       )}
     /> // AxEditCtrl
   )
 }
 
-export const AxInputNumber: React.FC<AxProps<CsInputNumberItem>> = (props) => {
-  const { item } = props
+export interface AxInputNumberProps extends AxProps<CsInputNumberItem> {
+  antdProps?: InputNumberProps
+}
+
+export const AxInputNumber = (props: AxInputNumberProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <InputNumber className={getClassName(props)}
           value={item.value} defaultValue={item.value}
           readOnly={item.isReadonly()}
-          onChange={(value: number | null) => {
-            if (value !== null) { item.setValue(value) }
-            if (!validateWhenErrroExists(value ?? 0, item)) {
-              setRefresh(true)
+          onChange={(value: ValueType | null) => {
+            if (value !== null) {
+              item.setValue(Number(value))
+              if (!validateWhenErrroExists(Number(value), item)) {
+                setRefresh(true)
+              }
             }
           }}
+          {...antdProps}
         />
       )}
     /> // AxEditCtrl
   )
 }
 
-export const AxPasswordBox: React.FC<AxProps<CsPasswordItem>> = (props) => {
-  const { item } = props
+export interface AxInputPasswordProps extends AxProps<CsInputPassword> {
+  antdProps?: InputProps & React.RefAttributes<InputRef>
+}
+
+export const AxInputPassword = (props: AxInputPasswordProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
@@ -153,34 +176,44 @@ export const AxPasswordBox: React.FC<AxProps<CsPasswordItem>> = (props) => {
               setRefresh(true)
             }
           }}
+          {...antdProps}
         />
       )}
     /> // AxEditCtrl
   )
 }
 
-export const AxTextArea: React.FC<AxProps<CsTextAreaItem>> = (props: AxProps<CsTextAreaItem>) => {
-  const { item } = props
+export interface AxTextAreaProps extends AxProps<CsTextAreaItem> {
+  antdProps?: TextAreaProps & React.RefAttributes<TextAreaRef>
+}
+
+export const AxTextArea = (props: AxTextAreaProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Input.TextArea className={getClassName(props, "textarea")}
           value={item.value} defaultValue={item.value}
           readOnly={item.isReadonly()}
-          onChange={(e) => {
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
             item.setValue(e.target.value)
             if (!validateWhenErrroExists(e.target.value, item)) {
               setRefresh(true)
             }
           }}
+          {...antdProps}
         />
       )}
     /> // AxEditCtrl
   )
 }
 
-export const AxSelectBox = <T extends string | number = string>(props: AxProps<CsSelectBoxItem<T>>) => {
-  const { item } = props
+export interface AxSelectBoxProps<T extends string | number> extends AxProps<CsSelectBoxItem<T>> {
+  antdProps?: SelectProps
+}
+
+export const AxSelectBox = <T extends string | number = string>(props: AxSelectBoxProps<T>) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
@@ -192,6 +225,7 @@ export const AxSelectBox = <T extends string | number = string>(props: AxProps<C
               setRefresh(true)
             }
           }}
+          {...antdProps}
         >
           {item.options.map(o => {
             return (
@@ -209,12 +243,20 @@ export const AxSelectBox = <T extends string | number = string>(props: AxProps<C
   )
 }
 
-export const AxSelectNumberBox: (props: AxProps<CsSelectNumberBoxItem>) => JSX.Element = (props) => {
+export interface AxSelectNumberBoxProps extends AxSelectBoxProps<number> {
+  antdProps?: SelectProps
+}
+
+export const AxSelectNumberBox = (props: AxSelectNumberBoxProps) => {
   return (<AxSelectBox<number> {...props} />)
 }
 
-export const AxRadioBox: React.FC<AxProps<CsRadioBoxItem>> = (props) => {
-  const { item } = props
+export interface AxRadioBoxProps extends AxProps<CsRadioBoxItem> {
+  antdProps?: RadioGroupProps & React.RefAttributes<HTMLDivElement>
+}
+
+export const AxRadioBox = (props: AxRadioBoxProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
@@ -227,6 +269,7 @@ export const AxRadioBox: React.FC<AxProps<CsRadioBoxItem>> = (props) => {
               setRefresh(true)
             }
           }}
+          {...antdProps}
         >
           {item.options.map(o => {
             return (
@@ -242,8 +285,12 @@ export const AxRadioBox: React.FC<AxProps<CsRadioBoxItem>> = (props) => {
   )
 }
 
-export const AxCheckBox: React.FC<AxProps<CsCheckBoxItem>> = (props) => {
-  const { item } = props
+export interface AxCheckBoxProps extends AxProps<CsCheckBoxItem> {
+  antdProps?: CheckboxProps & React.RefAttributes<HTMLInputElement>
+}
+
+export const AxCheckBox = (props: AxCheckBoxProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={() => (
@@ -252,6 +299,7 @@ export const AxCheckBox: React.FC<AxProps<CsCheckBoxItem>> = (props) => {
             if (item.isReadonly()) return
             item.setValue(e.target.checked)
           }}
+          {...antdProps}
         >
           {item.checkBoxText}
         </Checkbox>
@@ -260,8 +308,12 @@ export const AxCheckBox: React.FC<AxProps<CsCheckBoxItem>> = (props) => {
   )
 }
 
-export const AxMultiCheckBox: React.FC<AxProps<CsMultiCheckBoxItem>> = (props) => {
-  const { item } = props
+export interface AxMultiCheckBoxProps extends AxProps<CsMultiCheckBoxItem> {
+  antdProps?: CheckboxProps & React.RefAttributes<HTMLInputElement>
+}
+
+export const AxMultiCheckBox = (props: AxMultiCheckBoxProps) => {
+  const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
@@ -286,7 +338,9 @@ export const AxMultiCheckBox: React.FC<AxProps<CsMultiCheckBoxItem>> = (props) =
                     setRefresh(true)
                   }
                 }}
-                disabled={item.isReadonly() && !item.value?.includes(value)}>
+                disabled={item.isReadonly() && !item.value?.includes(value)}
+                {...antdProps}
+              >
                 {text}
               </Checkbox>
             )

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 
-import { BooleanValidationRule, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsSelectNumberBoxItem, CsTextAreaItem, NumberValidationRule, StringArrayValidationRule, StringValidationRule, ValidationRule } from "./CsItem"
+import { BooleanValidationRule, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsSelectNumberBoxItem, CsTextAreaItem, NumberValidationRule, StringArrayValidationRule, StringValidationRule, ValidationRule } from "./CsItem"
 
 export type StateResultOptional<T> = [val: T | undefined, setVal: Dispatch<SetStateAction<T | undefined>>]
 export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>>]
@@ -99,12 +99,12 @@ export function useCsInputNumberItem(label: string,
   return useCsItem(CsInputNumberItem, label, state, rule, undefined, readonly);
 }
 
-export function useCsPasswordItem(label: string,
+export function useCsInputPassword(label: string,
   state: StateResult<string>,
   rule: StringValidationRule,
   readonly: RW = RW.Editable,
-): CsPasswordItem {
-  return useCsItem(CsPasswordItem, label, state, rule, undefined, readonly);
+): CsInputPassword {
+  return useCsItem(CsInputPassword, label, state, rule, undefined, readonly);
 }
 
 export function useCsTextAreaItem(label: string,

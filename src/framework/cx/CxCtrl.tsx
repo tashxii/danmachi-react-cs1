@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem,
+  CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem
 } from '../cs'
 import { CsInputNumberItem, CsItemBase } from '../cs/CsItem'
@@ -38,7 +38,7 @@ export const CxInputNumber: React.FC<CxProps<CsInputNumberItem>> = (props) => {
   )
 }
 
-export const CxPasswordBox: React.FC<CxProps<CsPasswordItem>> = (props) => {
+export const CxPasswordBox: React.FC<CxProps<CsInputPassword>> = (props) => {
   const { item } = props
   return (
     <div className="ctrl">

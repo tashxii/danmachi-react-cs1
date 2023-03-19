@@ -223,6 +223,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
         {/* Clan Modal */}
         <Modal
           open={showClanModal}
+          destroyOnClose={true}
           onCancel={() => { setShowClanModal(false) }}
           title={(editingClan?.isNew ?? true) ? "クラン作成" : "クラン更新"}
           footer={[
@@ -260,6 +261,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
         {/* Chara Modal */}
         <Modal
           open={showCharaModal}
+          destroyOnClose={true}
           onCancel={() => { setShowCharaModal(false) }}
           title={(editingChara?.isNew ?? true) ? "キャラ作成" : "キャラ更新"}
           footer={[

@@ -1,11 +1,11 @@
 import React from "react"
 import { Col, Row } from "antd"
 import Antd from "../../components/antd"
-import { CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../cs"
+import { CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../cs"
 import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
 import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../cs/CsItem"
 import { AxMultiCheckBox } from "../../components/antd/AxCtrl"
-const { AxCheckBox, AxInputNumber, AxPasswordBox, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
+const { AxCheckBox, AxInputNumber, AxInputPassword, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
 
 
 export interface CxLayoutProps {
@@ -105,15 +105,15 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
         return (<AxCheckBox {...props} />)
     }
   }
-  if (item instanceof CsPasswordItem) {
-    const props: CxProps<CsPasswordItem> = { item: item }
+  if (item instanceof CsInputPassword) {
+    const props: CxProps<CsInputPassword> = { item: item }
     switch (componentType) {
       case "standard":
         return (<CxPasswordBox {...props} />)
       case "fluent":
         return (<NullElement />)
       default:
-        return (<AxPasswordBox {...props} />)
+        return (<AxInputPassword {...props} />)
     }
   }
   if (item instanceof CsRadioBoxItem) {

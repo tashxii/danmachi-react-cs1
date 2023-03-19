@@ -1,6 +1,6 @@
 import CsEvent, { CsValidationEvent } from "./CsEvent"
 import {
-  CsItem, CsCheckBoxItem, CsItemBase, CsPasswordItem, CsRadioBoxItem,
+  CsItem, CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsInputNumberItem,
   CsMultiCheckBoxItem, CsSelectNumberBoxItem,
 } from "./CsItem"
@@ -12,7 +12,7 @@ export {
   CsInputTextItem,
   CsInputNumberItem,
   CsTextAreaItem,
-  CsPasswordItem,
+  CsInputPassword,
   CsCheckBoxItem,
   CsMultiCheckBoxItem,
   CsSelectBoxItem,

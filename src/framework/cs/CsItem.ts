@@ -105,9 +105,9 @@ export class CsInputNumberItem extends CsItem<number> {
   private identifier?: CsInputNumberItem
 }
 
-export class CsPasswordItem extends CsItem<string> {
+export class CsInputPassword extends CsItem<string> {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
-  private identifier?: CsPasswordItem
+  private identifier?: CsInputPassword
 }
 
 export class CsTextAreaItem extends CsItem<string> {

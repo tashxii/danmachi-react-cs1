@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { CsItemBase, CsInputTextItem, CsView } from "../../framework/cs";
-import { CsInputNumberItem, CsCheckBoxItem, CsPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
+import { CsInputNumberItem, CsCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
 import {
   stringRule, RW, useCsInputTextItem, useCsSelectBoxItem,
   useCsCheckBoxItem, numberRule, useCsInputNumberItem,
   useCsRadioBoxItem, useCsTextAreaItem, optionStrings,
-  useCsMultiCheckBoxItem, useCsPasswordItem, stringArrayRule
+  useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule
 } from "../../framework/cs/CsHooks";
 import { CsMultiCheckBoxItem } from "../../framework/cs/CsItem";
 import { useCsView } from "../../framework/cs/CsView";
 
 export default interface TestView extends CsView {
   nameItem: CsInputTextItem
-  password: CsPasswordItem
+  password: CsInputPassword
   adminCheck: CsCheckBoxItem
   genderSelect: CsSelectBoxItem
   contactWay: CsRadioBoxItem
@@ -30,7 +30,7 @@ export default interface TestView extends CsView {
 export function useTestView(): TestView {
   const view = useCsView<TestView>({
     nameItem: useCsInputTextItem("名前", useState(), stringRule(true, 3, 30)),
-    password: useCsPasswordItem("パスワード", useState(""), stringRule(true, 8, 16)),
+    password: useCsInputPassword("パスワード", useState(""), stringRule(true, 8, 16)),
     adminCheck: useCsCheckBoxItem("管理者権限", useState(), "付与する"),
     genderSelect: useCsSelectBoxItem("性別", useState(), stringRule(true, 0, 1),
       optionStrings(["男性", "女性", "未回答"])),

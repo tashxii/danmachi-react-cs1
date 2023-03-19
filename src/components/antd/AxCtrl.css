@@ -114,6 +114,14 @@
   justify-content: flex-end;
 }
 
+.button-alert {
+  position: absolute;
+  width: fit-content;
+  white-space: nowrap;
+  bottom: 60px;
+  margin-left: calc(-55%);
+}
+
 .button {
   position: relative;
   flex-wrap: wrap;

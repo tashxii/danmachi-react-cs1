@@ -50,13 +50,13 @@ const TestTab: React.FC = () => {
     },
   ];
   return (
-    <>
+    <div style={{ padding: "20px" }}>
       <Row>
-        <AxSelectNumberBox item={colSize} />
-        <AxCheckBox item={readonlyCheck} />
+        <AxSelectNumberBox item={colSize} showRequiredTag="none" />
+        <AxCheckBox item={readonlyCheck} showRequiredTag="none" />
       </Row>
       <Tabs defaultActiveKey="1" items={items} />
-    </>
+    </div>
   )
 }
 
