@@ -20,22 +20,33 @@ const TestTab: React.FC = () => {
     {
       key: '2',
       label: `x列の自動デザイン（標準）`,
-      children: <TestTabXPane colSize={colSize.value ?? 1} componentType="standard" readonly={readonlyCheck.value} />,
+      children: <TestTabXPane
+        colSize={colSize.value ?? 1}
+        componentType="standard"
+        readonly={readonlyCheck.value === true} />,
     },
     {
       key: '3',
       label: `x列の自動デザイン（Ant Design）`,
-      children: <TestTabXPane colSize={colSize.value ?? 1} componentType="antd" readonly={readonlyCheck.value} />,
+      children: <TestTabXPane
+        colSize={colSize.value ?? 1}
+        componentType="antd"
+        readonly={readonlyCheck.value ?? false} />,
     },
     {
       key: '4',
       label: `x列の自動デザイン（Fluent UI）`,
-      children: <TestTabXPane colSize={colSize.value ?? 1} componentType="fluent" readonly={readonlyCheck.value} />,
+      children: <TestTabXPane
+        colSize={colSize.value ?? 1}
+        componentType="fluent"
+        readonly={readonlyCheck.value ?? false} />,
     },
     {
       key: '5',
       label: `イベントテスト（ReactQuery ⁺ Ant Design）`,
-      children: <TestEventPane colSize={colSize.value ?? 1} componentType="antd" />,
+      children: <TestEventPane
+        colSize={colSize.value ?? 1}
+        componentType="antd" />,
     },
   ];
   return (

@@ -1,25 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { Card, Col, Modal, Row, Table } from "antd"
-import { CxLayoutProps, CxTableLayout } from "../../framework/cx/CxLayout"
+import { Button, Card, Col, Modal, Row, Table } from "antd"
+import { CxTableLayout } from "../../framework/cx/CxLayout"
 import { CsInputTextItem, CsSelectBoxItem, CsView } from "../../framework/cs"
-import { Form } from "../basics/Form"
-import { AxOwnClickButton, AxMutateButton, AxQueryButton } from "../antd/AxEventCtrl"
+import { AxButton, AxMutateButton, AxQueryButton } from "../antd/AxEventCtrl"
 import { AxInputText } from "../antd/AxCtrl"
 import {
-  CsRQMutateButtonClickEvent, CsRQQueryButtonClickEvent, useCsRQMutateButtonClickEvent, useCsRQQueryButtonClickEvent, useRQCsButtonClickEvent
+  CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
+  useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
 } from "../../framework/cs/CsEvent"
 import { stringRule, optionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, options } from "../../framework/cs/CsHooks"
 import { TestApi, Chara, CityCreateRequest, City, Clan } from "./testApi"
 import { useCsView } from "../../framework/cs/CsView"
 import { useMutation, useQuery } from "react-query"
 import { CsSelectNumberBoxItem } from "../../framework/cs/CsItem"
-import { CxLabel } from "../../framework/cx/CxCtrl"
 import Link from "antd/es/typography/Link"
 
 interface CitySearchView extends CsView {
   keyword: CsInputTextItem
-  searchButton: CsRQQueryButtonClickEvent<City>
-  makeButton: CsRQMutateButtonClickEvent<CityCreateRequest, City>
+  searchButton: CsRqQueryButtonClickEvent<City>
+  makeButton: CsRqMutateButtonClickEvent<CityCreateRequest, City>
 }
 
 export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "fluent" }>
@@ -38,14 +37,27 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
     const searchView = useCsView<CitySearchView>({
       readonly: false,
       keyword: keywordItem,
-      searchButton: useCsRQQueryButtonClickEvent(
+      searchButton: useCsRqQueryButtonClickEvent(
         useQuery(
           "getCity",
           () => TestApi.getCity(keywordItem.value ?? ""),
           { enabled: false, refetchOnWindowFocus: false, retry: 2 }
         )
       ),
-      makeButton: useCsRQMutateButtonClickEvent(useMutation(TestApi.createCity)),
+      makeButton: useCsRqMutateButtonClickEvent(useMutation(TestApi.createCity)),
+    })
+    const clanView = useCsView<ClanMakeView>({
+      readonly: false,
+      name: useCsInputTextItem("名前", useState(""), stringRule(true, 1, 16)),
+      description: useCsInputTextItem("説明", useState(""), stringRule(false, 1, 100)),
+    })
+    const charaView = useCsView<CharaMakeView>({
+      readonly: false,
+      name: useCsInputTextItem("名前", useState(""), stringRule(true, 1, 16)),
+      job: useCsSelectBoxItem("職業", useState(""), stringRule(true),
+        optionStrings(["無職", "戦士", "魔術師", "僧侶", "盗賊", "山賊", "海賊", "遊び人", "ギャンブラー", "博徒", "勇者", "修羅"])),
+      clanKey: useCsSelectNumberBoxItem("クラン", useState(0), numberRule(true),
+        options(editingCity.clans, "clanKey", "name")),
     })
 
     useMemo(() => {
@@ -59,14 +71,14 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
         <Card title="都市ロード" style={{ width: "auto" }}>
           <Row>
             <Col span={18}>
-              <AxInputText item={searchView.keyword}></AxInputText>
+              <AxInputText showRequiredTag="none" item={searchView.keyword} />
             </Col>
             <Col span={6}>
               <AxQueryButton
                 type="primary"
                 validationViews={[searchView]}
                 event={searchView.searchButton}
-                addClassNames={["left"]}
+                addClassNames={["left", "bottom"]}
                 successMessage="6割くらいの確率で成功しました"
                 errorMessage="4割くらいの確率で失敗しました"
                 validateErrorMessage="入力項目に不備があります"
@@ -76,24 +88,28 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
             </Col>
           </Row>
         </Card>
-        <Card title={"都市 " + editingCity.name + " の情報"}>
-          <Card size="small" title="クランの一覧" style={{ width: "auto" }}>
-            <Row>
-              <Col span={14}>
-                <AxOwnClickButton
-                  onClickHandler={() => {
+        <Card title={"都市 " + editingCity.name + " の情報"} style={{ width: "100%" }} >
+          <Card size="small" title="クランの一覧" style={{ width: "100%" }}>
+            <Row style={{ marginBottom: "10px", height: "100%", width: "100%" }}>
+              <Col span={24}>
+                <AxButton type="primary"
+                  onClick={() => {
                     setEditingClan(new Clan())
+                    clanView.validateEvent?.resetError()
+                    clanView.name.setValue("")
+                    clanView.description.setValue("")
                     setShowClanModal(true)
                     return true
                   }}
                 >
                   ⚔クランの追加⚔
-                </AxOwnClickButton>
+                </AxButton>
               </Col>
             </Row>
             <Row>
               <Table
                 dataSource={clans}
+                style={{ width: "100%" }}
                 columns={[
                   { title: "ID", dataIndex: "clanKey", key: "1" },
                   { title: "名前", dataIndex: "name", key: "2" },
@@ -104,6 +120,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                       return (
                         <>
                           <Link onClick={() => { setEditingClan(row); setShowClanModal(true) }}>編集</Link>
+                          <span>&nbsp;</span>
                           <Link onClick={() => { }} >削除</Link>
                         </>
                       )
@@ -115,118 +132,135 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
               ></Table>
             </Row>
           </Card>
-          <Card size="small" title="キャラクターの一覧" style={{ width: "auto" }}>
-            <Row>
-              <Col span={14}>
-                <AxOwnClickButton
-                  onClickHandler={() => {
-                    setEditingChara(new Chara())
-                    setShowCharaModal(true)
-                    return true
-                  }}
-                >
-                  †キャラクターの追加†
-                </AxOwnClickButton>
-              </Col>
-            </Row>
-            <Row>
-              <Table
-                dataSource={charas}
-                columns={[
-                  { title: "ID", dataIndex: "charaKey", key: "1" },
-                  { title: "名前", dataIndex: "name", key: "2" },
-                  { title: "職業", dataIndex: "job", key: "3" },
-                  { title: "筋力", dataIndex: "str", key: "4" },
-                  { title: "耐久", dataIndex: "vit", key: "5" },
-                  { title: "知力", dataIndex: "int", key: "6" },
-                  { title: "器用", dataIndex: "dex", key: "7" },
-                  { title: "幸運", dataIndex: "luc", key: "8" },
-                  {
-                    title: <span style={{ color: "red" }}>† 合計 †</span>,
-                    render: (i, row: Chara) =>
-                    (<span style={{ color: "blue" }}>
-                      {row.str + row.vit + row.int + row.dex + row.luc}
-                    </span>)
-                  },
-                  {
-                    title: "操作", key: "9", render: (i, row) => {
-                      return (
-                        <>
-                          <Link onClick={() => { setEditingChara(row); setShowCharaModal(true) }}>編集</Link>
-                          <Link onClick={() => { }} >削除</Link>
-                        </>
-                      )
-                    }
-                  },
-                ]}
-                pagination={false}
-                rowKey="id"
-              ></Table>
-            </Row>
+          <Card size="small" title="キャラクターの一覧" style={{ width: "100%" }}>
+            <div>
+              <Row style={{ marginBottom: "10px", height: "100%", width: "100%" }}>
+                <Col span={24}>
+                  <AxButton type="primary"
+                    onClick={() => {
+                      setEditingChara(new Chara())
+                      charaView.validateEvent?.resetError()
+                      charaView.name.setValue("")
+                      charaView.job.setValue("")
+                      charaView.clanKey.setValue()
+                      setShowCharaModal(true)
+                      return true
+                    }}
+                  >
+                    † キャラクターの追加 †
+                  </AxButton>
+                </Col>
+              </Row>
+              <Row>
+                <Table
+                  dataSource={charas}
+                  style={{ width: "100%" }}
+                  columns={[
+                    { title: "ID", dataIndex: "charaKey", key: "1" },
+                    { title: "名前", dataIndex: "name", key: "2" },
+                    { title: "職業", dataIndex: "job", key: "3" },
+                    { title: "筋力", dataIndex: "str", key: "4" },
+                    { title: "耐久", dataIndex: "vit", key: "5" },
+                    { title: "知力", dataIndex: "int", key: "6" },
+                    { title: "器用", dataIndex: "dex", key: "7" },
+                    { title: "幸運", dataIndex: "luc", key: "8" },
+                    {
+                      title: <span style={{ color: "red" }}>† 合計 †</span>,
+                      render: (i, row: Chara) =>
+                      (<span style={{ color: "blue" }}>
+                        {row.str + row.vit + row.int + row.dex + row.luc}
+                      </span>)
+                    },
+                    {
+                      title: "操作", key: "9", render: (i, row) => {
+                        return (
+                          <>
+                            <Link onClick={() => { setEditingChara(row); setShowCharaModal(true) }}>編集</Link>
+                            <span>&nbsp;</span>
+                            <Link onClick={() => { }} >削除</Link>
+                          </>
+                        )
+                      }
+                    },
+                  ]}
+                  pagination={false}
+                  rowKey="id"
+                ></Table>
+              </Row>
+            </div>
           </Card>
         </Card>
         {/* Clan Modal */}
         <Modal
           open={showClanModal}
-          title={(editingClan?.isNew ?? true) ? "クラン作成" : "クラン更新"}
-          okText={(editingClan?.isNew ?? true) ? "作成" : "更新"}
-          cancelText="やめる"
           onCancel={() => { setShowClanModal(false) }}
-          onOk={() => {
-            console.log(editingClan)
-            if (editingClan.isNew) {
-              editingCity.addClan(editingClan)
-              setClans(editingCity.clans)
-            } else {
-              setEditingClan(editingClan)
-            }
-            console.log(clans)
-            setShowClanModal(false)
-          }}
+          title={(editingClan?.isNew ?? true) ? "クラン作成" : "クラン更新"}
+          footer={[
+            <Row>
+              <Col offset={16} span={4}>
+                <AxButton onClick={() => { setShowClanModal(false) }}>
+                  やめる
+                </AxButton>
+              </Col>
+              <Col span={4}>
+                <AxButton type="primary"
+                  validationViews={[clanView]}
+                  onClick={() => {
+                    if (editingClan.isNew) {
+                      editingCity.addClan(editingClan)
+                      setClans(editingCity.clans)
+                    } else {
+                      setEditingClan(editingClan)
+                    }
+                    setShowClanModal(false)
+                  }}>
+                  {(editingClan?.isNew ?? true) ? "作成" : "更新"}
+                </AxButton>
+              </Col>
+            </Row>
+          ]}
         >
           <ClanEditForm
             clan={editingClan}
-            city={editingCity}
-          // onClickHandler={() => {
-          //   console.log(editingClan)
-          //   if (editingClan.isNew) {
-          //     editingCity.addClan(editingClan)
-          //     setClans(editingCity.clans)
-          //   } else {
-          //     setEditingClan(editingClan)
-          //   }
-          //   console.log(clans)
-          // }}
+            view={clanView}
+          // city={editingCity}
           />
         </Modal>
         {/* Chara Modal */}
         <Modal
           open={showCharaModal}
-          title={(editingChara?.isNew ?? true) ? "キャラ作成" : "キャラ更新"}
-          okText={(editingChara?.isNew ?? true) ? "作成" : "更新"}
-          cancelText="やめる"
           onCancel={() => { setShowCharaModal(false) }}
-          onOk={() => {
-            if (editingChara.isNew) {
-              editingCity.addChara(editingChara)
-              setCharas(editingCity.charas)
-            } else {
-              setEditingChara(editingChara)
-            }
-            setShowCharaModal(false)
-          }}
+          title={(editingChara?.isNew ?? true) ? "キャラ作成" : "キャラ更新"}
+          footer={[
+            <Row>
+              <Col offset={16} span={4}>
+                <AxButton onClick={() => { setShowCharaModal(false) }}>
+                  やめる
+                </AxButton>
+              </Col>
+              <Col span={4}>
+                <AxButton type="primary"
+                  validationViews={[charaView]}
+                  onClick={() => {
+                    if (editingChara.isNew) {
+                      editingCity.addChara(editingChara)
+                      setCharas(editingCity.charas)
+                    } else {
+                      setEditingChara(editingChara)
+                    }
+                    setShowCharaModal(false)
+                  }}>
+                  {(editingChara?.isNew ?? true) ? "作成" : "更新"}
+                </AxButton>
+              </Col>
+            </Row>
+          ]}
+
         >
           <CharaEditForm
             chara={editingChara}
-            city={editingCity}
-          // onClickHandler={() => {
-          //   if (editingChara.isNew) {
-          //     editingCity.addChara(editingChara)
-          //     setCharas(editingCity.charas)
-          //   } else {
-          //     setEditingChara(editingChara)
-          //   }
-          // }}
+            view={charaView}
+          // city={editingCity}
           />
         </Modal>
       </>
@@ -236,7 +270,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
 // ClanEdit
 interface ClanEditProps {
   clan: Clan
-  city: City
+  view: ClanMakeView
   //onClickHandler: () => boolean | void
 }
 
@@ -246,12 +280,7 @@ interface ClanMakeView extends CsView {
 }
 
 export const ClanEditForm: React.FC<ClanEditProps> = (props: ClanEditProps) => {
-  const { clan, city } = props
-  const view = useCsView<ClanMakeView>({
-    readonly: false,
-    name: useCsInputTextItem("名前", useState(clan.name), stringRule(true, 1, 16)),
-    description: useCsInputTextItem("説明", useState(clan.description), stringRule(false, 1, 100)),
-  })
+  const { clan, view } = props
 
   useEffect(() => {
     clan.name = view.name.value ?? ""
@@ -272,7 +301,7 @@ export const ClanEditForm: React.FC<ClanEditProps> = (props: ClanEditProps) => {
 // CharaEdit
 interface CharaEditProps {
   chara: Chara
-  city: City
+  view: CharaMakeView
   //onClickHandler: () => boolean | void
 }
 
@@ -283,15 +312,7 @@ interface CharaMakeView extends CsView {
 }
 
 export const CharaEditForm: React.FC<CharaEditProps> = (props: CharaEditProps) => {
-  const { chara, city } = props
-  const view = useCsView<CharaMakeView>({
-    readonly: false,
-    name: useCsInputTextItem("名前", useState(chara.name), stringRule(true, 1, 16)),
-    job: useCsSelectBoxItem("職業", useState(chara.job), stringRule(true),
-      optionStrings(["無職", "戦士", "魔術師", "僧侶", "盗賊", "山賊", "海賊", "遊び人", "ギャンブラー", "博徒", "勇者", "修羅"])),
-    clanKey: useCsSelectNumberBoxItem("クラン", useState(), numberRule(true),
-      options(city.clans, "clanKey", "name")),
-  })
+  const { chara, view } = props
 
   useEffect(() => {
     chara.name = view.name.value ?? ""

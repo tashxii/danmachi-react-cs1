@@ -29,15 +29,15 @@ export default interface TestView extends CsView {
 
 export function useTestView(): TestView {
   const view = useCsView<TestView>({
-    nameItem: useCsInputTextItem("名前", useState("a"), stringRule(true, 1, 30)),
-    password: useCsPasswordItem("パスワード", useState("a"), stringRule(true, 1, 16)),
-    adminCheck: useCsCheckBoxItem("管理者権限", useState(true), "付与する"),
-    genderSelect: useCsSelectBoxItem("性別", useState("男性"), stringRule(true),
+    nameItem: useCsInputTextItem("名前", useState(), stringRule(true, 3, 30)),
+    password: useCsPasswordItem("パスワード", useState(""), stringRule(true, 8, 16)),
+    adminCheck: useCsCheckBoxItem("管理者権限", useState(), "付与する"),
+    genderSelect: useCsSelectBoxItem("性別", useState(), stringRule(true, 0, 1),
       optionStrings(["男性", "女性", "未回答"])),
-    contactWay: useCsRadioBoxItem("連絡方法", useState("メール"), stringRule(true),
+    contactWay: useCsRadioBoxItem("連絡方法", useState(), stringRule(true, 0, 1),
       optionStrings(["メール", "電話", "訪問"])),
     age: useCsInputNumberItem("年齢", useState(20), numberRule(true, 18, 70)),
-    memo: useCsTextAreaItem("メモ", useState("aaa"), stringRule(true, 1, 4000)),
+    memo: useCsTextAreaItem("メモ", useState(""), stringRule(true, 1, 4000)),
     snsWay: useCsMultiCheckBoxItem("SNS連絡手段", useState(["SMS", "Twitter"]), stringArrayRule(true),
       optionStrings(["SMS", "Line", "Twitter", "Facebook"])),
     other1: useCsInputTextItem("ほか１", useState("ほか１"), stringRule(false, 1, 10)),

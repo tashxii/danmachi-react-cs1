@@ -1,33 +1,94 @@
-.label {
+.label-base {
   display: block;
+  margin-left: 5px;
+  margin-top: 5px;
   margin-bottom: 5px;
+  text-align: left;
+  font-size: 90%;
+}
+
+.label-base .tag {
+  font-size: 40%;
+  vertical-align: top;
+  margin-left: 10px;
+  padding-inline: 4px;
+}
+
+.ctrl-base {
+  width: 90%;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  min-width: 40px;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: #fafbfc;
+  font-size: 16px;
+  outline: none;
+}
+
+.ctrl-base:focus {
+  background-color: white;
+}
+
+.readonly-base {
+  background: linear-gradient(to right, #ccd0d95c, #cdd3de83);
+  /* pointer-events: none; */
+}
+
+.readonly-base:focus {
+  background: linear-gradient(to right, #a5bed73c, #c5def75c);
+}
+
+.checkbox-item-base {
+  margin-right: 5px;
+  margin-left: 0px !important;
+  /* for-antd */
+  margin-inline-start: 0px !important;
+  /* for-antd */
+}
+
+.textarea-base {
+  width: 90%;
+  border-radius: 5px;
+  padding: 8px;
+  border: solid 1px lightgray;
+  font-size: 16px;
+  outline: none;
+}
+
+.fit-content-base {
+  width: -moz-fit-content;
+  /* Firefox */
+  width: fit-content;
+  /* other browsers */
+  min-width: 120px;
+}
+
+.button-area-base {
+  /* text-align: right;
+  max-width: fit-content;*/
+  margin-top: 5px;
+  margin-bottom: 15px;
+  margin-right: 10px;
+  text-align: right;
+  min-height: 100%;
+  position: relative;
+}
+
+.button-area-base.left {
   text-align: left;
 }
 
-.ctrl {
-  width: 400px;
-  border-radius: 5px;
-  padding: 8px;
-  border: solid 1px lightgray;
-  background-color: #fafbfc;
-  font-size: 16px;
-  outline: none;
+.button-base {
+  position: absolute;
+  align-content: center;
+  display: flex;
+  margin-top: 15px;
+  margin-left: 5px;
+  bottom: 15px !important;
 }
 
-.ctrl:focus {
-  background-color: white;
-}
-
-.textarea {
-  width: 400px;
-  border-radius: 5px;
-  padding: 8px;
-  border: solid 1px lightgray;
-  background-color: #fafbfc;
-  font-size: 16px;
-  outline: none;
-}
-
-.textarea:focus {
-  background-color: white;
+.button-base.left {
+  align-content: left;
 }

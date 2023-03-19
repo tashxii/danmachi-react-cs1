@@ -1,6 +1,6 @@
 .label {
   display: block;
-  margin-left: 5px;
+  margin-left: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
   text-align: left;
@@ -16,29 +16,37 @@
 
 .ctrl {
   width: 90%;
-  margin-left: 5px;
+  margin-left: 10px;
   margin-right: 5px;
   margin-bottom: 5px;
   min-width: 40px;
+  border-color: #c9cece;
+  border-width: 1px;
   border-radius: 5px;
   padding: 8px;
-  border: solid 1px lightgray;
-  background-color: #fafbfc;
+  background-color: #fafbfcfd;
   font-size: 16px;
   outline: none;
 }
 
 .ctrl:focus {
   background-color: white;
+  /* border-color: azure; */
+}
+
+.ctrl.validation-error {
+  border-style: solid;
+  border-color: #f01818bf;
+  border-width: 1.0px;
 }
 
 .readonly {
   background: linear-gradient(to right, #ccd0d95c, #cdd3de83);
-  /* pointer-events: none; */
 }
 
 .readonly .ant-select-selector {
   background-color: #abafb783 !important;
+  pointer-events: none;
 }
 
 .readonly .ant-input {
@@ -59,8 +67,10 @@
 
 .checkbox-item {
   margin-right: 5px;
-  margin-left: 0px !important; /* for-antd */
-  margin-inline-start: 0px !important; /* for-antd */
+  margin-left: 0px !important;
+  /* for-antd */
+  margin-inline-start: 0px !important;
+  /* for-antd */
 }
 
 .textarea {
@@ -81,30 +91,35 @@
 }
 
 .button-area {
-  /* text-align: right;
-  max-width: fit-content;*/
-  margin-top: 5px;
-  margin-bottom: 5px;
+  padding: 3px;
+  min-height: 100%;
+  width: 100%;
   margin-right: 10px;
-  display: flex;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
   align-items: flex-end;
-  justify-content: flex-end;
-  vertical-align: bottom;
+  justify-content: end;
 }
 
-.button-area .left {
+.button-area.left {
   align-items: flex-start;
-  justify-content: flex-start;
+}
+
+.button-area.middle {
+  justify-content: center;
+}
+
+.button-area.bottom {
+  justify-content: flex-end;
 }
 
 .button {
-  text-align: right;
-  position: absolute;
-  bottom: 10px;
+  position: relative;
+  flex-wrap: wrap;
+  width: fit-content;
 }
 
-.button .left {
-  text-align: left;
-  align-items: flex-start;
-  justify-content: flex-start;
+.button.bottom {
+  bottom: 15px;
 }

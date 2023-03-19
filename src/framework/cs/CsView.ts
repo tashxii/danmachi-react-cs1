@@ -1,4 +1,4 @@
-import { CsItem, NumberValidationRule, StringArrayValidationRule, StringValidationRule } from "./CsItem"
+import { CsItem, CsItemBase, NumberValidationRule, StringArrayValidationRule, StringValidationRule } from "./CsItem"
 import { stringField, useValidation } from "../validation"
 import FieldConstraint from "../validation/field/FieldConstraint"
 import StringFieldConstraint from "../validation/field/StringFieldConstraint"
@@ -72,6 +72,12 @@ export function useCsView<T extends CsView>(
   instance: T
 ): T {
   const validationSchemaObj = CsView.createValidationSchema<T>(instance)
+  Object.keys(instance).forEach(k => {
+    const v = instance[k as keyof T]
+    if (v instanceof CsItemBase) {
+      v.key = k
+    }
+  })
   const { error, validator, resetError, handleSubmit } = useValidation(validationSchemaObj)
   instance.validateEvent = new CsValidationEvent(error, validator, resetError, handleSubmit)
   return instance

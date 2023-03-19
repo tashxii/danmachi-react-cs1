@@ -4,12 +4,13 @@ import CsView from "./CsView"
 
 export abstract class CsItemBase {
   label: string = ""
+  key: string = ""
   private readonly: boolean = false
   parentView?: CsView = undefined
   isReadonly() {
     return (this.readonly) ? this.readonly : this.parentView?.readonly ?? false;
   }
-  setReadonly(value: boolean) {
+  setReadonly = (value: boolean) => {
     this.readonly = value
   }
 }
@@ -17,7 +18,7 @@ export abstract class CsItemBase {
 // eslint-disable-next-line
 export class ValidationRule<T> {
   required: boolean = false
-  setRequired(required: boolean = true) {
+  setRequired = (required: boolean = true) => {
     this.required = required
     return this
   }
@@ -29,7 +30,7 @@ export class BooleanValidationRule extends ValidationRule<boolean> {
 export class NumberValidationRule extends ValidationRule<number> {
   min: number = 0
   max: number = 0
-  setRange(min: number, max: number): NumberValidationRule {
+  setRange = (min: number, max: number): NumberValidationRule => {
     this.min = min
     this.max = max
     return this
@@ -41,16 +42,16 @@ export class StringValidationRule extends ValidationRule<string> {
   max: number = 0
   email: boolean = false
   regExp: string | null = null
-  setLength(min: number, max: number) {
+  setLength = (min: number, max: number) => {
     this.min = min
     this.max = max
     return this
   }
-  setRegExp(regExp: string) {
+  setRegExp = (regExp: string) => {
     this.regExp = regExp
     return this
   }
-  setEmail(b: boolean = true) {
+  setEmail = (b: boolean = true) => {
     this.email = b
     return this
   }
@@ -58,28 +59,58 @@ export class StringValidationRule extends ValidationRule<string> {
 export class StringArrayValidationRule extends ValidationRule<string[]> {
 }
 
-export type SetValueTypeRquired<T> = Dispatch<SetStateAction<T>>
+export type SetValueTypeRequired<T> = Dispatch<SetStateAction<T>>
 export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
-export type SetValueType<T> = SetValueTypeRquired<T> | SetValueTypeOptional<T>
 export type ValueType<T> = T | undefined
 
 export abstract class CsItem<T> extends CsItemBase {
   value: ValueType<T> = undefined
-  setValue: SetValueType<T> = {} as SetValueType<T>
+  private setValueReq?: SetValueTypeRequired<T>
+  private setValueOpt?: SetValueTypeOptional<T>
   ValidationRule: ValidationRule<T> = new ValidationRule<T>()
-  init(label: string, readonly: boolean = false) {
+
+  init = (label: string, readonly: boolean = false) => {
     this.label = label
     this.setReadonly(readonly)
     return this
   }
-  setState(state: StateResult<T>) {
+
+  setState = (state: StateResult<T>) => {
     this.value = state[0]
-    this.setValue = state[1]
+    if (this.value !== undefined) {
+      this.setValueReq = state[1] as SetValueTypeRequired<T>
+    } else {
+      this.setValueOpt = state[1] as SetValueTypeOptional<T>
+    }
     return this
   }
-  setValidationRule<T>(rule: ValidationRule<T>) {
+
+  setValue = (value?: SetStateAction<T>) => {
+    if (this.setValueOpt) {
+      this.setValueOpt(value as SetStateAction<T | undefined>)
+      return
+    }
+    if (this.setValueReq) {
+      if (value !== undefined) {
+        this.setValueReq(value);
+        return
+      }
+      throw new Error("undefined cannot be passed to setState, only allowed when you specify any inital value for useState(initialValue).")
+    }
+    throw new Error("setState must be called before using setValue")
+  }
+
+  setValidationRule = <T>(rule: ValidationRule<T>) => {
     this.ValidationRule = rule
     return this
+  }
+
+  get hasValidationError(): boolean {
+    return (this.parentView?.validateEvent?.validationError[this.key] !== undefined)
+  }
+
+  get validationErrorMessage(): string {
+    return this.parentView?.validateEvent?.validationError[this.key] ?? ""
   }
 }
 
@@ -107,7 +138,7 @@ export class CsCheckBoxItem extends CsItem<boolean> {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
   private identifier?: CsCheckBoxItem
   checkBoxText: string = ""
-  setCheckBoxText(checkBoxText: string) {
+  setCheckBoxText = (checkBoxText: string) => {
     this.checkBoxText = checkBoxText
   }
   isChecked(): boolean {
@@ -119,7 +150,7 @@ export abstract class CsHasOptionsItem<T> extends CsItem<T> {
   options: any[] = []
   valueKey: string = "value"
   labelKey: string = "label"
-  setOptions(options: any[], valueKey: string, labelKey: string) {
+  setOptions = (options: any[], valueKey: string, labelKey: string) => {
     this.options = options
     this.valueKey = valueKey
     this.labelKey = labelKey
