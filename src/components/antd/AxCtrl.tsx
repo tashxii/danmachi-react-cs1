@@ -71,7 +71,6 @@ const validateWhenErrroExists = <T extends string | number | string[]>(newValue:
   if (!validateEvent.validationError[item.key]) {
     return
   }
-  console.log("here " + item.key, item.value)
   return validateEvent.onItemValidateHasError(newValue, item)
 }
 
@@ -130,7 +129,6 @@ export const AxInputNumber: React.FC<AxProps<CsInputNumberItem>> = (props) => {
           readOnly={item.isReadonly()}
           onChange={(value: number | null) => {
             if (value !== null) { item.setValue(value) }
-            if (value === null) { item.setValue() }
             if (!validateWhenErrroExists(value ?? 0, item)) {
               setRefresh(true)
             }
@@ -187,7 +185,7 @@ export const AxSelectBox = <T extends string | number = string>(props: AxProps<C
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Select className={getClassName(props, "fit-content")}
-          value={item.value} defaultValue={item.value}
+          value={item.value} // defaultValue={item.value}
           onChange={(value: T) => {
             item.setValue(value)
             if (!validateWhenErrroExists(value, item)) {
@@ -197,9 +195,9 @@ export const AxSelectBox = <T extends string | number = string>(props: AxProps<C
         >
           {item.options.map(o => {
             return (
-              (!item.isReadonly() || (item.isReadonly() && item.value === o[item.valueKey])) ?
-                <Select.Option key={o[item.valueKey]} value={o[item.valueKey]}>
-                  {o[item.labelKey]}
+              (!item.isReadonly() || (item.isReadonly() && item.value === o[item.optionValueKey])) ?
+                <Select.Option key={o[item.optionValueKey]} value={o[item.optionValueKey]}>
+                  {o[item.optionLabelKey]}
                 </Select.Option>
                 : null
             )
@@ -232,9 +230,9 @@ export const AxRadioBox: React.FC<AxProps<CsRadioBoxItem>> = (props) => {
         >
           {item.options.map(o => {
             return (
-              <Radio key={o[item.valueKey]} value={o[item.valueKey]}
-                disabled={item.isReadonly() && item.value !== o[item.valueKey]}>
-                {o[item.labelKey]}
+              <Radio key={o[item.optionValueKey]} value={o[item.optionValueKey]}
+                disabled={item.isReadonly() && item.value !== o[item.optionValueKey]}>
+                {o[item.optionLabelKey]}
               </Radio>
             )
           })}
@@ -269,8 +267,8 @@ export const AxMultiCheckBox: React.FC<AxProps<CsMultiCheckBoxItem>> = (props) =
       renderCtrl={(setRefresh) => (
         <div className={getClassName(props, "fit-content")}>
           {item.options.map(o => {
-            const value = o[item.valueKey]
-            const text = o[item.labelKey]
+            const value = o[item.optionValueKey]
+            const text = o[item.optionLabelKey]
             return (
               <Checkbox
                 className="checkbox-item" key={value} value={value}

@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react"
-import { Alert, Button } from "antd"
+import { Alert, Button, ButtonProps, Tooltip } from "antd"
 import { useCallback } from "react"
 import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../../framework/cs/CsEvent"
 import "./AxCtrl.css"
@@ -25,24 +25,23 @@ export interface AxButtonProps extends AxEventProps {
   errorMessage?: string
   validateErrorMessage?: string
   affterSuccessPath?: string
+  disabledReason?: string
   children?: ReactNode | undefined
+  antdProps?: ButtonProps
 }
 
 export const AxButton = (props: AxButtonProps) => {
-  const { onClick, validationViews } = props
+  const { onClick, validationViews, antdProps } = props
   const [onClickResult, setOnClickResult] = useState<boolean>()
-  const [validationSuccess, setValidationSuccess] = useState(true)
 
   const onClickWrap = useCallback(() => {
     let validationOK = true
-    setValidationSuccess(true)
     if (validationViews) {
       for (const view of validationViews) {
         if (view.validateEvent) {
           view.validateEvent.resetError()
           if (view.validateEvent.onValidateHasError(view)) {
             validationOK = false
-            setValidationSuccess(false)
           }
         }
       }
@@ -53,15 +52,23 @@ export const AxButton = (props: AxButtonProps) => {
     }
   }, [onClick, validationViews])
 
+  const isShowDisableReason = () => {
+    return (antdProps?.disabled === true) && (props.disabledReason)
+  }
+
   return (
     <div className={getClassName(props, "button-area")}>
       {(onClickResult !== undefined && onClickResult && props.successMessage) && <Alert message={props.successMessage} type="success" showIcon closable />}
       {(onClickResult !== undefined && !onClickResult && props.errorMessage) && <Alert message={props.errorMessage} type="error" showIcon closable />}
-      {(!validationSuccess && props.validateErrorMessage) && <Alert message={props.validateErrorMessage} type="warning" showIcon closable />}
-      <Button className={getClassName(props, "button")} type={props.type}
-        onClick={() => { onClickWrap() }}>
-        {props.children}
-      </Button>
+      <Tooltip title={props.disabledReason} color="darkslategray"
+        open={(isShowDisableReason()) ? undefined : false} >
+        <Button className={getClassName(props, "button")} type={props.type}
+          onClick={() => { onClickWrap() }}
+          {...antdProps}
+        >
+          {props.children}
+        </Button>
+      </Tooltip>
     </div >
   )
 }
@@ -72,14 +79,14 @@ export interface AxMutateButtonProps<TApiRequest = unknown, TApiResponse = unkno
   validationViews?: CsView[],
   successMessage?: string
   errorMessage?: string
-  validateErrorMessage?: string
   affterSuccessPath?: string
   children?: ReactNode | undefined
+  antdProps?: ButtonProps
 }
 
 export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>
   (props: AxMutateButtonProps<TApiRequest, TApiResponse>) => {
-  const { event, validationViews } = props
+  const { event, validationViews, antdProps } = props
 
   useEffect(() => {
     if (!event.isLoading) {
@@ -92,23 +99,7 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>
     }
   }, [event])
 
-  const isVadaliteSuccess = () => {
-    if (validationViews) {
-      for (const view of validationViews) {
-        if (view.validateEvent) {
-          if (Object.keys(view.validateEvent.validationError).length > 0) {
-            return false
-          }
-        }
-      }
-    }
-    return true;
-  }
-
   const onClick = useCallback(async () => {
-    if (event.apiRequest === undefined) {
-      return
-    }
     let validationOK = true
     if (validationViews) {
       for (const view of validationViews) {
@@ -121,6 +112,9 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>
       }
     }
     if (validationOK) {
+      if (event.apiRequest === undefined) {
+        return
+      }
       await event.onClick()
     }
   }, [event, validationViews])
@@ -129,9 +123,10 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>
     <div className={getClassName(props, "button-area")}>
       {(event.result.isSuccess && props.successMessage) && <Alert message={props.successMessage} type="success" showIcon closable />}
       {(event.result.isError && props.errorMessage) && <Alert message={props.errorMessage} type="error" showIcon closable />}
-      {(!isVadaliteSuccess() && props.validateErrorMessage) && <Alert message={props.validateErrorMessage} type="warning" showIcon closable />}
       <Button className={getClassName(props, "button")} type={props.type} loading={event.isLoading}
-        onClick={() => { onClick() }} disabled={(event.apiRequest === undefined)}>
+        onClick={() => { onClick() }}
+        disabled={(event.apiRequest === undefined)}
+        {...antdProps}>
         {props.children}
       </Button>
     </div >
@@ -144,14 +139,14 @@ export interface AxQueryButtonProps<TApiResponse = unknown> extends AxEventProps
   validationViews?: CsView[],
   successMessage?: string
   errorMessage?: string
-  validateErrorMessage?: string
   affterSuccessPath?: string
   children?: ReactNode | undefined
+  antdProps?: ButtonProps
 }
 
 export const AxQueryButton = <TApiResponse = unknown>
   (props: AxQueryButtonProps<TApiResponse>) => {
-  const { event, validationViews } = props
+  const { event, validationViews, antdProps } = props
 
   useEffect(() => {
     if (!event.isRefetching) {
@@ -163,19 +158,6 @@ export const AxQueryButton = <TApiResponse = unknown>
       }
     }
   }, [event])
-
-  const isVadaliteSuccess = () => {
-    if (validationViews) {
-      for (const view of validationViews) {
-        if (view.validateEvent) {
-          if (Object.keys(view.validateEvent.validationError).length > 0) {
-            return false
-          }
-        }
-      }
-    }
-    return true;
-  }
 
   const onClick = useCallback(async () => {
     let validationOK = true
@@ -198,9 +180,9 @@ export const AxQueryButton = <TApiResponse = unknown>
     <div className={getClassName(props, "button-area")}>
       {(event.result.isSuccess && props.successMessage) && <Alert message={props.successMessage} type="success" showIcon closable />}
       {(event.result.isError && props.errorMessage) && <Alert message={props.errorMessage} type="error" showIcon closable />}
-      {(!isVadaliteSuccess() && props.validateErrorMessage) && <Alert message={props.validateErrorMessage} type="warning" showIcon closable />}
       <Button className={getClassName(props, "button")} type={props.type} loading={event.isRefetching}
-        onClick={() => { onClick() }}>
+        onClick={() => { onClick() }}
+        {...antdProps}>
         {props.children}
       </Button>
     </div>

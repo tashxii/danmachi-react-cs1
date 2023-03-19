@@ -61,12 +61,12 @@ export class StringArrayValidationRule extends ValidationRule<string[]> {
 
 export type SetValueTypeRequired<T> = Dispatch<SetStateAction<T>>
 export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
+export type SetValueType<T> = SetValueTypeRequired<T> | SetValueTypeOptional<T>
 export type ValueType<T> = T | undefined
 
 export abstract class CsItem<T> extends CsItemBase {
   value: ValueType<T> = undefined
-  private setValueReq?: SetValueTypeRequired<T>
-  private setValueOpt?: SetValueTypeOptional<T>
+  setValue: SetValueType<T> = {} as SetValueType<T>
   ValidationRule: ValidationRule<T> = new ValidationRule<T>()
 
   init = (label: string, readonly: boolean = false) => {
@@ -77,27 +77,8 @@ export abstract class CsItem<T> extends CsItemBase {
 
   setState = (state: StateResult<T>) => {
     this.value = state[0]
-    if (this.value !== undefined) {
-      this.setValueReq = state[1] as SetValueTypeRequired<T>
-    } else {
-      this.setValueOpt = state[1] as SetValueTypeOptional<T>
-    }
+    this.setValue = state[1]
     return this
-  }
-
-  setValue = (value?: SetStateAction<T>) => {
-    if (this.setValueOpt) {
-      this.setValueOpt(value as SetStateAction<T | undefined>)
-      return
-    }
-    if (this.setValueReq) {
-      if (value !== undefined) {
-        this.setValueReq(value);
-        return
-      }
-      throw new Error("undefined cannot be passed to setState, only allowed when you specify any inital value for useState(initialValue).")
-    }
-    throw new Error("setState must be called before using setValue")
   }
 
   setValidationRule = <T>(rule: ValidationRule<T>) => {
@@ -148,12 +129,12 @@ export class CsCheckBoxItem extends CsItem<boolean> {
 
 export abstract class CsHasOptionsItem<T> extends CsItem<T> {
   options: any[] = []
-  valueKey: string = "value"
-  labelKey: string = "label"
-  setOptions = (options: any[], valueKey: string, labelKey: string) => {
+  optionValueKey: string = "value"
+  optionLabelKey: string = "label"
+  setOptions = (options: any[], optionValueKey: string, optionLabelKey: string) => {
     this.options = options
-    this.valueKey = valueKey
-    this.labelKey = labelKey
+    this.optionValueKey = optionValueKey
+    this.optionLabelKey = optionLabelKey
     return this
   }
 }
@@ -164,7 +145,7 @@ export class CsMultiCheckBoxItem extends CsHasOptionsItem<string[]> {
     return this.value ?? []
   }
   getCheckedOption(): any[] {
-    return this.options.filter((o => this.value?.includes(o[this.valueKey])))
+    return this.options.filter((o => this.value?.includes(o[this.optionValueKey])))
   }
 }
 
@@ -175,7 +156,7 @@ export class CsSelectBoxItem<T extends string | number = string> extends CsHasOp
     return (this.value !== undefined)
   }
   getSelectedOption(): any {
-    return this.options.find(o => o[this.valueKey] === this.value)
+    return this.options.find(o => o[this.optionValueKey] === this.value)
   }
 }
 
@@ -188,6 +169,6 @@ export class CsRadioBoxItem extends CsHasOptionsItem<string> {
     return (this.value !== undefined)
   }
   getSelectedOption(): any {
-    return this.options.find(o => o[this.valueKey] === this.value)
+    return this.options.find(o => o[this.optionValueKey] === this.value)
   }
 }

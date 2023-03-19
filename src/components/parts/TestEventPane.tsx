@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { Button, Card, Col, Modal, Row, Table } from "antd"
+import { Card, Col, Modal, Row, Table } from "antd"
 import { CxTableLayout } from "../../framework/cx/CxLayout"
 import { CsInputTextItem, CsSelectBoxItem, CsView } from "../../framework/cs"
 import { AxButton, AxMutateButton, AxQueryButton } from "../antd/AxEventCtrl"
@@ -9,11 +9,12 @@ import {
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
 } from "../../framework/cs/CsEvent"
 import { stringRule, optionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, options } from "../../framework/cs/CsHooks"
-import { TestApi, Chara, CityCreateRequest, City, Clan } from "./testApi"
+import { TestApi } from "./testApi"
 import { useCsView } from "../../framework/cs/CsView"
 import { useMutation, useQuery } from "react-query"
 import { CsSelectNumberBoxItem } from "../../framework/cs/CsItem"
 import Link from "antd/es/typography/Link"
+import { City, CityCreateRequest, Clan, Chara } from "./testApiClasses"
 
 interface CitySearchView extends CsView {
   keyword: CsInputTextItem
@@ -25,7 +26,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
   = (
     props: { colSize: number, componentType: "standard" | "antd" | "fluent" }
   ) => {
-    const [editingCity, setEditingCity] = useState(new City())
+    const [editingCity] = useState(new City())
     const [clans, setClans] = useState<Clan[]>(editingCity.clans)
     const [charas, setCharas] = useState<Chara[]>(editingCity.charas)
     const [showClanModal, setShowClanModal] = useState(false)
@@ -56,9 +57,10 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       name: useCsInputTextItem("名前", useState(""), stringRule(true, 1, 16)),
       job: useCsSelectBoxItem("職業", useState(""), stringRule(true),
         optionStrings(["無職", "戦士", "魔術師", "僧侶", "盗賊", "山賊", "海賊", "遊び人", "ギャンブラー", "博徒", "勇者", "修羅"])),
-      clanKey: useCsSelectNumberBoxItem("クラン", useState(0), numberRule(true),
+      clanKey: useCsSelectNumberBoxItem("クラン", useState(), numberRule(true),
         options(editingCity.clans, "clanKey", "name")),
     })
+    console.log(charaView.clanKey)
 
     useMemo(() => {
       searchView.makeButton.setRequest(
@@ -81,7 +83,6 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                 addClassNames={["left", "bottom"]}
                 successMessage="6割くらいの確率で成功しました"
                 errorMessage="4割くらいの確率で失敗しました"
-                validateErrorMessage="入力項目に不備があります"
               >
                 検索
               </AxQueryButton>
@@ -102,7 +103,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                     return true
                   }}
                 >
-                  ⚔クランの追加⚔
+                  ⚔ クランの追加 ⚔
                 </AxButton>
               </Col>
             </Row>
@@ -119,9 +120,21 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                     title: "操作", key: "9", render: (i, row) => {
                       return (
                         <>
-                          <Link onClick={() => { setEditingClan(row); setShowClanModal(true) }}>編集</Link>
-                          <span>&nbsp;</span>
-                          <Link onClick={() => { }} >削除</Link>
+                          <Link style={{ marginRight: "10px" }}
+                            onClick={() => {
+                              const clan = new Clan()
+                              // 参照を渡すとキャンセルでロールバックできないので、コピーを渡す
+                              Object.assign(clan, row)
+                              setEditingClan(clan)
+                              clanView.name.setValue(clan.name)
+                              setShowClanModal(true)
+                            }}>編集</Link>
+
+                          <Link style={{ color: "red" }}
+                            onClick={() => {
+                              editingCity.removeClan(row)
+                              setClans(editingCity.clans)
+                            }} >削除</Link>
                         </>
                       )
                     }
@@ -142,12 +155,16 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                       charaView.validateEvent?.resetError()
                       charaView.name.setValue("")
                       charaView.job.setValue("")
-                      charaView.clanKey.setValue()
+                      charaView.clanKey.setValue(clans.at(0)?.clanKey ?? -1)
                       setShowCharaModal(true)
                       return true
                     }}
+                    disabledReason="クランがないのでキャラクターは追加できません。"
+                    antdProps={{
+                      disabled: (clans.length === 0),
+                    }}
                   >
-                    † キャラクターの追加 †
+                    🗡 キャラクターの追加 🗡
                   </AxButton>
                 </Col>
               </Row>
@@ -175,9 +192,22 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                       title: "操作", key: "9", render: (i, row) => {
                         return (
                           <>
-                            <Link onClick={() => { setEditingChara(row); setShowCharaModal(true) }}>編集</Link>
-                            <span>&nbsp;</span>
-                            <Link onClick={() => { }} >削除</Link>
+                            <Link style={{ marginRight: "10px" }}
+                              onClick={() => {
+                                const chara = new Chara()
+                                Object.assign(chara, row)
+                                // 参照を渡すとキャンセルでロールバックできないので、コピーを渡す
+                                setEditingChara(chara)
+                                charaView.name.setValue(chara.name)
+                                charaView.job.setValue(chara.job)
+                                charaView.clanKey.setValue(chara.clanKey ?? -1)
+                                setShowCharaModal(true)
+                              }}>編集</Link>
+                            <Link style={{ color: "red" }}
+                              onClick={() => {
+                                editingCity.removeChara(row)
+                                setCharas(editingCity.charas)
+                              }} >削除</Link>
                           </>
                         )
                       }
@@ -211,6 +241,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                       setClans(editingCity.clans)
                     } else {
                       setEditingClan(editingClan)
+                      setClans((prev) => (prev.map(c => (c.clanKey === editingClan.clanKey) ? editingClan : c)))
                     }
                     setShowClanModal(false)
                   }}>
@@ -247,6 +278,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                       setCharas(editingCity.charas)
                     } else {
                       setEditingChara(editingChara)
+                      setCharas((prev) => (prev.map(c => (c.charaKey === editingChara.charaKey) ? editingChara : c)))
                     }
                     setShowCharaModal(false)
                   }}>
@@ -255,7 +287,6 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
               </Col>
             </Row>
           ]}
-
         >
           <CharaEditForm
             chara={editingChara}
@@ -302,7 +333,6 @@ export const ClanEditForm: React.FC<ClanEditProps> = (props: ClanEditProps) => {
 interface CharaEditProps {
   chara: Chara
   view: CharaMakeView
-  //onClickHandler: () => boolean | void
 }
 
 interface CharaMakeView extends CsView {

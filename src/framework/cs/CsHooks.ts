@@ -35,18 +35,18 @@ export function booleanRule(required: boolean) {
 
 class SelectOptions {
   options: any[]
-  valueKey: string = "value"
-  labelKey: string = "label"
-  constructor(options: any[], valueKey: string = "value", labelKey: string = "label") {
+  optionValueKey: string = "value"
+  optionLabelKey: string = "label"
+  constructor(options: any[], optionValueKey: string = "value", optionLabelKey: string = "label") {
     this.options = options
-    this.valueKey = valueKey
-    this.labelKey = labelKey
+    this.optionValueKey = optionValueKey
+    this.optionLabelKey = optionLabelKey
   }
 }
 
-export function options(options: any[], valueKey: string = "value", labelKey: string = "label")
+export function options(options: any[], optionValueKey: string = "value", optionLabelKey: string = "label")
   : SelectOptions {
-  return new SelectOptions(options, valueKey, labelKey)
+  return new SelectOptions(options, optionValueKey, optionLabelKey)
 }
 
 export function optionStrings(options: string[]) {
@@ -76,7 +76,7 @@ export function useCsItem<T, I extends CsItem<T>>(
   if (selOpt) {
     if (item instanceof CsHasOptionsItem<T>) {
       const hasOptItem = item as CsHasOptionsItem<T>
-      hasOptItem.setOptions(selOpt.options, selOpt.valueKey, selOpt.valueKey)
+      hasOptItem.setOptions(selOpt.options, selOpt.optionValueKey, selOpt.optionLabelKey)
     }
   }
   item.setReadonly((readonly === RW.Readonly))
