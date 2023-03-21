@@ -1,11 +1,20 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
 import { BooleanValidationRule, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsSelectNumberBoxItem, CsTextAreaItem, NumberValidationRule, StringArrayValidationRule, StringValidationRule, ValidationRule } from "./CsItem"
 
 export type StateResultOptional<T> = [val: T | undefined, setVal: Dispatch<SetStateAction<T | undefined>>]
 export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>>]
-export type StateResult<T> = StateResultRequired<T> | StateResultOptional<T>
+export type StateResult<T> = StateResultOptional<T>
 
+
+export function useInit<T>(value?: T) {
+  const state = useState<T>()
+  if (value !== undefined && state[0] === undefined) {
+    console.log("useInit", value, state[0])
+    state[1](value)
+  }
+  return state
+}
 
 export function stringRule(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string) {
   const rule = new StringValidationRule()
@@ -44,16 +53,16 @@ class SelectOptions {
   }
 }
 
-export function options(options: any[], optionValueKey: string = "value", optionLabelKey: string = "label")
+export function selectOptions(options: any[], optionValueKey: string = "value", optionLabelKey: string = "label")
   : SelectOptions {
   return new SelectOptions(options, optionValueKey, optionLabelKey)
 }
 
-export function optionStrings(options: string[]) {
+export function selectOptionStrings(options: string[]) {
   return new SelectOptions(options.map((o) => ({ value: o, label: o })))
 }
 
-export function optionNumbers(options: number[]) {
+export function selectOptionNumbers(options: number[]) {
   return new SelectOptions(options.map((o) => ({ value: o, label: o })))
 }
 

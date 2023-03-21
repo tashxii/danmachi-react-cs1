@@ -4,13 +4,13 @@ import type { TabsProps } from 'antd';
 import { AsIsWayPane } from '../parts/AsIsWayPane';
 import { TestTabXPane } from '../parts/TestTabXPane';
 import { AxCheckBox, AxSelectNumberBox } from '../antd/AxCtrl';
-import { numberRule, optionNumbers, useCsCheckBoxItem, useCsSelectNumberBoxItem } from '../../framework/cs/CsHooks';
+import { numberRule, selectOptionNumbers, useCsCheckBoxItem, useCsSelectNumberBoxItem, useInit } from '../../framework/cs/CsHooks';
 import { TestEventPane } from '../parts/TestEventPane';
 
 const TestTab: React.FC = () => {
-  const colSize = useCsSelectNumberBoxItem("表示列数", useState(2), numberRule(false),
-    optionNumbers([1, 2, 3, 4, 6]))
-  const readonlyCheck = useCsCheckBoxItem("読み取り専用", useState(false), "する")
+  const colSize = useCsSelectNumberBoxItem("表示列数", useInit(2), numberRule(false),
+    selectOptionNumbers([1, 2, 3, 4, 6]))
+  const readonlyCheck = useCsCheckBoxItem("読み取り専用", useInit(false), "する")
   const items: TabsProps['items'] = [
     {
       key: '1',
@@ -52,8 +52,8 @@ const TestTab: React.FC = () => {
   return (
     <div style={{ padding: "20px" }}>
       <Row>
-        <AxSelectNumberBox item={colSize} showRequiredTag="none" />
-        <AxCheckBox item={readonlyCheck} showRequiredTag="none" />
+        <AxSelectNumberBox item={colSize} />
+        <AxCheckBox item={readonlyCheck} />
       </Row>
       <Tabs defaultActiveKey="1" items={items} />
     </div>

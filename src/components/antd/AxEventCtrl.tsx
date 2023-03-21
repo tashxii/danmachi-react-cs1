@@ -73,7 +73,6 @@ export const AxButton = (props: AxButtonProps) => {
   const isShowDisableReason = () => {
     return (antdProps?.disabled === true) && (props.disabledReason)
   }
-  console.log("onClickResult", onClickResult)
   return (
     <div className={getClassName(props, "button-area")}>
       {(showStatus === "success" && props.successMessage) &&

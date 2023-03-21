@@ -8,7 +8,7 @@ import {
   CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
 } from "../../framework/cs/CsEvent"
-import { stringRule, optionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, options } from "../../framework/cs/CsHooks"
+import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/cs/CsHooks"
 import { TestApi } from "./testApi"
 import { useCsView } from "../../framework/cs/CsView"
 import { useMutation, useQuery } from "react-query"
@@ -34,7 +34,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
     const [showCharaModal, setShowCharaModal] = useState(false)
     const [editingChara, setEditingChara] = useState<Chara>(new Chara())
 
-    const keywordItem = useCsInputTextItem("検索キーワード", useState(""), stringRule(false, 1, 100))
+    const keywordItem = useCsInputTextItem("検索キーワード", useInit(""), stringRule(false, 1, 100))
     const searchView = useCsView<CitySearchView>({
       readonly: false,
       keyword: keywordItem,
@@ -49,16 +49,16 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
     })
     const clanView = useCsView<ClanMakeView>({
       readonly: false,
-      name: useCsInputTextItem("名前", useState(""), stringRule(true, 1, 16)),
-      description: useCsInputTextItem("説明", useState(""), stringRule(false, 1, 100)),
+      name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
+      description: useCsInputTextItem("説明", useInit(""), stringRule(false, 1, 100)),
     })
     const charaView = useCsView<CharaMakeView>({
       readonly: false,
-      name: useCsInputTextItem("名前", useState(""), stringRule(true, 1, 16)),
-      job: useCsSelectBoxItem("職業", useState(""), stringRule(true),
-        optionStrings(["無職", "戦士", "魔術師", "僧侶", "盗賊", "山賊", "海賊", "遊び人", "ギャンブラー", "博徒", "勇者", "修羅"])),
-      clanKey: useCsSelectNumberBoxItem("クラン", useState(), numberRule(true),
-        options(editingCity.clans, "clanKey", "name")),
+      name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
+      job: useCsSelectBoxItem("職業", useInit(""), stringRule(true),
+        selectOptionStrings(["無職", "戦士", "魔術師", "僧侶", "盗賊", "山賊", "海賊", "遊び人", "ギャンブラー", "博徒", "勇者", "修羅"])),
+      clanKey: useCsSelectNumberBoxItem("クラン", useInit(), numberRule(true),
+        selectOptions(editingCity.clans, "clanKey", "name")),
     })
     console.log(charaView.clanKey)
 
@@ -349,7 +349,7 @@ export const CharaEditForm: React.FC<CharaEditProps> = (props: CharaEditProps) =
   useEffect(() => {
     chara.name = view.name.value ?? ""
     chara.job = view.job.value ?? ""
-    chara.clanKey = view.clanKey.value ?? -1
+    chara.clanKey = view.clanKey.value
   }, [chara, view.clanKey.value, view.job.value, view.name.value])
 
   return (

@@ -45,7 +45,7 @@ export class CsValidationEvent extends CsEvent {
     return this.validator.validateAll(value)
   }
 
-  onItemValidateHasError = <T extends string | number | string[] | undefined>(newValue: T, item: CsItem<T>) => {
+  onItemValidateHasError = <T extends string | number | string[]>(newValue: T | undefined, item: CsItem<T>) => {
     const validator = this.validator.constraint[item.key]
     const hasError = validator.validate(newValue)
     if (!hasError) {

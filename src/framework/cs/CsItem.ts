@@ -25,9 +25,13 @@ export class ValidationRule<T> {
 }
 
 export class BooleanValidationRule extends ValidationRule<boolean> {
+  //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+  private identifier?: BooleanValidationRule
 }
 
 export class NumberValidationRule extends ValidationRule<number> {
+  //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+  private identifier?: NumberValidationRule
   min: number = 0
   max: number = 0
   setRange = (min: number, max: number): NumberValidationRule => {
@@ -38,6 +42,8 @@ export class NumberValidationRule extends ValidationRule<number> {
 }
 
 export class StringValidationRule extends ValidationRule<string> {
+  //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+  private identifier?: StringValidationRule
   min: number = 0
   max: number = 0
   email: boolean = false
@@ -57,16 +63,18 @@ export class StringValidationRule extends ValidationRule<string> {
   }
 }
 export class StringArrayValidationRule extends ValidationRule<string[]> {
+  //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+  private identifier?: StringArrayValidationRule
 }
 
 export type SetValueTypeRequired<T> = Dispatch<SetStateAction<T>>
 export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
-export type SetValueType<T> = SetValueTypeRequired<T> | SetValueTypeOptional<T>
+export type SetValueType<T> = SetValueTypeRequired<T>
 export type ValueType<T> = T | undefined
 
 export abstract class CsItem<T> extends CsItemBase {
-  value: ValueType<T> = undefined
-  setValue: SetValueType<T> = {} as SetValueType<T>
+  value: ValueType<T> = {} as T
+  private setValueOpt: SetValueTypeOptional<T> = {} as SetValueTypeOptional<T>
   ValidationRule: ValidationRule<T> = new ValidationRule<T>()
 
   init = (label: string, readonly: boolean = false) => {
@@ -77,8 +85,13 @@ export abstract class CsItem<T> extends CsItemBase {
 
   setState = (state: StateResult<T>) => {
     this.value = state[0]
-    this.setValue = state[1]
+    this.setValueOpt = state[1]
     return this
+  }
+
+  setValue = (value?: T) => {
+    console.log("setValue", value)
+    this.setValueOpt(value)
   }
 
   setValidationRule = <T>(rule: ValidationRule<T>) => {
