@@ -13,7 +13,7 @@ import { TextAreaProps, TextAreaRef } from 'antd/es/input/TextArea'
 
 const { Text } = Typography
 
-interface AxProps<I extends CsItemBase> {
+export interface AxProps<I extends CsItemBase> {
   item: I
   showRequiredTag?: "both" | "required" | "optional" | "none"
   addClassNames?: string[]
@@ -31,7 +31,7 @@ export const AxLabel = (props: AxLabelProp) => {
   )
 }
 
-const getClassName = <T,>(props: AxProps<CsItem<T>>, add?: string): string => {
+export const getClassName = <T,>(props: AxProps<CsItem<T>>, add?: string): string => {
   let names = ["ctrl"]
   const item = props.item
   if (add) {
@@ -49,7 +49,7 @@ const getClassName = <T,>(props: AxProps<CsItem<T>>, add?: string): string => {
   return names.join(" ")
 }
 
-const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
+export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
   const required = item.ValidationRule?.required ?? false
   const showTag = showRequiredTag ?? "both"
   const requiredTag = () => {
@@ -70,7 +70,7 @@ const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "
   )
 }
 
-const validateWhenErrroExists = <T extends string | number | string[]>(newValue: T, item: CsItem<T>) => {
+export const validateWhenErrroExists = <T extends string | number | string[]>(newValue: T, item: CsItem<T>) => {
   const validateEvent = item.parentView?.validateEvent
   if (!validateEvent) {
     return

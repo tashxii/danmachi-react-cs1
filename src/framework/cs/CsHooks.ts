@@ -42,7 +42,7 @@ export function booleanRule(required: boolean) {
   return new BooleanValidationRule().setRequired(required)
 }
 
-class SelectOptions {
+export class SelectOptions {
   options: any[]
   optionValueKey: string = "value"
   optionLabelKey: string = "label"

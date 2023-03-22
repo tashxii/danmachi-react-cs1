@@ -5,6 +5,8 @@ import { CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem, CsSelectBo
 import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
 import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../cs/CsItem"
 import { AxMultiCheckBox } from "../../components/antd/AxCtrl"
+import { CsInputDateItem } from "../cs/CsItemAdvanced"
+import { AxInputDate } from "../../components/antd/AxCtrlAdvanced"
 const { AxCheckBox, AxInputNumber, AxInputPassword, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
 
 
@@ -158,6 +160,17 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
         return (<NullElement />)
       default:
         return (<AxMultiCheckBox {...props} />)
+    }
+  }
+  if (item instanceof CsInputDateItem) {
+    const props: CxProps<CsInputDateItem> = { item: item }
+    switch (componentType) {
+      case "standard":
+        return (<NullElement />)
+      case "fluent":
+        return (<NullElement />)
+      default:
+        return (<AxInputDate {...props} />)
     }
   }
   return <NullElement />

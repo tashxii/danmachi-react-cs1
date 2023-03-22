@@ -69,12 +69,11 @@ export class StringArrayValidationRule extends ValidationRule<string[]> {
 
 export type SetValueTypeRequired<T> = Dispatch<SetStateAction<T>>
 export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
-export type SetValueType<T> = SetValueTypeRequired<T>
 export type ValueType<T> = T | undefined
 
 export abstract class CsItem<T> extends CsItemBase {
-  value: ValueType<T> = {} as T
-  private setValueOpt: SetValueTypeOptional<T> = {} as SetValueTypeOptional<T>
+  value: T | undefined = undefined
+  protected setValueOpt: SetValueTypeOptional<T> = {} as SetValueTypeOptional<T>
   ValidationRule: ValidationRule<T> = new ValidationRule<T>()
 
   init = (label: string, readonly: boolean = false) => {

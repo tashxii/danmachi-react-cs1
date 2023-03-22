@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
 import { AvailableFiledType, ConstraintValidators, ValidationError } from "../validation/Validation";
-import { ValueType, SetValueTypeRequired, SetValueTypeOptional, CsItem } from "./CsItem";
+import { ValueType, SetValueTypeOptional, CsItem, SetValueTypeRequired } from "./CsItem";
 import CsView from "./CsView";
 
 export default abstract class CsEvent { }
