@@ -1,6 +1,6 @@
 import React from "react"
 import { CxPasswordBox, CxRadioBox, CxSelectBox, CxInputText } from "../../framework/cx/CxCtrl"
-import { AxInputText, AxInputPassword } from "../antd/AxCtrl"
+import { AxInputText, AxInputPassword } from "../../framework/antd/AxCtrl"
 import { useTestView } from "./testView"
 
 export const AsIsWayPane: React.FC = () => {

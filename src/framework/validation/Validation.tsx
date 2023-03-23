@@ -135,8 +135,17 @@ class ConstraintValidator<T> {
   validate<V>(value: V): boolean {
     let message: string | null = null;
     if (this.constraint instanceof NumberFieldConstraint) {
-      const numValue = this.constraint.isNumber(value) ? Number(value) : null;
-      message = this.constraint.validate(numValue);
+      const constraint = this.constraint as NumberFieldConstraint
+      if (Array.isArray(value) === false) {
+        const numValue = constraint.isNumber(value) ? Number(value) : null;
+        message = constraint.validate(numValue);
+      } else {
+        for (const v of value as number[]) {
+          const numValue = constraint.isNumber(v) ? Number(v) : null;
+          message = constraint.validate(numValue);
+          if (message != null) break;
+        }
+      }
     } else if (this.constraint instanceof StringFieldConstraint) {
       // TypeGuardでコンパイルエラーになるため、instanceofで判定を行う
       const strValue = (!value) ? null : String(value)

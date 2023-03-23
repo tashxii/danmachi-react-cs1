@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from "react"
 import { Card, Col, Modal, Row, Table } from "antd"
 import { CxTableLayout } from "../../framework/cx/CxLayout"
 import { CsInputTextItem, CsSelectBoxItem, CsView } from "../../framework/cs"
-import { AxButton, AxMutateButton, AxQueryButton } from "../antd/AxEventCtrl"
-import { AxInputText } from "../antd/AxCtrl"
+import { AxButton, AxMutateButton, AxQueryButton } from "../../framework/antd/AxEventCtrl"
+import { AxInputText } from "../../framework/antd/AxCtrl"
 import {
   CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
@@ -22,9 +22,9 @@ interface CitySearchView extends CsView {
   makeButton: CsRqMutateButtonClickEvent<CityCreateRequest, City>
 }
 
-export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "fluent" }>
+export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "mui" | "fluent" }>
   = (
-    props: { colSize: number, componentType: "standard" | "antd" | "fluent" }
+    props: { colSize: number, componentType: "standard" | "antd" | "mui" | "fluent" }
   ) => {
     const [editingCity] = useState(new City())
     const [clans, setClans] = useState<Clan[]>(editingCity.clans)

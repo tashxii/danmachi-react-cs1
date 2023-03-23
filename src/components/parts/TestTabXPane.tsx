@@ -6,7 +6,7 @@ import { useTestView } from "./testView"
 
 interface TestTabXPaneProp {
   colSize: number,
-  componentType: "standard" | "antd" | "fluent",
+  componentType: "standard" | "antd" | "mui" | "fluent",
   readonly: boolean
 }
 export const TestTabXPane: React.FC<TestTabXPaneProp> = (props: TestTabXPaneProp) => {

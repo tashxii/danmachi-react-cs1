@@ -3,7 +3,7 @@ import { Row, Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import { AsIsWayPane } from '../parts/AsIsWayPane';
 import { TestTabXPane } from '../parts/TestTabXPane';
-import { AxCheckBox, AxSelectNumberBox } from '../antd/AxCtrl';
+import { AxCheckBox, AxSelectNumberBox } from '../../framework/antd/AxCtrl';
 import { numberRule, selectOptionNumbers, useCsCheckBoxItem, useCsSelectNumberBoxItem, useInit } from '../../framework/cs/CsHooks';
 import { TestEventPane } from '../parts/TestEventPane';
 
@@ -35,10 +35,10 @@ const TestTab: React.FC = () => {
     },
     {
       key: '4',
-      label: `x列の自動デザイン（Fluent UI）`,
+      label: `x列の自動デザイン（Material UI）`,
       children: <TestTabXPane
         colSize={colSize.value ?? 1}
-        componentType="fluent"
+        componentType="mui"
         readonly={readonlyCheck.value ?? false} />,
     },
     {

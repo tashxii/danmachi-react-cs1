@@ -1,22 +1,23 @@
 import React from "react"
 import { Col, Row } from "antd"
-import Antd from "../../components/antd"
+import Antd from "../antd"
 import { CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../cs"
 import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
 import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../cs/CsItem"
-import { AxMultiCheckBox } from "../../components/antd/AxCtrl"
-import { CsInputDateItem } from "../cs/CsItemAdvanced"
-import { AxInputDate } from "../../components/antd/AxCtrlAdvanced"
+import { AxMultiCheckBox, AxSelectNumberBox } from "../antd/AxCtrl"
+import { CsInputDateItem, CsInputNumberRangeItem } from "../cs/CsItemAdvanced"
+import { AxInputDate, AxInputNumberRange } from "../antd/AxCtrlAdvanced"
+import { MxCheckBox, MxInputNumber, MxInputPassword, MxInputText, MxMultiCheckBox, MxRadioBox, MxSelectBox, MxSelectNumberBox, MxTextArea } from "../mui/MxCtrl"
 const { AxCheckBox, AxInputNumber, AxInputPassword, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
 
 
 export interface CxLayoutProps {
   view: CsView
   colSize: 1 | 2 | 3 | 4 | 6 | 12 | 24
-  componentType: "standard" | "antd" | "fluent"
+  componentType: "standard" | "antd" | "mui" | "fluent"
 }
 
-export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
+export const CxTableLayout: React.FC<CxLayoutProps> = (props: CxLayoutProps) => {
   const v = props.view
   const items: CsItemBase[] = []
   for (const value of Object.values(v)) {
@@ -62,14 +63,14 @@ export const CxTableLayout: React.FC<CxLayoutProps> = (props) => {
   )
 }
 
-export const selectComponent = (item: CsItemBase, componentType: "standard" | "antd" | "fluent"): JSX.Element => {
+export const selectComponent = (item: CsItemBase, componentType: "standard" | "antd" | "mui" | "fluent"): JSX.Element => {
   if (item instanceof CsInputTextItem) {
     const props: CxProps<CsInputTextItem> = { item: item }
     switch (componentType) {
       case "standard":
         return (<CxInputText {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxInputText  {...props} />)
       default:
         return (<AxInputText {...props} />)
     }
@@ -79,8 +80,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<CxInputNumber {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxInputNumber {...props} />)
       default:
         return (<AxInputNumber {...props} />)
     }
@@ -90,8 +91,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<CxTextArea {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxTextArea {...props} />)
       default:
         return (<AxTextArea {...props} />)
     }
@@ -101,8 +102,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<CxCheckBox {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxCheckBox {...props} />)
       default:
         return (<AxCheckBox {...props} />)
     }
@@ -112,8 +113,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<CxPasswordBox {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxInputPassword {...props} />)
       default:
         return (<AxInputPassword {...props} />)
     }
@@ -123,8 +124,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<CxRadioBox {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxRadioBox {...props} />)
       default:
         return (<AxRadioBox {...props} />)
     }
@@ -134,10 +135,10 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<NullElement />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxSelectNumberBox {...props} />)
       default:
-        return (<AxSelectBox<number> {...props} />)
+        return (<AxSelectNumberBox {...props} />)
     }
   }
   if (item instanceof CsSelectBoxItem<string>) {
@@ -145,8 +146,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<CxSelectBox {...props} />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxSelectBox {...props} />)
       default:
         return (<AxSelectBox {...props} />)
     }
@@ -156,8 +157,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<NullElement />)
-      case "fluent":
-        return (<NullElement />)
+      case "mui":
+        return (<MxMultiCheckBox {...props} />)
       default:
         return (<AxMultiCheckBox {...props} />)
     }
@@ -167,10 +168,21 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
     switch (componentType) {
       case "standard":
         return (<NullElement />)
-      case "fluent":
+      case "mui":
         return (<NullElement />)
       default:
         return (<AxInputDate {...props} />)
+    }
+  }
+  if (item instanceof CsInputNumberRangeItem) {
+    const props: CxProps<CsInputNumberRangeItem> = { item: item }
+    switch (componentType) {
+      case "standard":
+        return (<NullElement />)
+      case "mui":
+        return (<NullElement />)
+      default:
+        return (<AxInputNumberRange {...props} />)
     }
   }
   return <NullElement />
@@ -180,6 +192,6 @@ const NullElement = () => {
   return <div></div>;
 }
 
-const SelectComponent: React.FC<{ item: CsItemBase, componentType: "standard" | "antd" | "fluent" }> = (props) => {
+const SelectComponent: React.FC<{ item: CsItemBase, componentType: "standard" | "antd" | "mui" | "fluent" }> = (props) => {
   return selectComponent(props.item, props.componentType)
 }

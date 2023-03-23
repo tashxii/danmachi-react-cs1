@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
 import { AvailableFiledType, ConstraintValidators, ValidationError } from "../validation/Validation";
 import { ValueType, SetValueTypeOptional, CsItem, SetValueTypeRequired } from "./CsItem";
@@ -45,7 +45,7 @@ export class CsValidationEvent extends CsEvent {
     return this.validator.validateAll(value)
   }
 
-  onItemValidateHasError = <T extends string | number | string[]>(newValue: T | undefined, item: CsItem<T>) => {
+  onItemValidateHasError = <T extends string | number | number[] | string[]>(newValue: T | undefined, item: CsItem<T>) => {
     const validator = this.validator.constraint[item.key]
     const hasError = validator.validate(newValue)
     if (!hasError) {

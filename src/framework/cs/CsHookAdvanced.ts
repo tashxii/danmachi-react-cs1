@@ -1,6 +1,12 @@
+import { Dispatch, useState } from "react";
 import { StateResult, RW, useCsItem } from "./CsHooks";
-import { StringValidationRule } from "./CsItem";
-import { CsInputDateItem } from "./CsItemAdvanced";
+import { NumberValidationRule, StringValidationRule } from "./CsItem";
+import { CsInputDateItem, CsInputNumberRangeItem } from "./CsItemAdvanced";
+
+export function useRangeInit<T extends number | string>(lower?: T, upper?: T) {
+  const state = useState<T[]>([lower as T, upper as T])
+  return state as [T[] | undefined, Dispatch<React.SetStateAction<T[] | undefined>>]
+}
 
 export function useCsInputDateItem(label: string,
   state: StateResult<string>,
@@ -9,3 +15,12 @@ export function useCsInputDateItem(label: string,
 ): CsInputDateItem {
   return useCsItem(CsInputDateItem, label, state, rule, undefined, readonly);
 }
+
+export function useCsInputNumberRangeItem(label: string,
+  state: StateResult<number[]>,
+  rule: NumberValidationRule,
+  readonly: RW = RW.Editable,
+): CsInputNumberRangeItem {
+  return useCsItem(CsInputNumberRangeItem, label, state, rule, undefined, readonly);
+}
+

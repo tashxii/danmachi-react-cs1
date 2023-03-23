@@ -6,7 +6,6 @@ export type StateResultOptional<T> = [val: T | undefined, setVal: Dispatch<SetSt
 export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>>]
 export type StateResult<T> = StateResultOptional<T>
 
-
 export function useInit<T>(value?: T) {
   const state = useState<T>()
   if (value !== undefined && state[0] === undefined) {
@@ -19,7 +18,7 @@ export function useInit<T>(value?: T) {
 export function stringRule(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string) {
   const rule = new StringValidationRule()
   rule.setRequired(required)
-  if (min && max) rule.setLength(min, max)
+  if (min || max) rule.setLength(min, max)
   if (email) rule.setEmail(true)
   if (regExp) rule.setRegExp(regExp)
   return rule
@@ -28,7 +27,7 @@ export function stringRule(required: boolean, min?: number, max?: number, email?
 export function numberRule(required: boolean, min?: number, max?: number) {
   const rule = new NumberValidationRule()
   rule.setRequired(required)
-  if (min && max) rule.setRange(min, max)
+  if (min || max) rule.setRange(min, max)
   return rule
 }
 

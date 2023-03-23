@@ -34,7 +34,7 @@ export class NumberValidationRule extends ValidationRule<number> {
   private identifier?: NumberValidationRule
   min: number = 0
   max: number = 0
-  setRange = (min: number, max: number): NumberValidationRule => {
+  setRange = (min: number = Number.MAX_SAFE_INTEGER, max: number = Number.MAX_SAFE_INTEGER) => {
     this.min = min
     this.max = max
     return this
@@ -48,7 +48,7 @@ export class StringValidationRule extends ValidationRule<string> {
   max: number = 0
   email: boolean = false
   regExp: string | null = null
-  setLength = (min: number, max: number) => {
+  setLength = (min: number = 0, max: number = Number.MAX_SAFE_INTEGER) => {
     this.min = min
     this.max = max
     return this

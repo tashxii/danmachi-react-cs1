@@ -1,9 +1,9 @@
 import React, { ReactNode, useEffect, useState } from "react"
 import { Alert, Button, ButtonProps, Tooltip } from "antd"
 import { useCallback } from "react"
-import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../../framework/cs/CsEvent"
+import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../cs/CsEvent"
 import "./AxCtrl.css"
-import { CsView } from "../../framework/cs"
+import { CsView } from "../cs"
 
 export interface AxEventProps {
   addClassNames?: string[]

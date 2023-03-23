@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { CsItemBase, CsInputTextItem, CsView } from "../../framework/cs";
 import { CsInputNumberItem, CsCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
-import { useCsInputDateItem } from "../../framework/cs/CsHookAdvanced";
+import { useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit } from "../../framework/cs/CsHookAdvanced";
 import {
   stringRule, RW, useCsInputTextItem, useCsSelectBoxItem,
   useCsCheckBoxItem, numberRule, useCsInputNumberItem,
@@ -10,7 +10,7 @@ import {
   useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule, useInit
 } from "../../framework/cs/CsHooks";
 import { CsMultiCheckBoxItem } from "../../framework/cs/CsItem";
-import { CsInputDateItem } from "../../framework/cs/CsItemAdvanced";
+import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/cs/CsItemAdvanced";
 import { useCsView } from "../../framework/cs/CsView";
 
 export default interface TestView extends CsView {
@@ -23,10 +23,10 @@ export default interface TestView extends CsView {
   snsWay: CsMultiCheckBoxItem
   memo: CsTextAreaItem
   birth: CsInputDateItem
+  budget: CsInputNumberRangeItem
   other1: CsInputTextItem
   other2: CsInputTextItem
   other3: CsInputTextItem
-  other4: CsInputTextItem
   otherA: CsInputTextItem
 }
 
@@ -45,10 +45,10 @@ export function useTestView(): TestView {
     snsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
     birth: useCsInputDateItem("生年月日", useInit(dayjs().toString()), stringRule(true)),
+    budget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
     other1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     other2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
     other3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),
-    other4: useCsInputTextItem("ほか４", useInit("ほか４"), stringRule(false, 1, 10)),
     otherA: useCsInputTextItem("ほか亜", useInit("ほかあ"), stringRule(false, 1, 10), RW.Readonly),
     readonly: false,
   })

@@ -5,9 +5,9 @@ import {
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem,
-} from '../../framework/cs'
+} from '../cs'
 import "./AxCtrl.css"
-import { ValidationError } from '../basics/ValidationError'
+import { ValidationError } from '../../components/basics/ValidationError'
 import { ValueType } from '@rc-component/mini-decimal'
 import { TextAreaProps, TextAreaRef } from 'antd/es/input/TextArea'
 
@@ -51,7 +51,7 @@ export const getClassName = <T,>(props: AxProps<CsItem<T>>, add?: string): strin
 
 export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
   const required = item.ValidationRule?.required ?? false
-  const showTag = showRequiredTag ?? "both"
+  const showTag = showRequiredTag ?? ((item.parentView) ? "both" : "none")
   const requiredTag = () => {
     switch (showTag) {
       case "both":
@@ -70,7 +70,7 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
   )
 }
 
-export const validateWhenErrroExists = <T extends string | number | string[]>(newValue: T, item: CsItem<T>) => {
+export const validateWhenErrroExists = <T extends string | number | number[] | string[]>(newValue: T, item: CsItem<T>) => {
   const validateEvent = item.parentView?.validateEvent
   if (!validateEvent) {
     return
@@ -140,7 +140,7 @@ export const AxInputNumber = (props: AxInputNumberProps) => {
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
-        <InputNumber className={getClassName(props)}
+        <InputNumber className={getClassName(props, "input-number")}
           value={item.value} defaultValue={item.value}
           readOnly={item.isReadonly()}
           onChange={(value: ValueType | null) => {

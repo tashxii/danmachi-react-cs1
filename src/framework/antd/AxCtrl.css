@@ -20,8 +20,9 @@
   margin-right: 5px;
   margin-bottom: 5px;
   min-width: 40px;
-  border-color: #c9cece;
+  border-color: #cccccc44;
   border-width: 1px;
+  border-style: solid;
   border-radius: 5px;
   padding: 8px;
   background-color: #fafbfcfd;
@@ -32,6 +33,11 @@
 .ctrl:focus {
   background-color: white;
   /* border-color: azure; */
+}
+
+.ctrl.input-number {
+  width: 35%;
+  min-width: 80px;
 }
 
 .ctrl.validation-error {
