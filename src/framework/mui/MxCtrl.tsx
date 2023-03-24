@@ -14,6 +14,7 @@ import TextField, { TextFieldProps } from '@mui/material/TextField'
 import TextareaAutosize, { TextareaAutosizeProps } from '@mui/material/TextareaAutosize'
 import { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+import { CsRIView } from '../cs/CsView'
 
 //const { Text } = Typography
 
@@ -75,14 +76,17 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
 }
 
 export const validateWhenErrroExists = <T extends string | number | number[] | string[]>(newValue: T, item: CsItem<T>) => {
-  const validateEvent = item.parentView?.validateEvent
-  if (!validateEvent) {
-    return
+  if (item.parentView instanceof CsRIView) {
+    const validateEvent = item.parentView?.validateEvent
+    if (!validateEvent) {
+      return
+    }
+    if (!validateEvent.validationError[item.key]) {
+      return
+    }
+    return validateEvent.onItemValidateHasError(newValue, item)
   }
-  if (!validateEvent.validationError[item.key]) {
-    return
-  }
-  return validateEvent.onItemValidateHasError(newValue, item)
+  return false
 }
 
 export interface MxEditCtrlProps<T extends CsItemBase> {

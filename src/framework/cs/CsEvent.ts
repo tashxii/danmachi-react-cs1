@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
 import { AvailableFiledType, ConstraintValidators, ValidationError } from "../validation/Validation";
 import { ValueType, SetValueTypeOptional, CsItem, SetValueTypeRequired } from "./CsItem";
-import CsView from "./CsView";
+import CsView, { CsRIView } from "./CsView";
 
 export default abstract class CsEvent { }
 
@@ -29,7 +29,7 @@ export class CsValidationEvent extends CsEvent {
   /** Form でのサブミットを使用する際に利用する。Formを使う意味はほとんどなく、
    *  XxButtonを使用してればOnClickまえに検証が行えるため、非推奨 */
   onHandleSubmit = (
-    view: CsView,
+    view: CsRIView,
     callback: ValidationCallback,
     onError?: ValidationCallback)
     : ValidationCallback => {
@@ -40,7 +40,7 @@ export class CsValidationEvent extends CsEvent {
 
   /** XxButtonから呼び出すためのバリデーションメソッド
    *  エラーがあったか、なかったかをbooleanとして返す */
-  onValidateHasError = (view: CsView): boolean => {
+  onValidateHasError = (view: CsRIView): boolean => {
     const value = Object.fromEntries(view.validateFieldMap!)
     return this.validator.validateAll(value)
   }

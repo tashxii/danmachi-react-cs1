@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { StateResult } from "./CsHooks"
-import CsView from "./CsView"
+import CsView, { CsRIView, CsZodView } from "./CsView"
 
 export abstract class CsItemBase {
   label: string = ""
@@ -99,11 +99,23 @@ export abstract class CsItem<T> extends CsItemBase {
   }
 
   get hasValidationError(): boolean {
-    return (this.parentView?.validateEvent?.validationError[this.key] !== undefined)
+    if (this.parentView instanceof CsRIView) {
+      return (this.parentView?.validateEvent?.validationError[this.key] !== undefined)
+    }
+    if (this.parentView instanceof CsZodView) {
+      return (this.parentView?.zodError?.issues.find(i => (i.path.includes(this.key))) !== undefined)
+    }
+    return false
   }
 
   get validationErrorMessage(): string {
-    return this.parentView?.validateEvent?.validationError[this.key] ?? ""
+    if (this.parentView instanceof CsRIView) {
+      return this.parentView?.validateEvent?.validationError[this.key] ?? ""
+    }
+    if (this.parentView instanceof CsZodView) {
+      return this.parentView?.zodError?.issues.find(i => (i.path.includes(this.key)))?.message ?? ""
+    }
+    return ""
   }
 }
 

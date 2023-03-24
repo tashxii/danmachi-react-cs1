@@ -10,21 +10,21 @@ import {
 } from "../../framework/cs/CsEvent"
 import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/cs/CsHooks"
 import { TestApi } from "./testApi"
-import { useCsView } from "../../framework/cs/CsView"
+import { CsRIView, useCsView } from "../../framework/cs/CsView"
 import { useMutation, useQuery } from "react-query"
 import { CsSelectNumberBoxItem } from "../../framework/cs/CsItem"
 import Link from "antd/es/typography/Link"
 import { City, CityCreateRequest, Clan, Chara } from "./testApiClasses"
 
-interface CitySearchView extends CsView {
+interface CitySearchView extends CsRIView {
   keyword: CsInputTextItem
   searchButton: CsRqQueryButtonClickEvent<City>
   makeButton: CsRqMutateButtonClickEvent<CityCreateRequest, City>
 }
 
-export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "mui" | "fluent" }>
+export const TestEventPane: React.FC<{ colSize: number, componentType: "standard" | "antd" | "mui" | "bootstrap" }>
   = (
-    props: { colSize: number, componentType: "standard" | "antd" | "mui" | "fluent" }
+    props: { colSize: number, componentType: "standard" | "antd" | "mui" | "bootstrap" }
   ) => {
     const [editingCity] = useState(new City())
     const [clans, setClans] = useState<Clan[]>(editingCity.clans)
@@ -307,7 +307,7 @@ interface ClanEditProps {
   //onClickHandler: () => boolean | void
 }
 
-interface ClanMakeView extends CsView {
+interface ClanMakeView extends CsRIView {
   name: CsInputTextItem
   description: CsInputTextItem
 }
@@ -337,7 +337,7 @@ interface CharaEditProps {
   view: CharaMakeView
 }
 
-interface CharaMakeView extends CsView {
+interface CharaMakeView extends CsRIView {
   name: CsInputTextItem
   job: CsSelectBoxItem
   clanKey: CsSelectNumberBoxItem
