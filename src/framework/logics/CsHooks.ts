@@ -7,11 +7,7 @@ export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>
 export type StateResult<T> = StateResultOptional<T>
 
 export function useInit<T>(value?: T) {
-  const state = useState<T>()
-  if (value !== undefined && state[0] === undefined) {
-    console.log("useInit", value, state[0])
-    state[1](value)
-  }
+  const state = useState<T | undefined>(value)
   return state
 }
 
@@ -80,6 +76,7 @@ export function useCsItem<T, I extends CsItem<T>>(
   const item = new type()
   item.label = label
   item.setState(state)
+  item.setValidation(useState<string>(""))
   if (rule) item.setValidationRule(rule)
   if (selOpt) {
     if (item instanceof CsHasOptionsItem<T>) {
@@ -145,7 +142,7 @@ export function useCsSelectNumberBoxItem(label: string,
   rule: NumberValidationRule, selOpt: SelectOptions | undefined,
   readonly: RW = RW.Editable,
 ): CsSelectNumberBoxItem {
-  return useCsItem(CsSelectBoxItem<number>, label, state, rule, selOpt, readonly);
+  return useCsItem(CsSelectNumberBoxItem, label, state, rule, selOpt, readonly);
 }
 
 export function useCsRadioBoxItem(label: string,

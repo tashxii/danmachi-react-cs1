@@ -1,8 +1,8 @@
 import { DatePicker, DatePickerProps, InputNumber, InputNumberProps, InputProps, InputRef } from "antd"
 import dayjs from "dayjs"
 import React from "react"
-import { CsInputDateItem, CsInputNumberRangeItem } from "../cs/CsItemAdvanced"
-import { AxProps, AxEditCtrl, getClassName, validateWhenErrroExists } from "./AxCtrl"
+import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
+import { AxProps, AxEditCtrl, getClassName } from "./AxCtrl"
 
 export interface AxInputDateProps extends AxProps<CsInputDateItem> {
   antdProps?: DatePickerProps
@@ -20,7 +20,7 @@ export const AxInputDate = (props: AxInputDateProps) => {
             if (item.isReadonly()) return
             const newValue = value?.format(CsInputDateItem.dateValueFormat)
             item.setValue(newValue)
-            if (!validateWhenErrroExists(newValue ?? "", item)) {
+            if (!item.validateWhenErrorExists(newValue ?? "")) {
               setRefresh(true)
             }
           }}
@@ -48,7 +48,7 @@ export const AxInputNumberRange = (props: AxInputNumberRangeProps) => {
             onChange={(value) => {
               const newValue = (value) ? value : undefined
               item.setLowerValue(newValue as number)
-              if (!validateWhenErrroExists([newValue as number, item.upperValue as number], item)) {
+              if (!item.validateWhenErrorExists([newValue as number, item.upperValue as number])) {
                 setRefresh(true)
               }
             }}
@@ -67,7 +67,7 @@ export const AxInputNumberRange = (props: AxInputNumberRangeProps) => {
             onChange={(value) => {
               const newValue = (value) ? value : undefined
               item.setUpperValue(newValue as number)
-              if (!validateWhenErrroExists([item.lowerValue as number, newValue as number], item)) {
+              if (!item.validateWhenErrorExists([item.lowerValue as number, newValue as number])) {
                 setRefresh(true)
               }
             }}

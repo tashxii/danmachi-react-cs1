@@ -1,59 +1,8 @@
 import React, { useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
-import { AvailableFiledType, ConstraintValidators, ValidationError } from "../validation/Validation";
-import { ValueType, SetValueTypeOptional, CsItem, SetValueTypeRequired } from "./CsItem";
-import CsView, { CsRIView } from "./CsView";
+import { ValueType, SetValueTypeOptional, SetValueTypeRequired } from "./CsItem";
 
-export default abstract class CsEvent { }
-
-export type ValidationCallback = (event: React.FormEvent<HTMLFormElement>) => void
-
-export class CsValidationEvent extends CsEvent {
-  validationError: ValidationError<AvailableFiledType>
-  validator: ConstraintValidators<AvailableFiledType>
-  resetError: (name?: string) => void
-  private handleSubmit: (value: AvailableFiledType, callback: ValidationCallback, onError?: ValidationCallback) => ValidationCallback
-  constructor(
-    error: ValidationError<AvailableFiledType>,
-    validator: ConstraintValidators<AvailableFiledType>,
-    resetError: (name?: string) => void,
-    handleSubmit: (value: AvailableFiledType, callback: ValidationCallback, onError?: ValidationCallback) => ValidationCallback
-  ) {
-    super()
-    this.validationError = error
-    this.validator = validator
-    this.resetError = resetError
-    this.handleSubmit = handleSubmit
-  }
-
-  /** Form でのサブミットを使用する際に利用する。Formを使う意味はほとんどなく、
-   *  XxButtonを使用してればOnClickまえに検証が行えるため、非推奨 */
-  onHandleSubmit = (
-    view: CsRIView,
-    callback: ValidationCallback,
-    onError?: ValidationCallback)
-    : ValidationCallback => {
-    const value = Object.fromEntries(view.validateFieldMap!)
-    const result = this.handleSubmit(value, callback, onError)
-    return result
-  }
-
-  /** XxButtonから呼び出すためのバリデーションメソッド
-   *  エラーがあったか、なかったかをbooleanとして返す */
-  onValidateHasError = (view: CsRIView): boolean => {
-    const value = Object.fromEntries(view.validateFieldMap!)
-    return this.validator.validateAll(value)
-  }
-
-  onItemValidateHasError = <T extends string | number | number[] | string[]>(newValue: T | undefined, item: CsItem<T>) => {
-    const validator = this.validator.constraint[item.key]
-    const hasError = validator.validate(newValue)
-    if (!hasError) {
-      this.resetError(item.key)
-    }
-    return hasError
-  }
-}
+export abstract class CsEvent { }
 
 export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
   isSuccess: boolean

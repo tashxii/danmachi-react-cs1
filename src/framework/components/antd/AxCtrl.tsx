@@ -1,15 +1,18 @@
-import React, { ChangeEvent, ReactNode, useEffect, useState } from 'react'
+import React, { ChangeEvent, ReactNode, useEffect, useState } from "react"
 import { Input, Select, Radio, Checkbox, InputNumber, Typography, Tag, InputProps, InputNumberProps, InputRef, SelectProps, RadioGroupProps, CheckboxProps } from "antd"
 import {
   CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem,
-} from '../cs'
+  CsSelectNumberBoxItem,
+} from "../../logics"
 import "./AxCtrl.css"
-import { ValidationError } from '../../components/basics/ValidationError'
-import { ValueType } from '@rc-component/mini-decimal'
-import { TextAreaProps, TextAreaRef } from 'antd/es/input/TextArea'
+import { ValidationError } from "../../../components/basics/ValidationError"
+import { ValueType } from "@rc-component/mini-decimal"
+import { TextAreaProps, TextAreaRef } from "antd/es/input/TextArea"
+import { CsRIView } from "../../logics"
+import { CsHasOptionsItem } from "../../logics"
 
 const { Text } = Typography
 
@@ -50,7 +53,7 @@ export const getClassName = <T,>(props: AxProps<CsItem<T>>, add?: string): strin
 }
 
 export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
-  const required = item.ValidationRule?.required ?? false
+  const required = item.validationRule?.required ?? false
   const showTag = showRequiredTag ?? ((item.parentView) ? "both" : "none")
   const requiredTag = () => {
     switch (showTag) {
@@ -68,17 +71,6 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
       {requiredTag()}
     </span >
   )
-}
-
-export const validateWhenErrroExists = <T extends string | number | number[] | string[]>(newValue: T, item: CsItem<T>) => {
-  const validateEvent = item.parentView?.validateEvent
-  if (!validateEvent) {
-    return
-  }
-  if (!validateEvent.validationError[item.key]) {
-    return
-  }
-  return validateEvent.onItemValidateHasError(newValue, item)
 }
 
 export interface AxEditCtrlProps<T extends CsItemBase> {
@@ -116,11 +108,11 @@ export const AxInputText = (props: AxInputTextProps) => {
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Input className={getClassName(props)}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
           readOnly={item.isReadonly()}
           onChange={(e) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -141,12 +133,12 @@ export const AxInputNumber = (props: AxInputNumberProps) => {
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <InputNumber className={getClassName(props, "input-number")}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
           readOnly={item.isReadonly()}
           onChange={(value: ValueType | null) => {
             if (value !== null) {
               item.setValue(Number(value))
-              if (!validateWhenErrroExists(Number(value), item)) {
+              if (!item.validateWhenErrorExists(Number(value))) {
                 setRefresh(true)
               }
             }
@@ -168,11 +160,11 @@ export const AxInputPassword = (props: AxInputPasswordProps) => {
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Input.Password className={getClassName(props)}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
           readOnly={item.isReadonly()}
           onChange={(e) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -193,11 +185,11 @@ export const AxTextArea = (props: AxTextAreaProps) => {
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Input.TextArea className={getClassName(props, "textarea")}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
           readOnly={item.isReadonly()}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -208,20 +200,23 @@ export const AxTextArea = (props: AxTextAreaProps) => {
   )
 }
 
-export interface AxSelectBoxProps<T extends string | number> extends AxProps<CsSelectBoxItem<T>> {
+interface AxSelectBoxCommonProps<V extends string | number, T extends CsHasOptionsItem<V>>
+  extends AxProps<T> {
   antdProps?: SelectProps
 }
 
-export const AxSelectBox = <T extends string | number = string>(props: AxSelectBoxProps<T>) => {
+const AxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem<V>>(
+  props: AxSelectBoxCommonProps<V, T>
+) => {
   const { item, antdProps } = props
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Select className={getClassName(props, "fit-content")}
-          value={item.value} // defaultValue={item.value}
-          onChange={(value: T) => {
+          value={item.value}
+          onChange={(value: V) => {
             item.setValue(value)
-            if (!validateWhenErrroExists(value, item)) {
+            if (!item.validateWhenErrorExists(value)) {
               setRefresh(true)
             }
           }}
@@ -243,12 +238,22 @@ export const AxSelectBox = <T extends string | number = string>(props: AxSelectB
   )
 }
 
-export interface AxSelectNumberBoxProps extends AxSelectBoxProps<number> {
+export interface AxSelectBoxProps
+  extends AxSelectBoxCommonProps<string, CsSelectBoxItem> {
+  antdProps?: SelectProps
+}
+
+export const AxSelectBox = (props: AxSelectBoxProps) => {
+  return (<AxSelectBoxCommon<string, CsSelectBoxItem> {...props} />)
+}
+
+export interface AxSelectNumberBoxProps
+  extends AxSelectBoxCommonProps<number, CsSelectNumberBoxItem> {
   antdProps?: SelectProps
 }
 
 export const AxSelectNumberBox = (props: AxSelectNumberBoxProps) => {
-  return (<AxSelectBox<number> {...props} />)
+  return (<AxSelectBoxCommon<number, CsSelectNumberBoxItem> {...props} />)
 }
 
 export interface AxRadioBoxProps extends AxProps<CsRadioBoxItem> {
@@ -261,11 +266,11 @@ export const AxRadioBox = (props: AxRadioBoxProps) => {
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
         <Radio.Group className={getClassName(props, "fit-content")}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
           onChange={(e) => {
             if (item.isReadonly()) return
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -334,7 +339,7 @@ export const AxMultiCheckBox = (props: AxMultiCheckBoxProps) => {
                     newValue = (item.value) ? item.value?.filter(v => v !== value) : []
                   }
                   item.setValue(newValue)
-                  if (!validateWhenErrroExists(newValue, item)) {
+                  if (!item.validateWhenErrorExists(newValue)) {
                     setRefresh(true)
                   }
                 }}

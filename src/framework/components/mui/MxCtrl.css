@@ -1,0 +1,170 @@
+.label {
+  display: block;
+  margin-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  text-align: left;
+  font-size: 90%;
+}
+
+.label .MuiChip-root {
+  font-size: 40%;
+  vertical-align: top;
+  height: auto;
+  margin-left: 10px;
+  padding-inline: 4px;
+}
+
+.mui-ctrl {
+  width: 90%;
+  margin-left: 10px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  min-width: 40px;
+  border-color: #d8eed9;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 8px;
+  background-color: #f6fcf7bb;
+  font-size: 16px;
+  outline: none;
+}
+
+.mui-ctrl:focus {
+  background-color: #bdf4cf23;
+  border-color: #36f03c5a;
+  border-width: 2px !important;
+}
+
+.mui-ctrl .MuiOutlinedInput-root.Mui-focused fieldset {
+  background-color: #bdf4cf23;
+  border-color: #36f03c5a;
+  border-width: 2px !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  background-color: #bdf4cf23;
+  border-color: #36f03c5a !important;
+  border-width: 2px !important;
+}
+
+.mui-ctrl.input-number {
+  width: 35%;
+  min-width: 80px;
+}
+
+.mui-ctrl.validation-error {
+  border-style: solid;
+  border-color: #f01818bf;
+  border-width: 1.0px;
+}
+
+.mui-ctrl.MuiTextField-root {
+  margin-left: 10px;
+}
+
+/* MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input
+ css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input */
+
+.mui-ctrl .MuiInputBase-input {
+  padding: 12px;
+}
+
+.mui-ctrl MuiOutlinedInput-input {
+  padding: 4px 4px 16px 4px;
+  vertical-align: middle;
+}
+
+.mui-ctrl .MuiInputBase-multiline {
+  padding: 4px 4px 4px 4px;
+}
+
+.mui-ctrl.readonly {
+  background: linear-gradient(to right, #d0d9cc23, #bedebd43);
+}
+
+.mui-ctrl.readonly .MuiButtonBase-root {
+  pointer-events: none;
+}
+
+.mui-ctrl.readonly .MuiSelect-select {
+  pointer-events: none;
+}
+
+.mui-ctrl.readonly:focus {
+  background: linear-gradient(to right, #a5bed73c, #c5def75c);
+}
+
+.mui-ctrl .checkbox-group {
+  display: inline-block !important;
+}
+
+.mui-ctrl .checkbox-item {
+  margin-right: 5px;
+  margin-left: 0px !important;
+  /* for-antd */
+  margin-inline-start: 0px !important;
+  /* for-antd */
+}
+
+.mui-ctrl.textarea {
+  width: 90%;
+  border-radius: 5px;
+  padding: 8px;
+  max-width: calc(90%-5px);
+  border: solid 1px lightgray;
+  font-size: 16px;
+  outline: none;
+}
+
+.fit-content {
+  width: -moz-fit-content;
+  /* Firefox */
+  width: fit-content;
+  /* other browsers */
+  min-width: 120px;
+}
+
+.mui-ctrl .button-area {
+  padding: 3px;
+  min-height: 100%;
+  width: 100%;
+  margin-right: 10px;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: end;
+}
+
+.mui-ctrl .button-area.left {
+  align-items: flex-start;
+}
+
+.mui-ctrl .button-area.middle {
+  justify-content: center;
+  color: #195e0bda;
+}
+
+.mui-ctrl .button-area.bottom {
+  justify-content: flex-end;
+}
+
+.mui-ctrl .button-alert {
+  position: absolute;
+  width: fit-content;
+  white-space: nowrap;
+  bottom: 60px;
+  margin-left: calc(-55%);
+}
+
+.mui-ctrl .button {
+  position: relative;
+  flex-wrap: wrap;
+  width: fit-content;
+}
+
+.mui-ctrl .button.bottom {
+  bottom: 15px;
+}

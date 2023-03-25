@@ -1,16 +1,15 @@
 import React from "react"
 import { Col, Row } from "antd"
-import Antd from "../antd"
-import { CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../cs"
+import { CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../../logics"
 import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
-import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../cs/CsItem"
-import { AxMultiCheckBox, AxSelectNumberBox } from "../antd/AxCtrl"
-import { CsInputDateItem, CsInputNumberRangeItem } from "../cs/CsItemAdvanced"
-import { AxInputDate, AxInputNumberRange } from "../antd/AxCtrlAdvanced"
+import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../../logics"
+import { AxCheckBox, AxInputNumber, AxInputPassword, AxInputText, AxMultiCheckBox, AxRadioBox, AxSelectBox, AxSelectNumberBox, AxTextArea } from "../antd"
+import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
 import { MxCheckBox, MxInputNumber, MxInputPassword, MxInputText, MxMultiCheckBox, MxRadioBox, MxSelectBox, MxSelectNumberBox, MxTextArea } from "../mui/MxCtrl"
 import { BSxCheckBox, BSxInputNumber, BSxInputPassword, BSxInputText, BSxMultiCheckBox, BSxRadioBox, BSxSelectBox, BSxSelectNumberBox, BSxTextArea } from "../bootstrap/BSxCtrl"
 import { BSxInputDate, BSxInputNumberRange } from "../bootstrap/BSxCtrlAdvanced"
-const { AxCheckBox, AxInputNumber, AxInputPassword, AxRadioBox, AxSelectBox, AxTextArea, AxInputText } = Antd
+import { MxInputDate, MxInputNumberRange } from "../mui/MxCtrlAdvanced"
+import { AxInputDate, AxInputNumberRange } from "../antd"
 
 
 export interface CxLayout2Props {
@@ -19,7 +18,7 @@ export interface CxLayout2Props {
   componentType: "standard" | "antd" | "mui" | "bootstrap"
 }
 
-export const CxTableLayout2: React.FC<CxLayout2Props> = (props: CxLayout2Props) => {
+export const CxTableLayout: React.FC<CxLayout2Props> = (props: CxLayout2Props) => {
   const v = props.view
   const items: CsItemBase[] = []
   for (const value of Object.values(v)) {
@@ -144,7 +143,7 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
         return (<AxRadioBox {...props} />)
     }
   }
-  if (item instanceof CsSelectBoxItem<number>) {
+  if (item instanceof CsSelectNumberBoxItem) {
     const props: CxProps<CsSelectNumberBoxItem> = { item: item }
     switch (componentType) {
       case "standard":
@@ -157,7 +156,7 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
         return (<AxSelectNumberBox {...props} />)
     }
   }
-  if (item instanceof CsSelectBoxItem<string>) {
+  if (item instanceof CsSelectBoxItem) {
     const props: CxProps<CsSelectBoxItem> = { item: item }
     switch (componentType) {
       case "standard":
@@ -189,7 +188,7 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
       case "standard":
         return (<NullElement />)
       case "mui":
-        return (<NullElement />)
+        return (<MxInputDate  {...props} />)
       case "bootstrap":
         return (<BSxInputDate {...props} />)
       default:
@@ -202,7 +201,7 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
       case "standard":
         return (<NullElement />)
       case "mui":
-        return (<NullElement />)
+        return (<MxInputNumberRange {...props} />)
       case "bootstrap":
         return (<BSxInputNumberRange {...props} />)
       default:

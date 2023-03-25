@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import StringFieldConstraint from './field/StringFieldConstraint';
-import StringArrayFieldConstraint from './field/StringArrayFieldConstraint';
-import NumberFieldConstraint from './field/NumberFieldConstraint';
+import React, { useState } from "react";
+import StringFieldConstraint from "./field/StringFieldConstraint";
+import StringArrayFieldConstraint from "./field/StringArrayFieldConstraint";
+import NumberFieldConstraint from "./field/NumberFieldConstraint";
 
 /**
  * 単項目バリデーションの実装では、必須入力のバリデーション等、同様の実装をすることが多くなる。

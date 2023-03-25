@@ -1,21 +1,25 @@
 import { ConfigProvider } from "antd";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import ja_JP from "antd/locale/ja_JP"
 import React from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 import TestTab from "./components/pages/TestTab"
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css"
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <ConfigProvider locale={ja_JP}>
-      <React.Fragment>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ConfigProvider locale={ja_JP}>
         <QueryClientProvider client={queryClient}>
-          <TestTab />
+          <React.Fragment>
+            <TestTab />
+          </React.Fragment>
         </QueryClientProvider>
-      </React.Fragment>
-    </ConfigProvider>
+      </ConfigProvider>
+    </LocalizationProvider>
   );
 };
 

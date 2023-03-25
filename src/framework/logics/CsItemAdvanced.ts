@@ -1,6 +1,6 @@
-import { CsItem } from ".";
+import { CsItem, CsStringItem } from ".";
 
-export class CsInputDateItem extends CsItem<string> {
+export class CsInputDateItem extends CsStringItem {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
   private identifier?: CsInputDateItem
 
@@ -38,12 +38,20 @@ export abstract class CsRangeItem<V extends string | number, T extends V[]> exte
   }
 }
 
-export class CsInputNumberRangeItem extends CsRangeItem<number, number[]> {
+export class CsNumberRangeItem extends CsRangeItem<number, number[]> {
+  private itemIdentifier?: CsNumberRangeItem
+}
+
+export class CsInputNumberRangeItem extends CsNumberRangeItem {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
   private identifier?: CsInputNumberRangeItem
 }
 
-export class CsInputDateRangeItem extends CsRangeItem<string, string[]> {
+export class CsStringRangeItem extends CsRangeItem<string, string[]> {
+  private itemIdentifier?: CsStringRangeItem
+}
+
+export class CsInputDateRangeItem extends CsStringRangeItem {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
   private identifier?: CsInputNumberRangeItem
 }

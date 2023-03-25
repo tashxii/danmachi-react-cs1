@@ -1,51 +1,41 @@
 import React from "react"
-import { Button, Col, Row } from "antd"
-import { Form } from "../basics/Form"
-import { useTestView } from "./testView"
-import { CxLayout2Props, CxTableLayout2 } from "../../framework/cx/CxLayout2"
-import CsView, { CsRIView, CsZodView } from "../../framework/cs/CsView"
+import { Col, Row } from "antd"
+import { useTestView, useTestZodView } from "./testView"
+import { CxLayout2Props, CxTableLayout } from "../../framework/components/cx/CxTableLayout"
+import { CsView } from "../../framework/logics"
+import { AxButton } from "../../framework/components/antd/AxEventCtrl"
 
 interface TestTabXPaneProp {
   colSize: number,
   componentType: "standard" | "antd" | "mui" | "bootstrap",
   readonly: boolean
-  view: CsRIView | CsZodView
+  viewType: string
 }
 export const TestTabXPane: React.FC<TestTabXPaneProp> = (props: TestTabXPaneProp) => {
-  const { view } = props
+  const { viewType } = props
+  const riView = useTestView()
+  const zodView = useTestZodView()
+  const view = (viewType === "zod") ? zodView : riView
   view.readonly = props.readonly
   const layoutProps: CxLayout2Props = {
     colSize: props.colSize as 1 | 2 | 3 | 4 | 6 | 12 | 24,
     componentType: props.componentType,
     view: view
   }
-  const onSubmit = () => {
-    if (view instanceof CsRIView) {
-      const csView = view as CsRIView
-      if (csView.validateEvent) {
-        return csView.validateEvent?.onHandleSubmit(view, () => { alert("submit!") }, () => { })
-      }
-    }
-    return () => { }
-  }
   const onClickValidation = (argView: CsView) => {
-    if (argView instanceof CsZodView) {
-      const csView = argView as CsZodView
-      return () => { csView.validationEvent?.onValidateHasError(csView) }
-    }
-    return () => { }
+    return () => { alert("validation OK!") }
   }
 
 
   return (
-    <Form onSubmit={onSubmit}>
-      <CxTableLayout2 {...layoutProps} />
+    <div>
+      <CxTableLayout {...layoutProps} />
       <Row>
         <Col span={4} offset={20}>
-          <Button type="primary" htmlType="submit" onClick={onClickValidation(view)}>バリデーションテスト</Button>
-          <Button type="default" onClick={() => { console.log(view) }}>コンソールダンプ</Button>
+          <AxButton type="primary" validationViews={[view]} onClick={onClickValidation(view)}>バリデーションテスト</AxButton>
+          <AxButton type="default" onClick={() => { console.log(view) }}>コンソールダンプ</AxButton>
         </Col>
       </Row>
-    </Form >
+    </div>
   )
 }

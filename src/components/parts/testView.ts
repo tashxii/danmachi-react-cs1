@@ -1,17 +1,17 @@
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
-import { CsItemBase, CsInputTextItem, CsView } from "../../framework/cs";
-import { CsInputNumberItem, CsCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/cs";
-import { useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit } from "../../framework/cs/CsHookAdvanced";
+import { CsInputTextItem } from "../../framework/logics";
+import { CsInputNumberItem, CsCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/logics";
+import { useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit } from "../../framework/logics";
 import {
   stringRule, RW, useCsInputTextItem, useCsSelectBoxItem,
   useCsCheckBoxItem, numberRule, useCsInputNumberItem,
   useCsRadioBoxItem, useCsTextAreaItem, selectOptionStrings,
   useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule, useInit
-} from "../../framework/cs/CsHooks";
-import { CsMultiCheckBoxItem } from "../../framework/cs/CsItem";
-import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/cs/CsItemAdvanced";
-import { CsRIView, CsZodView, useCsView, useCsZodView } from "../../framework/cs/CsView";
+} from "../../framework/logics";
+import { CsMultiCheckBoxItem } from "../../framework/logics";
+import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics";
+import { CsRIView, CsZodView, useCsRIView, useCsZodView } from "../../framework/logics";
 
 export default interface TestView extends CsRIView {
   nameItem: CsInputTextItem
@@ -32,7 +32,7 @@ export default interface TestView extends CsRIView {
 
 export function useTestView(): TestView {
   console.log("call useTestView")
-  const view = useCsView<TestView>({
+  const view = useCsRIView<TestView>({
     nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
     password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
     adminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
@@ -44,7 +44,7 @@ export function useTestView(): TestView {
     memo: useCsTextAreaItem("メモ", useInit(""), stringRule(true, 1, 4000)),
     snsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
-    birth: useCsInputDateItem("生年月日", useInit(dayjs().toString()), stringRule(true)),
+    birth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
     budget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
     other1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     other2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
@@ -73,7 +73,7 @@ export interface TestZodView extends CsZodView {
 }
 
 export function useTestZodView(): TestZodView {
-  console.log("call useTestView")
+  console.log("call useTestZodView")
   const view = useCsZodView<TestZodView>({
     nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
     password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),

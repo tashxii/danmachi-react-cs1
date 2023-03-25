@@ -5,10 +5,8 @@ import React from "react"
 import { Form, FormControlProps } from "react-bootstrap"
 import { FeedbackProps } from "react-bootstrap/esm/Feedback"
 import { BsPrefixRefForwardingComponent } from "react-bootstrap/esm/helpers"
-import { CsInputDateItem, CsInputNumberRangeItem } from "../cs/CsItemAdvanced"
-import { BSxEditCtrl, BSxProps, getClassName, validateWhenErrroExists } from "./BSxCtrl"
-//import { CsInputDateItem,  } from "../cs/CsItemAdvanced"
-//import { BSxProps, BSxEditCtrl, getClassName, validateWhenErrroExists } from "./BSxCtrl"
+import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
+import { BSxEditCtrl, BSxProps, getClassName } from "./BSxCtrl"
 
 export interface BSxInputDateProps extends BSxProps<CsInputDateItem> {
   bsProps?: BsPrefixRefForwardingComponent<"input", FormControlProps> & {
@@ -18,8 +16,8 @@ export interface BSxInputDateProps extends BSxProps<CsInputDateItem> {
 
 export const BSxInputDate = (props: BSxInputDateProps) => {
   const { item, bsProps } = props
-  const displayValue = (!item.value) ? undefined
-    : dayjs(item.value).format(CsInputDateItem.dateTimeDisplayFormt)
+  const displayValue = (!item.value) ? ""
+    : dayjs(item.value).format("YYYY-MM-DD")
   return (
     <BSxEditCtrl bsxProps={props}
       renderCtrl={(setRefresh) => (
@@ -28,9 +26,11 @@ export const BSxInputDate = (props: BSxInputDateProps) => {
           value={displayValue}
           onChange={(e: React.ChangeEvent<any>) => {
             if (item.isReadonly()) return
-            const newValue = e.target.value?.format(CsInputDateItem.dateValueFormat)
+            const value = e.target.value
+            const newValue = (!value) ? ""
+              : dayjs(value).format(CsInputDateItem.dateValueFormat)
             item.setValue(newValue)
-            if (!validateWhenErrroExists(newValue ?? "", item)) {
+            if (!item.validateWhenErrorExists(newValue)) {
               setRefresh(true)
             }
           }}
@@ -64,7 +64,7 @@ export const BSxInputNumberRange = (props: BSxInputNumberRangeProps) => {
               const newValue = (e.target.value) ? e.target.value : undefined
               const newNumber = (newValue) ? Number(newValue) : undefined
               item.setLowerValue(newNumber)
-              if (!validateWhenErrroExists([newNumber as number, item.upperValue as number], item)) {
+              if (!item.validateWhenErrorExists([newNumber as number, item.upperValue as number])) {
                 setRefresh(true)
               }
             }}
@@ -85,7 +85,7 @@ export const BSxInputNumberRange = (props: BSxInputNumberRangeProps) => {
               const newValue = (e.target.value) ? e.target.value : undefined
               const newNumber = (newValue) ? Number(newValue) : undefined
               item.setUpperValue(newNumber)
-              if (!validateWhenErrroExists([item.lowerValue as number, newNumber as number], item)) {
+              if (!item.validateWhenErrorExists([item.lowerValue as number, newNumber as number])) {
                 setRefresh(true)
               }
             }}

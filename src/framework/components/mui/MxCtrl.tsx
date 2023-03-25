@@ -1,22 +1,21 @@
-import React, { ChangeEvent, ReactNode, useEffect, useState } from 'react'
+import React, { ChangeEvent, ReactNode, useEffect, useState } from "react"
 import {
   CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem,
-} from '../cs'
+} from "../../logics"
 import "./MxCtrl.css"
-import { ValidationError } from '../../components/basics/ValidationError'
-import { Checkbox, CheckboxProps, FormControl, FormControlLabel, FormGroup, FormLabel, Input, Radio, RadioGroup, RadioGroupProps, Select, SelectProps, Typography } from '@mui/material'
-import Chip from '@mui/material/Chip'
-import { InputProps } from '@mui/material/Input'
-import TextField, { TextFieldProps } from '@mui/material/TextField'
-import TextareaAutosize, { TextareaAutosizeProps } from '@mui/material/TextareaAutosize'
-import { SelectChangeEvent } from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import { CsRIView } from '../cs/CsView'
-
-//const { Text } = Typography
+import { ValidationError } from "../../../components/basics/ValidationError"
+import {
+  Checkbox, CheckboxProps, FormControl, FormControlLabel, FormGroup,
+  Radio, RadioGroup, RadioGroupProps, Select, SelectProps, Typography
+} from "@mui/material"
+import Chip from "@mui/material/Chip"
+import TextField, { TextFieldProps } from "@mui/material/TextField"
+import { SelectChangeEvent } from "@mui/material/Select"
+import MenuItem from "@mui/material/MenuItem"
+import { CsHasOptionsItem, CsSelectNumberBoxItem } from "../../logics"
 
 export interface MxProps<I extends CsItemBase> {
   item: I
@@ -30,7 +29,7 @@ interface MxLabelProp {
 }
 
 export const MxLabel = (props: MxLabelProp) => {
-  const color = props.color ?? "#195e0bda"
+  const color = props.color ?? "#196e0bda"
   return (
     <div className="label"><Typography variant="subtitle2" style={{ color: color }}>{props.label}</Typography></div>
   )
@@ -55,7 +54,7 @@ export const getClassName = <T,>(props: MxProps<CsItem<T>>, add?: string): strin
 }
 
 export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
-  const required = item.ValidationRule?.required ?? false
+  const required = item.validationRule?.required ?? false
   const showTag = showRequiredTag ?? ((item.parentView) ? "both" : "none")
   const requiredTag = () => {
     switch (showTag) {
@@ -73,20 +72,6 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
       {requiredTag()}
     </span >
   )
-}
-
-export const validateWhenErrroExists = <T extends string | number | number[] | string[]>(newValue: T, item: CsItem<T>) => {
-  if (item.parentView instanceof CsRIView) {
-    const validateEvent = item.parentView?.validateEvent
-    if (!validateEvent) {
-      return
-    }
-    if (!validateEvent.validationError[item.key]) {
-      return
-    }
-    return validateEvent.onItemValidateHasError(newValue, item)
-  }
-  return false
 }
 
 export interface MxEditCtrlProps<T extends CsItemBase> {
@@ -115,7 +100,7 @@ export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T>>) => {
 }
 
 export interface MxInputTextProps extends MxProps<CsInputTextItem> {
-  muiProps?: InputProps
+  muiProps?: TextFieldProps
 }
 
 export const MxInputText = (props: MxInputTextProps) => {
@@ -123,12 +108,12 @@ export const MxInputText = (props: MxInputTextProps) => {
   return (
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
-        <Input className={getClassName(props)}
-          value={item.value} defaultValue={item.value}
-          readOnly={item.isReadonly()}
+        <TextField className={getClassName(props)}
+          value={item.value}
+          inputProps={{ readOnly: item.isReadonly() }}
           onChange={(e: any) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -140,7 +125,7 @@ export const MxInputText = (props: MxInputTextProps) => {
 }
 
 export interface MxInputNumberProps extends MxProps<CsInputNumberItem> {
-  muiProps?: InputProps
+  muiProps?: TextFieldProps
 }
 
 export const MxInputNumber = (props: MxInputNumberProps) => {
@@ -148,14 +133,20 @@ export const MxInputNumber = (props: MxInputNumberProps) => {
   return (
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
-        <Input className={getClassName(props, "input-number")}
+        <TextField className={getClassName(props, "input-number")}
           value={item.value} defaultValue={item.value}
-          readOnly={item.isReadonly()}
-          inputMode="numeric"
+          inputProps={{
+            readOnly: item.isReadonly(),
+          }}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-            item.setValue(Number(e.target.value))
-            if (!validateWhenErrroExists(Number(e.target.value), item)) {
-              setRefresh(true)
+            const re = /^-?[0-9]+$/g;
+            const newValue = (e.target.value.length === 0) ? undefined : e.target.value
+            if (newValue === undefined || re.test(newValue)) {
+              const newNumber = (newValue) ? Number(newValue) : undefined
+              item.setValue(newNumber)
+              if (!item.validateWhenErrorExists(newNumber as number)) {
+                setRefresh(true)
+              }
             }
           }
           }
@@ -176,11 +167,14 @@ export const MxInputPassword = (props: MxInputPasswordProps) => {
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
         <TextField className={getClassName(props)}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
+          inputProps={{
+            readOnly: item.isReadonly(),
+          }}
           type="password"
-          onChange={(e: any) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -192,7 +186,7 @@ export const MxInputPassword = (props: MxInputPasswordProps) => {
 }
 
 export interface MxTextAreaProps extends MxProps<CsTextAreaItem> {
-  muiProps?: TextareaAutosizeProps
+  muiProps?: TextFieldProps
 }
 
 export const MxTextArea = (props: MxTextAreaProps) => {
@@ -200,13 +194,17 @@ export const MxTextArea = (props: MxTextAreaProps) => {
   return (
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
-        <TextareaAutosize className={getClassName(props, "textarea")}
-          value={item.value} defaultValue={item.value}
+        <TextField className={getClassName(props, "textarea")}
+          value={item.value}
+          inputProps={{
+            readOnly: item.isReadonly(),
+          }}
+          multiline
+          variant="outlined"
           minRows={4}
-          readOnly={item.isReadonly()}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -217,20 +215,25 @@ export const MxTextArea = (props: MxTextAreaProps) => {
   )
 }
 
-export interface MxSelectBoxProps<T extends string | number = string> extends MxProps<CsSelectBoxItem<T>> {
-  muiProps?: SelectProps<T>
+interface MxSelectBoxCommonProps<V extends string | number, T extends CsHasOptionsItem<V>>
+  extends MxProps<T> {
+  muiProps?: SelectProps<V>
 }
 
-export const MxSelectBox = <T extends string | number = string>(props: MxSelectBoxProps<T>) => {
+const MxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem<V>>(
+  props: MxSelectBoxCommonProps<V, T>,
+  toValue: (value: string) => V | undefined
+) => {
   const { item, muiProps } = props
   return (
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
         <Select className={getClassName(props, "fit-content")}
           value={item.value} // defaultValue={item.value}
-          onChange={(e: SelectChangeEvent<T>) => {
-            item.setValue(e.target.value as T | undefined)
-            if (!validateWhenErrroExists(e.target.value as T, item)) {
+          onChange={(e: SelectChangeEvent<V>) => {
+            const newValue = (e.target.value) ? e.target.value.toString() : ""
+            item.setValue(toValue(newValue))
+            if (!item.validateWhenErrorExists(toValue(newValue) as V)) {
               setRefresh(true)
             }
           }}
@@ -251,13 +254,24 @@ export const MxSelectBox = <T extends string | number = string>(props: MxSelectB
     /> // MxEditCtrl
   )
 }
+export interface MxSelectBoxProps
+  extends MxSelectBoxCommonProps<string, CsSelectBoxItem> {
+  muiProps?: SelectProps<string>
+}
 
-export interface MxSelectNumberBoxProps extends MxSelectBoxProps<number> {
+export const MxSelectBox = (props: MxSelectBoxProps) => {
+  return (MxSelectBoxCommon<string, CsSelectBoxItem>(
+    props, (value: string) => (value)))
+}
+
+export interface MxSelectNumberBoxProps
+  extends MxSelectBoxCommonProps<number, CsSelectNumberBoxItem> {
   muiProps?: SelectProps<number>
 }
 
 export const MxSelectNumberBox = (props: MxSelectNumberBoxProps) => {
-  return (<MxSelectBox<number> {...props} />)
+  return (MxSelectBoxCommon<number, CsSelectNumberBoxItem>(
+    props, (value: string) => (Number(value))))
 }
 
 export interface MxRadioBoxProps extends MxProps<CsRadioBoxItem> {
@@ -272,13 +286,12 @@ export const MxRadioBox = (props: MxRadioBoxProps) => {
         <FormControl id={item.key}>
           <RadioGroup className={getClassName(props, "fit-content")}
             row
-            value={item.value} defaultValue={item.value}
+            value={item.value}
             name={"radio-group-" + item.key}
             onChange={(e, value: string) => {
-              console.log("checkbox", e.target.value)
               if (item.isReadonly()) return
               item.setValue(value)
-              if (!validateWhenErrroExists(value, item)) {
+              if (!item.validateWhenErrorExists(value)) {
                 setRefresh(true)
               }
             }}
@@ -287,8 +300,12 @@ export const MxRadioBox = (props: MxRadioBoxProps) => {
             {item.options.map(o => {
               const selected = (o[item.optionValueKey] === item.value)
               return (
-                <FormControlLabel value={o[item.optionValueKey]}
-                  control={<Radio readOnly={(item.isReadonly() && !selected)} />}
+                <FormControlLabel key={o[item.optionValueKey]}
+                  value={o[item.optionValueKey]}
+                  control={
+                    <Radio key={o[item.optionValueKey]}
+                      readOnly={(item.isReadonly())}
+                      disabled={(item.isReadonly() && !selected)} />}
                   label={o[item.optionLabelKey]} />
               )
             })}
@@ -308,20 +325,23 @@ export const MxCheckBox = (props: MxCheckBoxProps) => {
   return (
     <MxEditCtrl mxProps={props}
       renderCtrl={() => (
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox className={getClassName(props, "fit-content")}
-                value={item.value} checked={item.value}
-                onChange={(e, checked) => {
-                  if (item.isReadonly()) return
-                  item.setValue(checked)
-                }}
-                {...muiProps}
-              />
-            }
-            label={item.checkBoxText} />
-        </FormGroup>
+        <div className={getClassName(props, "fit-content")}>
+          <FormGroup className="checkbox-item">
+            <FormControlLabel
+              control={
+                <Checkbox className="checkbox-item"
+                  value={item.value} checked={item.value}
+                  onChange={(e, checked) => {
+                    if (item.isReadonly()) return
+                    item.setValue(checked)
+                  }}
+                  {...muiProps}
+                />
+              }
+              label={item.checkBoxText}
+            />
+          </FormGroup>
+        </div>
       )}
     /> // MxEditCtrl
   )
@@ -337,12 +357,13 @@ export const MxMultiCheckBox = (props: MxMultiCheckBoxProps) => {
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
         <div className={getClassName(props, "fit-content")}>
-          <FormGroup>
+          <FormGroup className="checkbox-group">
             {item.options.map(o => {
               const value = o[item.optionValueKey]
               const text = o[item.optionLabelKey]
               return (
                 <FormControlLabel
+                  key={value}
                   control={
                     <Checkbox
                       className="checkbox-item" key={value} value={value}
@@ -356,7 +377,7 @@ export const MxMultiCheckBox = (props: MxMultiCheckBoxProps) => {
                           newValue = (item.value) ? item.value?.filter(v => v !== value) : []
                         }
                         item.setValue(newValue)
-                        if (!validateWhenErrroExists(newValue, item)) {
+                        if (!item.validateWhenErrorExists(newValue)) {
                           setRefresh(true)
                         }
                       }}

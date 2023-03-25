@@ -1,41 +1,46 @@
 .label {
   display: block;
   margin-left: 10px;
-  margin-top: 10px;
+  margin-top: 5px;
   margin-bottom: 5px;
   text-align: left;
   font-size: 90%;
 }
 
-.label .MuiChip-root {
+.label .ant-tag {
   font-size: 40%;
   vertical-align: top;
-  height: auto;
   margin-left: 10px;
   padding-inline: 4px;
 }
 
-.mui-ctrl {
+.ctrl {
   width: 90%;
   margin-left: 10px;
   margin-right: 5px;
   margin-bottom: 5px;
   min-width: 40px;
-  border-color: #c9cece;
+  border-color: #cccccc44;
   border-width: 1px;
+  border-style: solid;
   border-radius: 5px;
   padding: 8px;
-  background-color: #fafbfcfd;
+  background-color: #f6f7fcbb;
   font-size: 16px;
   outline: none;
 }
 
-.mui-ctrl:focus {
+.ctrl:focus {
   background-color: white;
   /* border-color: azure; */
 }
 
-.mui-ctrl.validation-error {
+.ctrl.input-number {
+  width: 35%;
+  min-width: 80px;
+}
+
+.ctrl.validation-error {
   border-style: solid;
   border-color: #f01818bf;
   border-width: 1.0px;
@@ -45,22 +50,22 @@
   background: linear-gradient(to right, #ccd0d95c, #cdd3de83);
 }
 
-/* .readonly .ant-select-selector {
+.readonly .ant-select-selector {
   background-color: #abafb783 !important;
   pointer-events: none;
-} */
+}
 
-/* .readonly .ant-input {
+.readonly .ant-input {
   background-color: #abafb783 !important;
-} */
+}
 
-/* .readonly .ant-radio-checked .ant-radio-inner {
+.readonly .ant-radio-checked .ant-radio-inner {
   background-color: #93abe9;
-} */
+}
 
-/* .readonly .ant-checkbox-checked .ant-checkbox-inner {
+.readonly .ant-checkbox-checked .ant-checkbox-inner {
   background-color: #93abe9;
-} */
+}
 
 .readonly:focus {
   background: linear-gradient(to right, #a5bed73c, #c5def75c);
@@ -109,7 +114,6 @@
 
 .button-area.middle {
   justify-content: center;
-  color: #195e0bda;
 }
 
 .button-area.bottom {

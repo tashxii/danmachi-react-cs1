@@ -7,6 +7,8 @@
     "@emotion/styled": "^11.10.6",
     "@fluentui/react": "^8.106.3",
     "@mui/material": "^5.11.14",
+    "@mui/styled-engine-sc": "^5.11.11",
+    "@mui/x-date-pickers": "^6.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -23,6 +25,7 @@
     "react-icons": "^4.7.1",
     "react-query": "^3.39.3",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.9",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
     "zod": "^3.21.4"

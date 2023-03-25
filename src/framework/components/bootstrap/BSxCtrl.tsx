@@ -1,15 +1,17 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from "react"
 import {
   CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem,
-} from '../cs'
+  CsSelectNumberBoxItem,
+} from "../../logics"
 import "./BSxCtrl.css"
-import { ValidationError } from '../../components/basics/ValidationError'
-import { Badge, Form, FormControlProps, FormGroupProps, FormSelectProps } from 'react-bootstrap'
-import { BsPrefixRefForwardingComponent } from 'react-bootstrap/esm/helpers'
-import { FeedbackProps } from 'react-bootstrap/esm/Feedback'
+import { ValidationError } from "../../../components/basics/ValidationError"
+import { Badge, Form, FormControlProps, FormGroupProps, FormSelectProps } from "react-bootstrap"
+import { BsPrefixRefForwardingComponent } from "react-bootstrap/esm/helpers"
+import { FeedbackProps } from "react-bootstrap/esm/Feedback"
+import { CsHasOptionsItem } from "../../logics"
 
 export interface BSxProps<I extends CsItemBase> {
   item: I
@@ -48,7 +50,7 @@ export const getClassName = <T,>(props: BSxProps<CsItem<T>>, add?: string): stri
 }
 
 export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
-  const required = item.ValidationRule?.required ?? false
+  const required = item.validationRule?.required ?? false
   const showTag = showRequiredTag ?? ((item.parentView) ? "both" : "none")
   const requiredTag = () => {
     switch (showTag) {
@@ -66,17 +68,6 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
       {requiredTag()}
     </span >
   )
-}
-
-export const validateWhenErrroExists = <T extends string | number | number[] | string[]>(newValue: T, item: CsItem<T>) => {
-  const validateEvent = item.parentView?.validateEvent
-  if (!validateEvent) {
-    return
-  }
-  if (!validateEvent.validationError[item.key]) {
-    return
-  }
-  return validateEvent.onItemValidateHasError(newValue, item)
 }
 
 export interface BSxEditCtrlProps<T extends CsItemBase> {
@@ -121,7 +112,7 @@ export const BSxInputText = (props: BSxInputTextProps) => {
           readOnly={item.isReadonly()}
           onChange={(e) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -151,7 +142,7 @@ export const BSxInputNumber = (props: BSxInputNumberProps) => {
             const newValue = (e.target.value) ? e.target.value : undefined
             const newNumber = (newValue) ? Number(newValue) : undefined
             item.setValue(newNumber)
-            if (!validateWhenErrroExists(newNumber as number, item)) {
+            if (!item.validateWhenErrorExists(newNumber as number)) {
               setRefresh(true)
             }
           }}
@@ -179,7 +170,7 @@ export const BSxInputPassword = (props: BSxInputPasswordProps) => {
           readOnly={item.isReadonly()}
           onChange={(e) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -206,7 +197,7 @@ export const BSxTextArea = (props: BSxTextAreaProps) => {
           readOnly={item.isReadonly()}
           onChange={(e) => {
             item.setValue(e.target.value)
-            if (!validateWhenErrroExists(e.target.value, item)) {
+            if (!item.validateWhenErrorExists(e.target.value)) {
               setRefresh(true)
             }
           }}
@@ -217,11 +208,16 @@ export const BSxTextArea = (props: BSxTextAreaProps) => {
   )
 }
 
-export interface BSxSelectBoxProps<T extends string | number> extends BSxProps<CsSelectBoxItem<T>> {
+interface BSxSelectBoxCommonProps<V extends string | number,
+  T extends CsHasOptionsItem<V>> extends BSxProps<T> {
   bsProps?: BsPrefixRefForwardingComponent<"select", FormSelectProps>
 }
 
-export const BSxSelectBox = <T extends string | number = string>(props: BSxSelectBoxProps<T>) => {
+const BSxSelectBoxCommon = <V extends string | number,
+  T extends CsHasOptionsItem<V>>(
+    props: BSxSelectBoxCommonProps<V, T>,
+    toValue: (value: string) => V | undefined
+  ) => {
   const { item, bsProps } = props
   return (
     <BSxEditCtrl bsxProps={props}
@@ -230,13 +226,16 @@ export const BSxSelectBox = <T extends string | number = string>(props: BSxSelec
           value={item.value}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             const newValue = e.target.value
-            item.setValue(newValue as T | undefined)
-            if (!validateWhenErrroExists(newValue as T, item)) {
+            item.setValue(toValue(newValue))
+            if (!item.validateWhenErrorExists(toValue(newValue) as V)) {
               setRefresh(true)
             }
           }}
           {...bsProps}
         >
+          {(item.value === undefined || item.value === "") && (
+            <option key="" value="" disabled={true} />
+          )}
           {item.options.map(o => {
             const value = o[item.optionValueKey]
             const label = o[item.optionLabelKey]
@@ -255,12 +254,24 @@ export const BSxSelectBox = <T extends string | number = string>(props: BSxSelec
   )
 }
 
-export interface BSxSelectNumberBoxProps extends BSxSelectBoxProps<number> {
+export interface BSxSelectBoxProps
+  extends BSxSelectBoxCommonProps<string, CsSelectBoxItem> {
+  bsProps?: BsPrefixRefForwardingComponent<"select", FormSelectProps>
+}
+
+export const BSxSelectBox = (props: BSxSelectBoxProps) => {
+  return (BSxSelectBoxCommon<string, CsSelectBoxItem>(
+    props, (value: string) => (value)))
+}
+
+export interface BSxSelectNumberBoxProps
+  extends BSxSelectBoxCommonProps<number, CsSelectNumberBoxItem> {
   bsProps?: BsPrefixRefForwardingComponent<"select", FormSelectProps>
 }
 
 export const BSxSelectNumberBox = (props: BSxSelectNumberBoxProps) => {
-  return (<BSxSelectBox<number> {...props} />)
+  return (BSxSelectBoxCommon<number, CsSelectNumberBoxItem>(
+    props, (value: string) => ((value) ? Number(value) : undefined)))
 }
 
 export interface BSxRadioBoxProps extends BSxProps<CsRadioBoxItem> {
@@ -274,6 +285,7 @@ export const BSxRadioBox = (props: BSxRadioBoxProps) => {
       renderCtrl={(setRefresh) => (
         <Form.Group className={getClassName(props, "fit-content checkbox-area")}
           {...bsProps}
+          defaultValue={item.value}
         >
           {item.options.map(o => {
             const value = o[item.optionValueKey]
@@ -286,6 +298,9 @@ export const BSxRadioBox = (props: BSxRadioBoxProps) => {
                 disabled={item.isReadonly() && item.value !== value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   item.setValue(e.target.value)
+                  if (!item.validateWhenErrorExists(e.target.value)) {
+                    setRefresh(true)
+                  }
                 }}
                 checked={item.value === value}
               />
@@ -307,12 +322,6 @@ export const BSxCheckBox = (props: BSxCheckBoxProps) => {
     <BSxEditCtrl bsxProps={props}
       renderCtrl={() => (
         <Form.Group className={getClassName(props, "fit-content")}
-          onChange={(e: React.FormEvent<HTMLElement>) => {
-            if (item.isReadonly()) return
-            console.log("checkbox", e)
-            const newValue = (e) ? undefined : undefined
-            item.setValue(newValue)
-          }}
           {...bsProps}
         >
           <Form.Check
@@ -359,7 +368,7 @@ export const BSxMultiCheckBox = (props: BSxMultiCheckBoxProps) => {
                     newValue = (item.value) ? item.value?.filter(v => v !== value) : []
                   }
                   item.setValue(newValue)
-                  if (!validateWhenErrroExists(newValue, item)) {
+                  if (!item.validateWhenErrorExists(newValue)) {
                     setRefresh(true)
                   }
                 }}

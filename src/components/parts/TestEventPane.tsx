@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Card, Col, Modal, Row, Table } from "antd"
-import { CxTableLayout } from "../../framework/cx/CxLayout"
-import { CsInputTextItem, CsSelectBoxItem, CsView } from "../../framework/cs"
-import { AxButton, AxMutateButton, AxQueryButton } from "../../framework/antd/AxEventCtrl"
-import { AxInputText } from "../../framework/antd/AxCtrl"
+import { CxTableLayout } from "../../framework/components/cx/CxTableLayout"
+import { CsInputTextItem, CsSelectBoxItem } from "../../framework/logics"
+import { AxButton, AxMutateButton, AxQueryButton } from "../../framework/components/antd/AxEventCtrl"
+import { AxInputText } from "../../framework/components/antd/AxCtrl"
 import {
   CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
-} from "../../framework/cs/CsEvent"
-import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/cs/CsHooks"
+} from "../../framework/logics"
+import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/logics"
 import { TestApi } from "./testApi"
-import { CsRIView, useCsView } from "../../framework/cs/CsView"
+import { CsRIView, useCsRIView } from "../../framework/logics"
 import { useMutation, useQuery } from "react-query"
-import { CsSelectNumberBoxItem } from "../../framework/cs/CsItem"
+import { CsSelectNumberBoxItem } from "../../framework/logics"
 import Link from "antd/es/typography/Link"
 import { City, CityCreateRequest, Clan, Chara } from "./testApiClasses"
 
@@ -35,7 +35,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
     const [editingChara, setEditingChara] = useState<Chara>(new Chara())
 
     const keywordItem = useCsInputTextItem("検索キーワード", useInit(""), stringRule(false, 1, 100))
-    const searchView = useCsView<CitySearchView>({
+    const searchView = useCsRIView<CitySearchView>({
       readonly: false,
       keyword: keywordItem,
       searchButton: useCsRqQueryButtonClickEvent(
@@ -47,12 +47,12 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       ),
       makeButton: useCsRqMutateButtonClickEvent(useMutation(TestApi.createCity)),
     })
-    const clanView = useCsView<ClanMakeView>({
+    const clanView = useCsRIView<ClanMakeView>({
       readonly: false,
       name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
       description: useCsInputTextItem("説明", useInit(""), stringRule(false, 1, 100)),
     })
-    const charaView = useCsView<CharaMakeView>({
+    const charaView = useCsRIView<CharaMakeView>({
       readonly: false,
       name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
       job: useCsSelectBoxItem("職業", useInit(""), stringRule(true),
@@ -60,7 +60,6 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       clanKey: useCsSelectNumberBoxItem("クラン", useInit(), numberRule(true),
         selectOptions(editingCity.clans, "clanKey", "name")),
     })
-    console.log(charaView.clanKey)
 
     useMemo(() => {
       searchView.makeButton.setRequest(
@@ -96,7 +95,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                 <AxButton type="primary"
                   onClick={() => {
                     setEditingClan(new Clan())
-                    clanView.validateEvent?.resetError()
+                    clanView.validationEvent?.resetError()
                     clanView.name.setValue("")
                     clanView.description.setValue("")
                     setShowClanModal(true)
@@ -152,7 +151,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
                   <AxButton type="primary"
                     onClick={() => {
                       setEditingChara(new Chara())
-                      charaView.validateEvent?.resetError()
+                      charaView.validationEvent?.resetError()
                       charaView.name.setValue("")
                       charaView.job.setValue("")
                       charaView.clanKey.setValue(clans.at(0)?.clanKey ?? -1)

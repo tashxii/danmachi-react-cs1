@@ -1,9 +1,10 @@
 import React, { ReactNode, useEffect, useState } from "react"
 import { Alert, Button, ButtonProps, Tooltip } from "antd"
 import { useCallback } from "react"
-import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../cs/CsEvent"
+import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../../logics"
 import "./AxCtrl.css"
-import { CsView } from "../cs"
+import { CsView } from "../../logics"
+import { executeValidation } from "../../logics"
 
 export interface AxEventProps {
   addClassNames?: string[]
@@ -15,21 +16,6 @@ const getClassName = (props: AxEventProps, base: string): string => {
     names = names.concat(props.addClassNames)
   }
   return names.join(" ")
-}
-
-const executeValidation = (validationViews: CsView[] | undefined) => {
-  let validationOK = true
-  if (validationViews) {
-    for (const view of validationViews) {
-      if (view.validateEvent) {
-        view.validateEvent.resetError()
-        if (view.validateEvent.onValidateHasError(view)) {
-          validationOK = false
-        }
-      }
-    }
-  }
-  return validationOK
 }
 
 export interface AxButtonProps extends AxEventProps {

@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react"
 import {
   CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem
-} from '../cs'
-import { CsInputNumberItem, CsItemBase } from '../cs/CsItem'
+} from "../../logics"
+import { CsInputNumberItem, CsItemBase } from "../../logics"
 import "./CxCtrl.css"
 
 export class CxProps<I extends CsItemBase> {
