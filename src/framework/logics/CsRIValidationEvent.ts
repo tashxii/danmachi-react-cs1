@@ -8,42 +8,40 @@ import { CsItem, CsStringItem, StringValidationRule, CsNumberItem, NumberValidat
 import { CsNumberRangeItem } from "./CsItemAdvanced"
 import { CsValidationEvent, CsView } from "./CsView"
 
-export abstract class CsRIView extends CsView {
-  static createValidationSchema = <T extends CsView>(instance: T) => {
-    const validationMap = new Map<string, StringFieldConstraint | NumberFieldConstraint | StringArrayFieldConstraint | FieldConstraint<boolean>>()
-    const validateFieldMap = new Map<string, string | number | string[] | undefined>()
-    const keys = Object.keys(instance)
-    keys.forEach(key => {
-      const item = instance[key as keyof T]
-      if (!(item instanceof CsItem)) return
-      if (item.validationRule) {
-        if (item instanceof CsStringItem) {
-          createStringConstraint(item, key, validationMap)
-        }
-        if (item instanceof CsNumberItem) {
-          createNumberConstraint(item, key, validationMap)
-        }
-        if (item instanceof CsStringArrayItem) {
-          createStringArrayConstraint(item, key, validationMap)
-        }
-        if (item instanceof CsStringOptionsItem) {
-          createStringConstraint(item, key, validationMap)
-        }
-        if (item instanceof CsNumberOptionsItem) {
-          createNumberConstraint(item, key, validationMap)
-        }
-        if (item instanceof CsStringArrayOptionsItem) {
-          createStringArrayConstraint(item, key, validationMap)
-        }
-        if (item instanceof CsNumberRangeItem) {
-          createNumberConstraint(item, key, validationMap)
-        }
-        validateFieldMap.set(key, item.value)
+const createValidationSchema = <T extends CsView>(instance: T) => {
+  const validationMap = new Map<string, StringFieldConstraint | NumberFieldConstraint | StringArrayFieldConstraint | FieldConstraint<boolean>>()
+  const validateFieldMap = new Map<string, string | number | string[] | undefined>()
+  const keys = Object.keys(instance)
+  keys.forEach(key => {
+    const item = instance[key as keyof T]
+    if (!(item instanceof CsItem)) return
+    if (item.validationRule) {
+      if (item instanceof CsStringItem) {
+        createStringConstraint(item, key, validationMap)
       }
-    })
-    const validationSchemaObj = Object.fromEntries(validationMap)
-    return { validationSchemaObj, validateFieldMap }
-  }
+      if (item instanceof CsNumberItem) {
+        createNumberConstraint(item, key, validationMap)
+      }
+      if (item instanceof CsStringArrayItem) {
+        createStringArrayConstraint(item, key, validationMap)
+      }
+      if (item instanceof CsStringOptionsItem) {
+        createStringConstraint(item, key, validationMap)
+      }
+      if (item instanceof CsNumberOptionsItem) {
+        createNumberConstraint(item, key, validationMap)
+      }
+      if (item instanceof CsStringArrayOptionsItem) {
+        createStringArrayConstraint(item, key, validationMap)
+      }
+      if (item instanceof CsNumberRangeItem) {
+        createNumberConstraint(item, key, validationMap)
+      }
+      validateFieldMap.set(key, item.value)
+    }
+  })
+  const validationSchemaObj = Object.fromEntries(validationMap)
+  return { validationSchemaObj, validateFieldMap }
 }
 
 const createStringConstraint = (
@@ -98,7 +96,7 @@ const createStringArrayConstraint = (
 export type ValidationCallback = (event: React.FormEvent<HTMLFormElement>) => void
 
 export class CsRIValidationEvent extends CsValidationEvent {
-  parentView: CsRIView
+  parentView: CsView
   validationError: ValidationError<AvailableFiledType>
   validator: ConstraintValidators<AvailableFiledType>
   resetErrorInner: (name?: string) => void
@@ -106,7 +104,7 @@ export class CsRIValidationEvent extends CsValidationEvent {
 
   private handleSubmit: (value: AvailableFiledType, callback: ValidationCallback, onError?: ValidationCallback) => ValidationCallback
   constructor(
-    view: CsRIView,
+    view: CsView,
     validateFieldMap: Map<string, string | number | string[] | undefined>,
     error: ValidationError<AvailableFiledType>,
     validator: ConstraintValidators<AvailableFiledType>,
@@ -125,7 +123,7 @@ export class CsRIValidationEvent extends CsValidationEvent {
   /** Form でのサブミットを使用する際に利用する。Formを使う意味はほとんどなく、
    *  XxButtonを使用してればOnClickまえに検証が行えるため、非推奨 */
   onHandleSubmit = (
-    view: CsRIView,
+    view: CsView,
     callback: ValidationCallback,
     onError?: ValidationCallback)
     : ValidationCallback => {
@@ -160,21 +158,13 @@ export class CsRIValidationEvent extends CsValidationEvent {
   }
 }
 
-export const useCsRIView = <T extends CsRIView>(
+export const useCsRIValidationEvent = <T extends CsView>(
   instance: T
 ) => {
-  const { validationSchemaObj, validateFieldMap } = CsRIView.createValidationSchema<T>(instance)
-  Object.keys(instance).forEach(k => {
-    const v = instance[k as keyof T]
-    if (v instanceof CsItemBase) {
-      v.key = k
-      v.parentView = instance as CsView
-    }
-  })
+  const { validationSchemaObj, validateFieldMap } = createValidationSchema<T>(instance)
   const { error, validator, resetError, handleSubmit } = useValidation(validationSchemaObj)
-  const validateEvent = new CsRIValidationEvent(instance, validateFieldMap, error, validator, resetError, handleSubmit)
-  instance.validationEvent = validateEvent
-  return instance
+  const validationEvent = new CsRIValidationEvent(instance, validateFieldMap, error, validator, resetError, handleSubmit)
+  return validationEvent
 }
 
 

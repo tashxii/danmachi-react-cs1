@@ -1,9 +1,9 @@
-import React, { useState } from "react"
+import React from "react"
 import { Row, Tabs } from "antd"
 import type { TabsProps } from "antd"
 import { AsIsWayPane } from "../parts/AsIsWayPane"
 import { TestTabXPane } from "../parts/TestTabXPane"
-import { AxCheckBox, AxRadioBox, AxSelectNumberBox } from "../../framework/components/antd/AxCtrl"
+import { AxCheckBox, AxRadioBox, AxSelectNumberBox } from "../../framework/components/antd"
 import { numberRule, selectOptionNumbers, selectOptions, stringRule, useCsCheckBoxItem, useCsRadioBoxItem, useCsSelectNumberBoxItem, useInit } from "../../framework/logics"
 import { TestEventPane } from "../parts/TestEventPane"
 

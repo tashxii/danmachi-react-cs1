@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from "react"
 import { Alert, Button, ButtonProps, Tooltip } from "antd"
 import { useCallback } from "react"
 import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../../logics"
-import "./AxCtrl.css"
+import "./BSxCtrl.css"
 import { CsView } from "../../logics"
 import { executeValidation } from "../../logics"
 

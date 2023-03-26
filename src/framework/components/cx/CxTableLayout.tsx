@@ -1,16 +1,35 @@
 import React from "react"
 import { Col, Row } from "antd"
-import { CsCheckBoxItem, CsItemBase, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsInputTextItem, CsView, CsInputNumberItem } from "../../logics"
-import { CxCheckBox, CxInputNumber, CxPasswordBox, CxProps, CxRadioBox, CxSelectBox, CxTextArea, CxInputText } from "./CxCtrl"
-import { CsMultiCheckBoxItem, CsSelectNumberBoxItem } from "../../logics"
-import { AxCheckBox, AxInputNumber, AxInputPassword, AxInputText, AxMultiCheckBox, AxRadioBox, AxSelectBox, AxSelectNumberBox, AxTextArea } from "../antd"
-import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
-import { MxCheckBox, MxInputNumber, MxInputPassword, MxInputText, MxMultiCheckBox, MxRadioBox, MxSelectBox, MxSelectNumberBox, MxTextArea } from "../mui/MxCtrl"
-import { BSxCheckBox, BSxInputNumber, BSxInputPassword, BSxInputText, BSxMultiCheckBox, BSxRadioBox, BSxSelectBox, BSxSelectNumberBox, BSxTextArea } from "../bootstrap/BSxCtrl"
-import { BSxInputDate, BSxInputNumberRange } from "../bootstrap/BSxCtrlAdvanced"
-import { MxInputDate, MxInputNumberRange } from "../mui/MxCtrlAdvanced"
-import { AxInputDate, AxInputNumberRange } from "../antd"
-
+import {
+  CsView, CsItemBase, CsInputTextItem,
+  CsInputNumberItem, CsTextAreaItem, CsCheckBoxItem,
+  CsInputPassword, CsRadioBoxItem, CsSelectNumberBoxItem,
+  CsSelectBoxItem, CsMultiCheckBoxItem, CsInputDateItem,
+  CsInputNumberRangeItem
+} from "../../logics"
+import {
+  AxInputText, AxInputNumber, AxTextArea,
+  AxCheckBox, AxInputPassword, AxRadioBox,
+  AxSelectNumberBox, AxSelectBox, AxMultiCheckBox,
+  AxInputDate, AxInputNumberRange
+} from "../antd"
+import {
+  BSxInputText, BSxInputNumber, BSxTextArea,
+  BSxCheckBox, BSxInputPassword, BSxRadioBox,
+  BSxSelectNumberBox, BSxSelectBox, BSxMultiCheckBox,
+  BSxInputDate, BSxInputNumberRange
+} from "../bootstrap"
+import {
+  MxInputText, MxInputNumber, MxTextArea,
+  MxCheckBox, MxInputPassword, MxRadioBox,
+  MxSelectNumberBox, MxSelectBox, MxMultiCheckBox,
+  MxInputDate, MxInputNumberRange
+} from "../mui"
+import {
+  CxProps, CxInputText, CxInputNumber,
+  CxTextArea, CxCheckBox, CxPasswordBox,
+  CxRadioBox, CxSelectBox
+} from "./CxCtrl"
 
 export interface CxLayout2Props {
   view: CsView
@@ -39,7 +58,7 @@ export const CxTableLayout: React.FC<CxLayout2Props> = (props: CxLayout2Props) =
   let x = 0
   let k = 0
   return (
-    <>
+    <div>
       {
         rows.map((r) => {
           return (
@@ -60,7 +79,7 @@ export const CxTableLayout: React.FC<CxLayout2Props> = (props: CxLayout2Props) =
         }
         )
       }
-    </>
+    </div>
   )
 }
 

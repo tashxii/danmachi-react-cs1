@@ -5,45 +5,43 @@ import { CsView } from "."
 type ValueTypeZod = ZodString | ZodOptional<ZodString> | ZodNumber | ZodOptional<ZodNumber>
   | ZodArray<ZodNumber | ZodOptional<ZodNumber>, "many"> | ZodArray<ZodString, "many"> | ZodArray<ZodOptional<ZodString>, "many">
 
-export abstract class CsZodView extends CsView {
-  static createValidationSchema<T extends CsZodView>(instance: T) {
-    const validateFieldMap = new Map<string, any>()
-    const validationMap = new Map<string, ValueTypeZod>()
-    const keys = Object.keys(instance)
-    keys.forEach(key => {
-      const item = instance[key as keyof T]
-      if (!(item instanceof CsItem)) return
-      if (item instanceof CsStringItem) {
-        createStringConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsNumberArrayItem) {
-        createNumberArrayConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsNumberItem) {
-        createNumberConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsStringArrayItem) {
-        createStringArrayConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsStringOptionsItem) {
-        createStringConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsNumberOptionsItem) {
-        createNumberConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsStringArrayOptionsItem) {
-        createStringArrayConstraint(item, key, validationMap)
-      }
-      if (item instanceof CsNumberRangeItem) {
-        createNumberArrayConstraint(item, key, validationMap)
-      }
-      validateFieldMap.set(key, item.value)
-      return
-    })
-    const validationSchemaDefObj = Object.fromEntries(validationMap)
-    const validationSchemaObj = z.object(validationSchemaDefObj)
-    return { validationSchemaObj, validateFieldMap }
-  }
+const createValidationSchema = <T extends CsView>(instance: T) => {
+  const validateFieldMap = new Map<string, any>()
+  const validationMap = new Map<string, ValueTypeZod>()
+  const keys = Object.keys(instance)
+  keys.forEach(key => {
+    const item = instance[key as keyof T]
+    if (!(item instanceof CsItem)) return
+    if (item instanceof CsStringItem) {
+      createStringConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsNumberArrayItem) {
+      createNumberArrayConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsNumberItem) {
+      createNumberConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsStringArrayItem) {
+      createStringArrayConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsStringOptionsItem) {
+      createStringConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsNumberOptionsItem) {
+      createNumberConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsStringArrayOptionsItem) {
+      createStringArrayConstraint(item, key, validationMap)
+    }
+    if (item instanceof CsNumberRangeItem) {
+      createNumberArrayConstraint(item, key, validationMap)
+    }
+    validateFieldMap.set(key, item.value)
+    return
+  })
+  const validationSchemaDefObj = Object.fromEntries(validationMap)
+  const validationSchemaObj = z.object(validationSchemaDefObj)
+  return { validationSchemaObj, validateFieldMap }
 }
 
 const createStringConstraint = (
@@ -132,13 +130,13 @@ const createNumberArrayConstraint = (
 }
 
 export class CsZodValidationEvent extends CsValidationEvent {
-  parentView: CsZodView
+  parentView: CsView
   validationSchemaObj: ZodObject<{ [k: string]: ValueTypeZod }>
   validateFieldMap: Map<string, string | number | string[] | undefined>
   zodError?: ZodError
 
   constructor(
-    view: CsZodView,
+    view: CsView,
     validationSchemaObj: ZodObject<{
       [k: string]: ValueTypeZod;
     }>,
@@ -225,17 +223,10 @@ export class CsZodValidationEvent extends CsValidationEvent {
   }
 }
 
-export const useCsZodView = <T extends CsZodView>(
+export const useCsZodValidationEvent = <T extends CsView>(
   instance: T
 ) => {
-  Object.keys(instance).forEach(k => {
-    const v = instance[k as keyof T]
-    if (v instanceof CsItem) {
-      v.key = k
-      v.parentView = instance as CsView
-    }
-  })
-  const { validationSchemaObj, validateFieldMap } = CsZodView.createValidationSchema(instance)
-  instance.validationEvent = new CsZodValidationEvent(instance, validationSchemaObj, validateFieldMap)
-  return instance
+  const { validationSchemaObj, validateFieldMap } = createValidationSchema(instance)
+  const validationEvent = new CsZodValidationEvent(instance, validationSchemaObj, validateFieldMap)
+  return validationEvent
 }

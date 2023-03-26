@@ -1,22 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Card, Col, Modal, Row, Table } from "antd"
-import { CxTableLayout } from "../../framework/components/cx/CxTableLayout"
-import { CsInputTextItem, CsSelectBoxItem } from "../../framework/logics"
-import { AxButton, AxMutateButton, AxQueryButton } from "../../framework/components/antd/AxEventCtrl"
-import { AxInputText } from "../../framework/components/antd/AxCtrl"
+import { CxTableLayout } from "../../framework/components/cx"
+import { AxButton, AxMutateButton, AxQueryButton, AxInputText } from "../../framework/components/antd"
 import {
   CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
+  CsInputTextItem, CsSelectBoxItem, CsView, useCsView,
 } from "../../framework/logics"
 import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/logics"
 import { TestApi } from "./testApi"
-import { CsRIView, useCsRIView } from "../../framework/logics"
 import { useMutation, useQuery } from "react-query"
 import { CsSelectNumberBoxItem } from "../../framework/logics"
 import Link from "antd/es/typography/Link"
 import { City, CityCreateRequest, Clan, Chara } from "./testApiClasses"
 
-interface CitySearchView extends CsRIView {
+interface CitySearchView extends CsView {
   keyword: CsInputTextItem
   searchButton: CsRqQueryButtonClickEvent<City>
   makeButton: CsRqMutateButtonClickEvent<CityCreateRequest, City>
@@ -35,7 +33,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
     const [editingChara, setEditingChara] = useState<Chara>(new Chara())
 
     const keywordItem = useCsInputTextItem("検索キーワード", useInit(""), stringRule(false, 1, 100))
-    const searchView = useCsRIView<CitySearchView>({
+    const searchView = useCsView<CitySearchView>({
       readonly: false,
       keyword: keywordItem,
       searchButton: useCsRqQueryButtonClickEvent(
@@ -47,12 +45,12 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       ),
       makeButton: useCsRqMutateButtonClickEvent(useMutation(TestApi.createCity)),
     })
-    const clanView = useCsRIView<ClanMakeView>({
+    const clanView = useCsView<ClanMakeView>({
       readonly: false,
       name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
       description: useCsInputTextItem("説明", useInit(""), stringRule(false, 1, 100)),
     })
-    const charaView = useCsRIView<CharaMakeView>({
+    const charaView = useCsView<CharaMakeView>({
       readonly: false,
       name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
       job: useCsSelectBoxItem("職業", useInit(""), stringRule(true),
@@ -306,7 +304,7 @@ interface ClanEditProps {
   //onClickHandler: () => boolean | void
 }
 
-interface ClanMakeView extends CsRIView {
+interface ClanMakeView extends CsView {
   name: CsInputTextItem
   description: CsInputTextItem
 }
@@ -336,7 +334,7 @@ interface CharaEditProps {
   view: CharaMakeView
 }
 
-interface CharaMakeView extends CsRIView {
+interface CharaMakeView extends CsView {
   name: CsInputTextItem
   job: CsSelectBoxItem
   clanKey: CsSelectNumberBoxItem

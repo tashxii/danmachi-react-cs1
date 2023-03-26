@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { UseMutationResult, UseQueryResult } from "react-query";
-import { ValueType, SetValueTypeOptional, SetValueTypeRequired } from "./CsItem";
+import { CsView } from ".";
+import { ValueType, SetValueTypeOptional, SetValueTypeRequired } from ".";
 
-export abstract class CsEvent { }
+export abstract class CsEvent {
+  key: string = ""
+  parentView?: CsView
+}
 
 export class CsEventResult<TApiResponse = unknown, TApiError = unknown> {
   isSuccess: boolean

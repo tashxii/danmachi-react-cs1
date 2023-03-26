@@ -1,13 +1,12 @@
 import { Dispatch, SetStateAction } from "react"
-import { CsRIValidationEvent, CsRIView, CsZodValidationEvent, CsZodView, StateResultRequired } from "."
+import { CsView, StateResultRequired } from "."
 import { StateResult } from "."
-import { CsView } from "."
 
 export abstract class CsItemBase {
   label: string = ""
   key: string = ""
   private readonly: boolean = false
-  parentView?: CsView = undefined
+  parentView?: CsView
   isReadonly() {
     return (this.readonly) ? this.readonly : this.parentView?.readonly ?? false;
   }
@@ -35,7 +34,10 @@ export class NumberValidationRule extends ValidationRule<number> {
   private identifier?: NumberValidationRule
   min: number | undefined
   max: number | undefined
-  setRange = (min: number = Number.MAX_SAFE_INTEGER, max: number | undefined = Number.MAX_SAFE_INTEGER) => {
+  setRange = (
+    min: number | undefined = Number.MAX_SAFE_INTEGER,
+    max: number | undefined = Number.MAX_SAFE_INTEGER
+  ) => {
     this.min = min
     this.max = max
     return this
@@ -49,7 +51,10 @@ export class StringValidationRule extends ValidationRule<string> {
   max: number | undefined
   email: boolean = false
   regExp: string | undefined
-  setLength = (min: number | undefined = 0, max: number | undefined = Number.MAX_SAFE_INTEGER) => {
+  setLength = (
+    min: number | undefined = 0,
+    max: number | undefined = Number.MAX_SAFE_INTEGER
+  ) => {
     this.min = (this.required && min === 0) ? 1 : min
     this.max = max
     return this

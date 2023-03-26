@@ -11,7 +11,7 @@ export interface MxInputDateProps extends MxProps<CsInputDateItem> {
 
 export const MxInputDate = (props: MxInputDateProps) => {
   const { item, muiProps } = props
-  const valueDayjs = (!item.value) ? dayjs("")
+  const valueDayjs = (!item.value) ? dayjs("Invalid Date")
     : dayjs(item.value, CsInputDateItem.dateValueFormat)
   return (
     <MxEditCtrl<string> mxProps={props}
@@ -19,11 +19,11 @@ export const MxInputDate = (props: MxInputDateProps) => {
         <DatePicker className={getClassName(props)}
           value={valueDayjs}
           format={CsInputDateItem.dateDisplayFormat}
-          onChange={(value) => {
-            const newValue = (!value) ? ""
+          onChange={(value: dayjs.Dayjs | null) => {
+            const newValue = (!value || !(value.isValid())) ? undefined
               : value.format(CsInputDateItem.dateValueFormat)
             item.setValue(newValue)
-            if (!item.validateWhenErrorExists(newValue)) {
+            if (!item.validateWhenErrorExists(newValue as string)) {
               setRefresh(true)
             }
           }}

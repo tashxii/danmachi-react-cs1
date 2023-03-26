@@ -1,19 +1,18 @@
-import dayjs from "dayjs";
-import { useMemo, useState } from "react";
-import { CsInputTextItem } from "../../framework/logics";
-import { CsInputNumberItem, CsCheckBoxItem, CsInputPassword, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem } from "../../framework/logics";
-import { useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit } from "../../framework/logics";
 import {
   stringRule, RW, useCsInputTextItem, useCsSelectBoxItem,
   useCsCheckBoxItem, numberRule, useCsInputNumberItem,
   useCsRadioBoxItem, useCsTextAreaItem, selectOptionStrings,
-  useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule, useInit
+  useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule,
+  CsInputNumberItem, CsCheckBoxItem, CsInputPassword,
+  CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
+  useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
+  useInit, CsInputTextItem, useCsRIValidationEvent, useCsZodValidationEvent
 } from "../../framework/logics";
 import { CsMultiCheckBoxItem } from "../../framework/logics";
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics";
-import { CsRIView, CsZodView, useCsRIView, useCsZodView } from "../../framework/logics";
+import { CsView, useCsView } from "../../framework/logics";
 
-export default interface TestView extends CsRIView {
+export default interface TestView extends CsView {
   nameItem: CsInputTextItem
   password: CsInputPassword
   adminCheck: CsCheckBoxItem
@@ -31,8 +30,7 @@ export default interface TestView extends CsRIView {
 }
 
 export function useTestView(): TestView {
-  console.log("call useTestView")
-  const view = useCsRIView<TestView>({
+  const view = useCsView<TestView>({
     nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
     password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
     adminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
@@ -55,7 +53,7 @@ export function useTestView(): TestView {
   return view
 }
 
-export interface TestZodView extends CsZodView {
+export interface TestZodView extends CsView {
   nameItem: CsInputTextItem
   password: CsInputPassword
   adminCheck: CsCheckBoxItem
@@ -73,8 +71,7 @@ export interface TestZodView extends CsZodView {
 }
 
 export function useTestZodView(): TestZodView {
-  console.log("call useTestZodView")
-  const view = useCsZodView<TestZodView>({
+  const view = useCsView<TestZodView>({
     nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
     password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
     adminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
@@ -86,14 +83,14 @@ export function useTestZodView(): TestZodView {
     memo: useCsTextAreaItem("メモ", useInit(""), stringRule(true, 1, 4000)),
     snsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
-    birth: useCsInputDateItem("生年月日", useInit(dayjs().toString()), stringRule(true)),
+    birth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
     budget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
     other1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     other2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
     other3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),
     otherA: useCsInputTextItem("ほか亜", useInit("ほかあ"), stringRule(false, 1, 10), RW.Readonly),
     readonly: false,
-  })
+  }, useCsZodValidationEvent)
   return view
 }
 

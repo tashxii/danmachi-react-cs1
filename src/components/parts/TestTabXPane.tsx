@@ -1,9 +1,9 @@
 import React from "react"
 import { Col, Row } from "antd"
 import { useTestView, useTestZodView } from "./testView"
-import { CxLayout2Props, CxTableLayout } from "../../framework/components/cx/CxTableLayout"
+import { CxLayout2Props, CxTableLayout } from "../../framework/components/cx"
 import { CsView } from "../../framework/logics"
-import { AxButton } from "../../framework/components/antd/AxEventCtrl"
+import { AxButton } from "../../framework/components/antd"
 
 interface TestTabXPaneProp {
   colSize: number,

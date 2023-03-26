@@ -55,11 +55,11 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
   const requiredTag = () => {
     switch (showTag) {
       case "both":
-        return (<Badge pill bg="light" text={required ? "danger" : "dark"}>{required ? "必須" : "任意"}</Badge>)
+        return (<Badge pill bg="light" text={required ? "danger" : "secondary"}>{required ? "必須" : "任意"}</Badge>)
       case "required":
         return (required && <Badge pill bg="light" text="danger">{"必須"}</Badge>)
       case "optional":
-        return (!required && <Badge pill bg="light" text="dark">{"任意"}</Badge>)
+        return (!required && <Badge pill bg="light" text="secondary">{"任意"}</Badge>)
     }
   }
   return (

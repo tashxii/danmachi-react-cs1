@@ -1,4 +1,4 @@
-import { CsItem, CsRIValidationEvent, CsRIView, CsZodValidationEvent, CsZodView } from "."
+import { CsEvent, CsItem, CsItemBase, useCsRIValidationEvent } from "."
 
 
 export abstract class CsView {
@@ -10,7 +10,7 @@ export abstract class CsValidationEvent {
   /** XxButtonから呼び出すためのバリデーションメソッド
    *  エラーがあったか、なかったかをbooleanとして返す
    */
-  abstract onValidateHasError(view: CsView): boolean
+  abstract onValidateHasError(): boolean
 
   /**
    * 項目単体のみのバリデーションメソッド
@@ -32,11 +32,29 @@ export const executeValidation = (validationViews: CsView[] | undefined) => {
   if (validationViews) {
     for (const view of validationViews) {
       if (view.validationEvent) {
-        if (view.validationEvent.onValidateHasError(view)) {
+        if (view.validationEvent.onValidateHasError()) {
           validationOK = false
         }
       }
     }
   }
   return validationOK
+}
+
+export const useCsView = <T extends CsView>(
+  instance: T,
+  validationEventHook: (instance: T) => CsValidationEvent = useCsRIValidationEvent
+) => {
+  Object.entries(instance).forEach(([key, value]) => {
+    if (value instanceof CsItemBase) {
+      value.key = key
+      value.parentView = instance
+    }
+    if (value instanceof CsEvent) {
+      value.key = key
+      value.parentView = instance
+    }
+  })
+  instance.validationEvent = validationEventHook(instance)
+  return instance
 }
