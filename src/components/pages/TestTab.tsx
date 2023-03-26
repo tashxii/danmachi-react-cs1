@@ -11,8 +11,12 @@ const TestTab: React.FC = () => {
   const colSize = useCsSelectNumberBoxItem("表示列数", useInit(2), numberRule(false),
     selectOptionNumbers([1, 2, 3, 4, 6]))
   const readonlyCheck = useCsCheckBoxItem("読み取り専用", useInit(false), "する")
-  const viewType = useCsRadioBoxItem("バリデーションタイプ", useInit("ri"), stringRule(true),
-    selectOptions([{ value: "ri", label: "参照実装" }, { value: "zod", label: "Zod" }]))
+  const validationType = useCsRadioBoxItem("バリデーションタイプ", useInit("ri"), stringRule(true),
+    selectOptions([
+      { value: "ri", label: "参照実装" },
+      { value: "yup", label: "Yup" },
+      { value: "zod", label: "Zod" },
+    ]))
 
   const items: TabsProps["items"] = [
     {
@@ -24,7 +28,7 @@ const TestTab: React.FC = () => {
       key: "2",
       label: `x列の自動デザイン`,
       children: <TestTabXPane
-        viewType={viewType.value ?? ""}
+        validationType={validationType.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="standard"
         readonly={readonlyCheck.value === true} />,
@@ -33,7 +37,7 @@ const TestTab: React.FC = () => {
       key: "3",
       label: (<div>x列の自動デザイン<div>（Material UI）</div></div>),
       children: <TestTabXPane
-        viewType={viewType.value ?? ""}
+        validationType={validationType.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="mui"
         readonly={readonlyCheck.value ?? false} />,
@@ -42,7 +46,7 @@ const TestTab: React.FC = () => {
       key: "4",
       label: (<div>x列の自動デザイン<div>（Ant Design）</div></div>),
       children: <TestTabXPane
-        viewType={viewType.value ?? ""}
+        validationType={validationType.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="antd"
         readonly={readonlyCheck.value ?? false} />,
@@ -51,7 +55,7 @@ const TestTab: React.FC = () => {
       key: "5",
       label: (<div>x列の自動デザイン<div>（React-Bootstrap）</div></div>),
       children: <TestTabXPane
-        viewType={viewType.value ?? ""}
+        validationType={validationType.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="bootstrap"
         readonly={readonlyCheck.value ?? false} />,
@@ -69,7 +73,7 @@ const TestTab: React.FC = () => {
       <Row>
         <AxSelectNumberBox item={colSize} />
         <AxCheckBox item={readonlyCheck} />
-        <AxRadioBox item={viewType} />
+        <AxRadioBox item={validationType} />
       </Row>
       <Tabs defaultActiveKey="1" items={items} />
     </div>

@@ -67,12 +67,12 @@
   border-width: 1.0px;
 }
 
-.readonly {
-  background: linear-gradient(to right, #ccd0d95c, #cdd3de83);
+.bsx-ctrl.readonly {
+  background: linear-gradient(to right, #c9989f20, #e0a6a830);
 }
 
 .readonly:focus {
-  background: linear-gradient(to right, #a5bed73c, #c5def75c);
+  background: linear-gradient(to right, #c9989f20, #e0a6a830);
 }
 
 .bsx-ctrl .checkbox-item {

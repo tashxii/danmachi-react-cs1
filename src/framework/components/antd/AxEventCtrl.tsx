@@ -20,7 +20,7 @@ const getClassName = (props: AxEventProps, base: string): string => {
 
 export interface AxButtonProps extends AxEventProps {
   type?: "default" | "link" | "text" | "ghost" | "primary" | "dashed" | undefined
-  onClick: () => boolean | void
+  onClick: (() => boolean) | (() => void)
   validationViews?: CsView[],
   successMessage?: string
   errorMessage?: string
@@ -33,26 +33,19 @@ export interface AxButtonProps extends AxEventProps {
 
 export const AxButton = (props: AxButtonProps) => {
   const { onClick, validationViews, antdProps } = props
-  const [onClickResult, setOnClickResult] = useState<string>()
   const [showStatus, setShowStatus] = useState<string>()
-
-  useEffect(() => {
-    if (onClickResult !== undefined) {
-      setShowStatus(onClickResult)
-      setOnClickResult(undefined)
-    }
-  }, [onClickResult])
 
   const onClickWrap = useCallback(() => {
     const validationOk = executeValidation(validationViews)
+    setShowStatus("")
     if (!validationOk) {
-      setOnClickResult("validation")
+      setShowStatus("validation")
       return
     }
     if (onClick() === false) {
-      setOnClickResult("error")
+      setShowStatus("error")
     } else {
-      setOnClickResult("success")
+      setShowStatus("success")
     }
   }, [onClick, validationViews])
 
@@ -69,7 +62,7 @@ export const AxButton = (props: AxButtonProps) => {
           type="error" showIcon closable onClose={() => setShowStatus(undefined)} />}
       {(showStatus === "validation" && props.validateErrorMessage) &&
         <Alert className="button-alert" message={props.validateErrorMessage}
-          type="error" showIcon closable onClose={() => setShowStatus(undefined)} />}
+          type="warning" showIcon closable onClose={() => setShowStatus(undefined)} />}
       <Tooltip title={props.disabledReason} color="darkslategray"
         open={(isShowDisableReason()) ? undefined : false} >
         <Button className={getClassName(props, "button")} type={props.type}
@@ -99,14 +92,9 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
   props: AxMutateButtonProps<TApiRequest, TApiResponse>
 ) => {
   const { event, validationViews, antdProps } = props
-  const [onClickResult, setOnClickResult] = useState<string>()
   const [showStatus, setShowStatus] = useState<string>()
 
   useEffect(() => {
-    if (onClickResult !== undefined) {
-      setShowStatus(onClickResult)
-      setOnClickResult(undefined)
-    }
     if (!event.isLoading) {
       if (event.isSuccess) {
         event.setResponse()
@@ -114,15 +102,16 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
         event.setError()
       }
     }
-  }, [event, onClickResult])
+  }, [event])
 
   const onClick = useCallback(async () => {
     const validationOk = executeValidation(validationViews)
+    setShowStatus("")
     if (!validationOk) {
-      setOnClickResult("validation")
+      setShowStatus("validation")
     }
     if (event.apiRequest === undefined) {
-      setOnClickResult("noRequest")
+      setShowStatus("noRequest")
       return
     }
     await event.onClick()
@@ -166,14 +155,9 @@ export const AxQueryButton = <TApiResponse = unknown>(
   props: AxQueryButtonProps<TApiResponse>
 ) => {
   const { event, validationViews, antdProps } = props
-  const [onClickResult, setOnClickResult] = useState<string>()
   const [showStatus, setShowStatus] = useState<string>()
 
   useEffect(() => {
-    if (onClickResult !== undefined) {
-      setShowStatus(onClickResult)
-      setOnClickResult(undefined)
-    }
     if (!event.isRefetching) {
       if (event.isSuccess) {
         event.setResponse()
@@ -181,12 +165,13 @@ export const AxQueryButton = <TApiResponse = unknown>(
         event.setError()
       }
     }
-  }, [event, onClickResult])
+  }, [event])
 
   const onClick = useCallback(async () => {
     const validationOk = executeValidation(validationViews)
+    setShowStatus("")
     if (!validationOk) {
-      setOnClickResult("validation")
+      setShowStatus("validation")
       return
     }
     await event.onClick()

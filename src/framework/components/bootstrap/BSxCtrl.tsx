@@ -90,7 +90,7 @@ export const BSxEditCtrl = <T,>(props: BSxEditCtrlProps<CsItem<T>>) => {
     <div>
       <BSxLabel label={getLabel(item, showRequiredTag)}></BSxLabel>
       {renderCtrl(setRefresh)}
-      <ValidationError message={item.validationErrorMessage} />
+      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
     </div>
   )
 }

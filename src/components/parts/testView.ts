@@ -6,7 +6,7 @@ import {
   CsInputNumberItem, CsCheckBoxItem, CsInputPassword,
   CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
   useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
-  useInit, CsInputTextItem, useCsZodValidationEvent
+  useInit, CsInputTextItem, useCsZodValidationEvent, useCsYupValidationEvent
 } from "../../framework/logics";
 import { CsMultiCheckBoxItem } from "../../framework/logics";
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics";
@@ -92,4 +92,43 @@ export function useTestZodView(): TestZodView {
   return view
 }
 
+export interface TestYupView extends CsView {
+  ynameItem: CsInputTextItem
+  ypassword: CsInputPassword
+  yadminCheck: CsCheckBoxItem
+  ygenderSelect: CsSelectBoxItem
+  ycontactWay: CsRadioBoxItem
+  yage: CsInputNumberItem
+  ysnsWay: CsMultiCheckBoxItem
+  ymemo: CsTextAreaItem
+  ybirth: CsInputDateItem
+  ybudget: CsInputNumberRangeItem
+  yother1: CsInputTextItem
+  yother2: CsInputTextItem
+  yother3: CsInputTextItem
+  yotherA: CsInputTextItem
+}
+
+export function useTestYupView(): TestYupView {
+  const view = useCsView<TestYupView>({
+    ynameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
+    ypassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
+    yadminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
+    ygenderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
+      selectOptionStrings(["男性", "女性", "未回答"])),
+    ycontactWay: useCsRadioBoxItem("連絡方法", useInit(""), stringRule(true),
+      selectOptionStrings(["メール", "電話", "訪問"])),
+    yage: useCsInputNumberItem("年齢", useInit(), numberRule(true, 18, 70)),
+    ymemo: useCsTextAreaItem("メモ", useInit(""), stringRule(true, 1, 4000)),
+    ysnsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
+      selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
+    ybirth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
+    ybudget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
+    yother1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
+    yother2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
+    yother3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),
+    yotherA: useCsInputTextItem("ほか亜", useInit("ほかあ"), stringRule(false, 1, 10), RW.Readonly),
+  }, useCsYupValidationEvent)
+  return view
+}
 

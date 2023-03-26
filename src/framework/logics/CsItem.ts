@@ -95,6 +95,7 @@ export abstract class CsItem<T> extends CsItemBase {
     return this
   }
 
+  // vallidationTypeがZodやYupの場合のみ利用。RIでは不要
   setValidation = (state: StateResultRequired<string>) => {
     this.validationMessage = state[0]
     this.setValidationMessage = state[1]

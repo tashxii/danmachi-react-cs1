@@ -94,7 +94,7 @@ export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T>>) => {
     <>
       <MxLabel label={getLabel(item, showRequiredTag)}></MxLabel>
       {renderCtrl(setRefresh)}
-      <ValidationError message={item.validationErrorMessage} />
+      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
     </>
   )
 }

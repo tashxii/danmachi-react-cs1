@@ -32,7 +32,7 @@ export const AxLabel = (props: AxLabelProp) => {
 }
 
 export const getClassName = <T,>(props: AxProps<CsItem<T>>, add?: string): string => {
-  let names = ["ctrl"]
+  let names = ["antd-ctrl"]
   const item = props.item
   if (add) {
     names.push(add)
@@ -90,7 +90,7 @@ export const AxEditCtrl = <T,>(props: AxEditCtrlProps<CsItem<T>>) => {
     <div>
       <AxLabel label={getLabel(item, showRequiredTag)}></AxLabel>
       {renderCtrl(setRefresh)}
-      <ValidationError message={item.validationErrorMessage} />
+      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
     </div>
   )
 }

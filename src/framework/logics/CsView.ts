@@ -50,10 +50,6 @@ export const useCsView = <T extends CsView>(
       value.key = key
       value.parentView = instance
     }
-    if (value instanceof CsEvent) {
-      value.key = key
-      value.parentView = instance
-    }
   })
   instance.validationEvent = validationEventHook(instance)
   return instance
