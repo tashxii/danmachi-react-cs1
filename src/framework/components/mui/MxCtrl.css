@@ -64,9 +64,6 @@
   margin-left: 10px;
 }
 
-/* MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input
- css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input */
-
 .mui-ctrl .MuiInputBase-input {
   padding: 12px;
 }
@@ -116,6 +113,12 @@
   border: solid 1px lightgray;
   font-size: 16px;
   outline: none;
+}
+
+.textarea.validation-error {
+  border-style: solid;
+  border-color: #f01818bf;
+  border-width: 1.0px;
 }
 
 .fit-content {

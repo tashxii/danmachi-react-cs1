@@ -43,7 +43,7 @@ export const AxInputNumberRange = (props: AxInputNumberRangeProps) => {
       renderCtrl={(setRefresh) => (
         <div style={{ display: "inline-block" }}>
           <InputNumber className={getClassName(props, "input-number")}
-            value={item.lowerValue} defaultValue={item.lowerValue}
+            value={item.lowerValue}
             readOnly={item.isReadonly()}
             onChange={(value) => {
               const newValue = (value) ? value : undefined
@@ -62,7 +62,7 @@ export const AxInputNumberRange = (props: AxInputNumberRangeProps) => {
           />
           <span> ～ </span>
           <InputNumber className={getClassName(props, "input-number")}
-            value={item.upperValue} defaultValue={item.upperValue}
+            value={item.upperValue}
             readOnly={item.isReadonly()}
             onChange={(value) => {
               const newValue = (value) ? value : undefined

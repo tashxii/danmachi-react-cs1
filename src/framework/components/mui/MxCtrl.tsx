@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactNode, useEffect, useState } from "react"
+import React, { ReactNode, useEffect, useState } from "react"
 import {
   CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
@@ -134,7 +134,7 @@ export const MxInputNumber = (props: MxInputNumberProps) => {
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
         <TextField className={getClassName(props, "input-number")}
-          value={item.value} defaultValue={item.value}
+          value={item.value}
           inputProps={{
             readOnly: item.isReadonly(),
           }}
@@ -229,7 +229,7 @@ const MxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
         <Select className={getClassName(props, "fit-content")}
-          value={item.value} // defaultValue={item.value}
+          value={item.value}
           onChange={(e: SelectChangeEvent<V>) => {
             const newValue = (e.target.value) ? e.target.value.toString() : ""
             item.setValue(toValue(newValue))

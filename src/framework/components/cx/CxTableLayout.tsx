@@ -68,7 +68,7 @@ export const CxTableLayout: React.FC<CxLayout2Props> = (props: CxLayout2Props) =
                   return (
                     <Col key={k++} span={colSpan}>
                       {
-                        <SelectComponent key={k++} item={items[x++]} componentType={props.componentType} />
+                        <SelectComponent key={(k++) + items[x]?.key} item={items[x++]} componentType={props.componentType} />
                       }
                     </Col>
                   )
