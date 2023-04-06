@@ -3,7 +3,7 @@ import { Col, Row } from "antd"
 import {
   CsView, CsItemBase, CsInputTextItem,
   CsInputNumberItem, CsTextAreaItem, CsCheckBoxItem,
-  CsInputPassword, CsRadioBoxItem, CsSelectNumberBoxItem,
+  CsInputPasswordItem, CsRadioBoxItem, CsSelectNumberBoxItem,
   CsSelectBoxItem, CsMultiCheckBoxItem, CsInputDateItem,
   CsInputNumberRangeItem
 } from "../../logics"
@@ -136,8 +136,8 @@ export const selectComponent = (item: CsItemBase, componentType: "standard" | "a
         return (<AxCheckBox {...props} />)
     }
   }
-  if (item instanceof CsInputPassword) {
-    const props: CxProps<CsInputPassword> = { item: item }
+  if (item instanceof CsInputPasswordItem) {
+    const props: CxProps<CsInputPasswordItem> = { item: item }
     switch (componentType) {
       case "standard":
         return (<CxPasswordBox {...props} />)

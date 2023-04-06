@@ -1,6 +1,6 @@
 import React from "react"
 import {
-  CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
+  CsCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem
 } from "../../logics"
 import { CsInputNumberItem, CsItemBase } from "../../logics"
@@ -38,7 +38,7 @@ export const CxInputNumber: React.FC<CxProps<CsInputNumberItem>> = (props) => {
   )
 }
 
-export const CxPasswordBox: React.FC<CxProps<CsInputPassword>> = (props) => {
+export const CxPasswordBox: React.FC<CxProps<CsInputPasswordItem>> = (props) => {
   const { item } = props
   return (
     <div className="ctrl">

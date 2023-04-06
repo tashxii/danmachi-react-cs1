@@ -1,7 +1,7 @@
 import React, { ChangeEvent, ReactNode, useEffect, useState } from "react"
 import { Input, Select, Radio, Checkbox, InputNumber, Typography, Tag, InputProps, InputNumberProps, InputRef, SelectProps, RadioGroupProps, CheckboxProps } from "antd"
 import {
-  CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
+  CsCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem, CsSelectNumberBoxItem, CsHasOptionsItem,
@@ -147,7 +147,7 @@ export const AxInputNumber = (props: AxInputNumberProps) => {
   )
 }
 
-export interface AxInputPasswordProps extends AxProps<CsInputPassword> {
+export interface AxInputPasswordProps extends AxProps<CsInputPasswordItem> {
   antdProps?: InputProps & React.RefAttributes<InputRef>
 }
 

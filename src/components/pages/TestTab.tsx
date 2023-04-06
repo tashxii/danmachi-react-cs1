@@ -1,11 +1,12 @@
 import React from "react"
 import { Row, Tabs } from "antd"
 import type { TabsProps } from "antd"
-import { AsIsWayPane } from "../parts/AsIsWayPane"
+import { OldFashionededPane } from "../parts/OldFashionedPane"
 import { TestTabXPane } from "../parts/TestTabXPane"
 import { AxCheckBox, AxRadioBox, AxSelectNumberBox } from "../../framework/components/antd"
 import { numberRule, selectOptionNumbers, selectOptions, stringRule, useCsCheckBoxItem, useCsRadioBoxItem, useCsSelectNumberBoxItem, useInit } from "../../framework/logics"
 import { TestEventPane } from "../parts/TestEventPane"
+import { ConceptApplyedPane } from "../parts/ConceptApplyedPane"
 
 const TestTab: React.FC = () => {
   const colSize = useCsSelectNumberBoxItem("表示列数", useInit(2), numberRule(false),
@@ -21,17 +22,13 @@ const TestTab: React.FC = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: `現状の実装`,
-      children: <AsIsWayPane />,
+      label: `工夫無しの実装`,
+      children: <OldFashionededPane />,
     },
     {
       key: "2",
-      label: `x列の自動デザイン`,
-      children: <TestTabXPane
-        validationType={validationType.value ?? ""}
-        colSize={colSize.value ?? 1}
-        componentType="standard"
-        readonly={readonlyCheck.value === true} />,
+      label: `コンセプトを適用した実装`,
+      children: <ConceptApplyedPane />,
     },
     {
       key: "3",
@@ -62,7 +59,7 @@ const TestTab: React.FC = () => {
     },
     {
       key: "6",
-      label: `イベントテスト（ReactQuery ⁺ Ant Design）`,
+      label: (<div><div>イベントテスト</div>（React- Query＋Ant Design）</div>),
       children: <TestEventPane
         colSize={colSize.value ?? 1}
         componentType="antd" />,

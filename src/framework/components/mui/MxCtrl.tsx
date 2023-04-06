@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react"
 import {
-  CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
+  CsCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem,
@@ -157,7 +157,7 @@ export const MxInputNumber = (props: MxInputNumberProps) => {
   )
 }
 
-export interface MxInputPasswordProps extends MxProps<CsInputPassword> {
+export interface MxInputPasswordProps extends MxProps<CsInputPasswordItem> {
   muiProps?: TextFieldProps
 }
 

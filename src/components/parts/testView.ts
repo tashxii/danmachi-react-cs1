@@ -3,7 +3,7 @@ import {
   useCsCheckBoxItem, numberRule, useCsInputNumberItem,
   useCsRadioBoxItem, useCsTextAreaItem, selectOptionStrings,
   useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule,
-  CsInputNumberItem, CsCheckBoxItem, CsInputPassword,
+  CsInputNumberItem, CsCheckBoxItem, CsInputPasswordItem,
   CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
   useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
   useInit, CsInputTextItem, useCsZodValidationEvent, useCsYupValidationEvent
@@ -14,7 +14,7 @@ import { CsView, useCsView } from "../../framework/logics";
 
 export default interface TestView extends CsView {
   nameItem: CsInputTextItem
-  password: CsInputPassword
+  password: CsInputPasswordItem
   adminCheck: CsCheckBoxItem
   genderSelect: CsSelectBoxItem
   contactWay: CsRadioBoxItem
@@ -54,7 +54,7 @@ export function useTestView(): TestView {
 
 export interface TestZodView extends CsView {
   znameItem: CsInputTextItem
-  zpassword: CsInputPassword
+  zpassword: CsInputPasswordItem
   zadminCheck: CsCheckBoxItem
   zgenderSelect: CsSelectBoxItem
   zcontactWay: CsRadioBoxItem
@@ -94,7 +94,7 @@ export function useTestZodView(): TestZodView {
 
 export interface TestYupView extends CsView {
   ynameItem: CsInputTextItem
-  ypassword: CsInputPassword
+  ypassword: CsInputPasswordItem
   yadminCheck: CsCheckBoxItem
   ygenderSelect: CsSelectBoxItem
   ycontactWay: CsRadioBoxItem

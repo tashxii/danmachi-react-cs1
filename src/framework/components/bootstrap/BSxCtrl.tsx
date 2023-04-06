@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react"
 import {
-  CsCheckBoxItem, CsInputPassword, CsRadioBoxItem,
+  CsCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
   CsInputNumberItem, CsItem, CsItemBase,
   CsMultiCheckBoxItem,
@@ -153,7 +153,7 @@ export const BSxInputNumber = (props: BSxInputNumberProps) => {
   )
 }
 
-export interface BSxInputPasswordProps extends BSxProps<CsInputPassword> {
+export interface BSxInputPasswordProps extends BSxProps<CsInputPasswordItem> {
   bsProps?: BsPrefixRefForwardingComponent<"input", FormControlProps> & {
     Feedback: BsPrefixRefForwardingComponent<"div", FeedbackProps>
   }
