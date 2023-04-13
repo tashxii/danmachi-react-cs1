@@ -46,14 +46,11 @@ export const CxTableLayout: React.FC<CxLayout2Props> = (props: CxLayout2Props) =
     }
   }
   const rowLimit = Math.floor(items.length / props.colSize + ((items.length % props.colSize === 0) ? 0 : 1))
-  const rows: number[] = []
-  for (let i = 0; i < rowLimit; i++) {
-    rows.push(i + 1)
-  }
-  const cols: number[] = []
-  for (let i = 0; i < props.colSize; i++) {
-    cols.push(i + 1)
-  }
+  const rows: Array<number> = new Array(rowLimit)
+  rows.fill(0) //map/forEachはemptyでは無効のため0詰め
+  const cols: Array<number> = new Array(props.colSize)
+  cols.fill(0)
+
   const colSpan = 24 / props.colSize
   let x = 0
   let k = 0
