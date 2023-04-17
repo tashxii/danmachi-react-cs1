@@ -1,4 +1,4 @@
-.label {
+.label-base {
   display: block;
   margin-left: 5px;
   margin-top: 5px;
@@ -7,14 +7,14 @@
   font-size: 90%;
 }
 
-.label .ant-tag {
+.label-base .tag {
   font-size: 40%;
   vertical-align: top;
   margin-left: 10px;
   padding-inline: 4px;
 }
 
-.ctrl {
+.ctrl-base {
   width: 90%;
   margin-left: 5px;
   margin-right: 5px;
@@ -22,48 +22,33 @@
   min-width: 40px;
   border-radius: 5px;
   padding: 8px;
-  border: solid 1px lightgray;
   background-color: #fafbfc;
   font-size: 16px;
   outline: none;
 }
 
-.ctrl:focus {
+.ctrl-base:focus {
   background-color: white;
 }
 
-.readonly {
+.readonly-base {
   background: linear-gradient(to right, #ccd0d95c, #cdd3de83);
   /* pointer-events: none; */
 }
 
-.readonly .ant-select-selector {
-  background-color: #abafb783 !important;
-}
-
-.readonly .ant-input {
-  background-color: #abafb783 !important;
-}
-
-.readonly .ant-radio-checked .ant-radio-inner {
-  background-color: #93abe9;
-}
-
-.readonly .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #93abe9;
-}
-
-.readonly:focus {
+.readonly-base:focus {
   background: linear-gradient(to right, #a5bed73c, #c5def75c);
 }
 
-.checkbox-item {
+.checkbox-item-base {
   margin-right: 5px;
-  margin-left: 3px;
-  margin-inline-start: 0px !important; /* for-antd */
+  margin-left: 0px !important;
+  /* for-antd */
+  margin-inline-start: 0px !important;
+  /* for-antd */
 }
 
-.textarea {
+.textarea-base {
   width: 90%;
   border-radius: 5px;
   padding: 8px;
@@ -72,7 +57,7 @@
   outline: none;
 }
 
-.fit-content {
+.fit-content-base {
   width: -moz-fit-content;
   /* Firefox */
   width: fit-content;
@@ -80,31 +65,30 @@
   min-width: 120px;
 }
 
-.button-area {
+.button-area-base {
   /* text-align: right;
   max-width: fit-content;*/
   margin-top: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
   margin-right: 10px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  vertical-align: bottom;
-}
-
-.button-area .left {
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-.button {
   text-align: right;
-  position: absolute;
-  bottom: 10px;
+  min-height: 100%;
+  position: relative;
 }
 
-.button .left {
+.button-area-base.left {
   text-align: left;
-  align-items: flex-start;
-  justify-content: flex-start;
+}
+
+.button-base {
+  position: absolute;
+  align-content: center;
+  display: flex;
+  margin-top: 15px;
+  margin-left: 5px;
+  bottom: 15px !important;
+}
+
+.button-base.left {
+  align-content: left;
 }

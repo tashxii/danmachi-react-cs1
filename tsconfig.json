@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "preserve",
     "target": "es5",
     "lib": [
       "dom",
@@ -19,10 +19,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    // "jsx": "react-jsx",
-    "downlevelIteration": true,
+    "downlevelIteration": true
   },
   "include": [
     "src"
-  ],
+  ]
 }

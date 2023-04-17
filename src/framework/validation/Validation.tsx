@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import StringFieldConstraint from './field/StringFieldConstraint';
-import StringArrayFieldConstraint from './field/StringArrayFieldConstraint';
-import NumberFieldConstraint from './field/NumberFieldConstraint';
+import React, { useState } from "react";
+import StringFieldConstraint from "./field/StringFieldConstraint";
+import StringArrayFieldConstraint from "./field/StringArrayFieldConstraint";
+import NumberFieldConstraint from "./field/NumberFieldConstraint";
 
 /**
  * 単項目バリデーションの実装では、必須入力のバリデーション等、同様の実装をすることが多くなる。
@@ -16,7 +16,7 @@ import NumberFieldConstraint from './field/NumberFieldConstraint';
  * それぞれの項目が正常であった場合に相関バリデーションを行うのがよいため、単項目バリデーションでエラーが発生しなかった場合にコールバックされる関数内にて実装する。
  */
 // stringは検証できるが他の型を考慮していないので型制約をつける
-export type AvailableFiledType = { [key: string]: string | number | string[] };
+export type AvailableFiledType = { [key: string]: string | number | string[] | undefined };
 
 // IDEで補完が効くように、Genericsで検証対象フィールドを指定させてそれに基づいた型制約をつける
 type FieldConstraintSchema<T> = Record<keyof T, Constraint<any>>;
@@ -46,10 +46,24 @@ const useValidation = <T extends AvailableFiledType>(schema: FieldConstraintSche
       return { ...error, ...newError };
     });
   };
-  const resetError = () => {
-    setError((error) => {
-      return {} as ValidationError<T>;
-    });
+
+  const resetError = (name?: string) => {
+    if (!name) {
+      setError((error) => {
+        return {} as ValidationError<T>;
+      });
+    } else {
+      const newErrorMap = new Map<string, string>()
+      Object.entries(error).forEach(row => {
+        if (row[0] !== name && row[1] && row[1] !== "") {
+          newErrorMap.set(row[0], row[1])
+        }
+      })
+      const newError = Object.fromEntries(newErrorMap)
+      setError((error) => {
+        return { ...newError as ValidationError<T> };
+      });
+    }
   };
   const validator = new ConstraintValidators<T>(schema, setValidationError);
 
@@ -108,7 +122,6 @@ export class ConstraintValidators<T extends AvailableFiledType> {
 class ConstraintValidator<T> {
 
   name: keyof T;
-
   constraint: Constraint<T>;
 
   setValidationError: SetValidationError<T>;
@@ -122,11 +135,21 @@ class ConstraintValidator<T> {
   validate<V>(value: V): boolean {
     let message: string | null = null;
     if (this.constraint instanceof NumberFieldConstraint) {
-      const numValue = this.constraint.isNumber(value) ? Number(value) : null;
-      message = this.constraint.validate(numValue);
+      const constraint = this.constraint as NumberFieldConstraint
+      if (Array.isArray(value) === false) {
+        const numValue = constraint.isNumber(value) ? Number(value) : null;
+        message = constraint.validate(numValue);
+      } else {
+        for (const v of value as number[]) {
+          const numValue = constraint.isNumber(v) ? Number(v) : null;
+          message = constraint.validate(numValue);
+          if (message != null) break;
+        }
+      }
     } else if (this.constraint instanceof StringFieldConstraint) {
       // TypeGuardでコンパイルエラーになるため、instanceofで判定を行う
-      message = this.constraint.validate(String(value));
+      const strValue = (!value) ? null : String(value)
+      message = this.constraint.validate(strValue);
     } else if (this.constraint instanceof StringArrayFieldConstraint) {
       const arrayValue = Array.isArray(value) ? value : null;
       message = this.constraint.validate(arrayValue);
