@@ -102,13 +102,15 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
         event.setError()
       }
     }
-  }, [event])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event.isLoading, event.isSuccess, event.isError])
 
   const onClick = useCallback(async () => {
     const validationOk = executeValidation(validationViews)
     setShowStatus("")
     if (!validationOk) {
       setShowStatus("validation")
+      return
     }
     if (event.apiRequest === undefined) {
       setShowStatus("noRequest")
@@ -165,7 +167,9 @@ export const AxQueryButton = <TApiResponse = unknown>(
         event.setError()
       }
     }
-  }, [event])
+    // 検索キーワードなどもeventに含まれるため、3つの属性のみを依存関係とする
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event.isRefetching, event.isSuccess, event.isError])
 
   const onClick = useCallback(async () => {
     const validationOk = executeValidation(validationViews)

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactNode, useEffect, useState } from "react"
-import { Input, Select, Radio, Checkbox, InputNumber, Typography, Tag, InputProps, InputNumberProps, InputRef, SelectProps, RadioGroupProps, CheckboxProps } from "antd"
+import { Input, Select, Radio, Checkbox, InputNumber, Typography, Tag, InputProps, InputNumberProps, InputRef, SelectProps, RadioGroupProps, CheckboxProps, Row, Col, Tooltip } from "antd"
 import {
   CsCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem,
   CsSelectBoxItem, CsTextAreaItem, CsInputTextItem,
@@ -7,7 +7,6 @@ import {
   CsMultiCheckBoxItem, CsSelectNumberBoxItem, CsHasOptionsItem,
 } from "../../logics"
 import "./AxCtrl.css"
-import { ValidationError } from "../../../components/basics/ValidationError"
 import { ValueType } from "@rc-component/mini-decimal"
 import { TextAreaProps, TextAreaRef } from "antd/es/input/TextArea"
 
@@ -88,10 +87,24 @@ export const AxEditCtrl = <T,>(props: AxEditCtrlProps<CsItem<T>>) => {
 
   return (
     <div>
-      <AxLabel label={getLabel(item, showRequiredTag)}></AxLabel>
-      {renderCtrl(setRefresh)}
-      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
-    </div>
+      <Row>
+        <Col span={6}>
+          <AxLabel label={getLabel(item, showRequiredTag)}></AxLabel>
+        </Col>
+        <Col span={18}>
+          {/* <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} /> */}
+
+
+          {(item.validationErrorMessage) ?
+            < Tooltip placement="top" color="#ffb6c1" title={item.validationErrorMessage} defaultOpen={true}>
+              {renderCtrl(setRefresh)}
+            </Tooltip>
+            :
+            renderCtrl(setRefresh)
+          }
+        </Col>
+      </Row>
+    </div >
   )
 }
 
