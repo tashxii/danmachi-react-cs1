@@ -5,7 +5,7 @@ import { CxTableLayout } from "../../framework/components/cx"
 import { Col, Row } from "antd"
 
 // Viewの定義
-interface RegisterUserView extends CsView {
+type RegisterUserView = CsView & {
   nickname: CsInputTextItem
   password: CsInputPasswordItem
   kananame: CsInputTextItem
@@ -19,7 +19,7 @@ interface RegisterUserView extends CsView {
 }
 
 export const ConceptApplyedPane: React.FC = () => {
-  const view: RegisterUserView = useCsView<RegisterUserView>({
+  const view: RegisterUserView = useCsView({
     nickname: useCsInputTextItem("ニックネーム", useInit(""), stringRule(true, 3, 30)),
     password: useCsInputPasswordItem("パスワード", useInit(""), stringRule(true, 8, 16)),
     kananame: useCsInputTextItem("かな", useInit(""), stringRule(true)),

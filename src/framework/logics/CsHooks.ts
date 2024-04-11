@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react"
 
-import { BooleanValidationRule, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsSelectNumberBoxItem, CsTextAreaItem, NumberValidationRule, StringArrayValidationRule, StringValidationRule, ValidationRule } from "./CsItem"
+import { BooleanValidationRule, CsCheckBoxItem, CsHasOptionsItem, CsInputNumberItem, CsInputTextItem, CsItem, CsMultiCheckBoxItem, CsInputPasswordItem, CsRadioBoxItem, CsSelectBoxItem, CsSelectNumberBoxItem, CsTextAreaItem, NumberValidationRule, StringArrayValidationRule, StringValidationRule, ValidationRule, NumberArrayValidationRule } from "./CsItem"
 
 export type StateResultOptional<T> = [val: T | undefined, setVal: Dispatch<SetStateAction<T | undefined>>]
 export type StateResultRequired<T> = [val: T, setVal: Dispatch<SetStateAction<T>>]
@@ -11,30 +11,41 @@ export function useInit<T>(value?: T) {
   return state
 }
 
-export function stringRule(required: boolean, min?: number, max?: number, email?: boolean, regExp?: string) {
+export function stringRule(required: boolean, min?: number, max?: number, customRuleName?: string) {
   const rule = new StringValidationRule()
   rule.setRequired(required)
   if (min || max) rule.setLength(min, max)
-  if (email) rule.setEmail(true)
-  if (regExp) rule.setRegExp(regExp)
+  if (customRuleName) rule.setCustomRuleName(customRuleName)
   return rule
 }
 
-export function numberRule(required: boolean, min?: number, max?: number) {
+export function numberRule(required: boolean, min?: number, max?: number, customRuleName?: string) {
   const rule = new NumberValidationRule()
   rule.setRequired(required)
   if (min || max) rule.setRange(min, max)
+  if (customRuleName) rule.setCustomRuleName(customRuleName)
   return rule
 }
 
-export function stringArrayRule(required: boolean) {
+export function stringArrayRule(required: boolean, customRuleName?: string) {
   const rule = new StringArrayValidationRule()
   rule.setRequired(required)
+  if (customRuleName) rule.setCustomRuleName(customRuleName)
   return rule
 }
 
-export function booleanRule(required: boolean) {
-  return new BooleanValidationRule().setRequired(required)
+export function numberArrayRule(required: boolean, customRuleName?: string) {
+  const rule = new NumberArrayValidationRule()
+  rule.setRequired(required)
+  if (customRuleName) rule.setCustomRuleName(customRuleName)
+  return rule
+}
+
+export function booleanRule(required: boolean, customRuleName?: string) {
+  const rule = new BooleanValidationRule()
+  rule.setRequired(required)
+  if (customRuleName) rule.setCustomRuleName(customRuleName)
+  return rule
 }
 
 export class SelectOptions {
@@ -79,7 +90,7 @@ export function useCsItem<T, I extends CsItem<T>>(
   item.setValidation(useState<string>(""))
   if (rule) item.setValidationRule(rule)
   if (selOpt) {
-    if (item instanceof CsHasOptionsItem<T>) {
+    if (item instanceof CsHasOptionsItem) {
       const hasOptItem = item as CsHasOptionsItem<T>
       hasOptItem.setOptions(selOpt.options, selOpt.optionValueKey, selOpt.optionLabelKey)
     }

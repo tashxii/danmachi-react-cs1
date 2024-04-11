@@ -3,7 +3,7 @@ import {
   CsNumberArrayItem, NumberValidationRule, CsNumberItem,
   CsStringArrayItem, StringArrayValidationRule, CsView,
   CsValidationEvent, CsNumberOptionsItem, CsNumberRangeItem,
-  CsStringArrayOptionsItem, CsStringOptionsItem
+  CsStringArrayOptionsItem, CsStringOptionsItem, CustomValidationRule, CustomValidationRules
 } from ".."
 import * as yup from "yup"
 import { AnyObject, ArraySchema, NumberSchema, ObjectSchema, StringSchema, ValidationError } from "yup"
@@ -142,39 +142,48 @@ export class CsYupValidationEvent extends CsValidationEvent {
   constructor(
     view: CsView,
     validationSchemaObj: YupObject,
-    validateFieldMap: Map<string, string | number | string[] | undefined>
+    validateFieldMap: Map<string, string | number | string[] | undefined>,
+    customValidationRules?: CustomValidationRules
   ) {
-    super()
+    super(customValidationRules)
     this.parentView = view
     this.validationSchemaObj = validationSchemaObj
     this.validateFieldMap = validateFieldMap
   }
 
   onValidateHasError = (): boolean => {
-    const sourceMap = new Map<string, any>()
-    for (const k of this.validateFieldMap.keys()) {
-      const value = this.validateFieldMap.get(k)
-      const newValue = (value === "") ? undefined : value
-      sourceMap.set(k, newValue)
-    }
-    const data = Object.fromEntries(sourceMap)
+    // const sourceMap = new Map<string, any>()
+    // for (const k of this.validateFieldMap.keys()) {
+    //   const value = this.validateFieldMap.get(k)
+    //   const newValue = (value === "") ? undefined : value
+    //   sourceMap.set(k, newValue)
+    // }
+    // const data = Object.fromEntries(sourceMap)
+    // let hasError = false
+    // try {
+    //   this.validationSchemaObj.validateSync({ ...data }, { abortEarly: false })
+    // } catch (error) {
+    //   hasError = true
+    //   if (error instanceof ValidationError) {
+    //     this.yupError = error
+    //     for (const item of Object.values(this.parentView)) {
+    //       if (item instanceof CsItem) {
+    //         let message = ""
+    //         message = this.yupError!.inner
+    //           .find(ve => ((ve.path?.split("[")[0] === item.key)))?.message ?? ""
+    //         if (item.setValidationMessage) {
+    //           item.setValidationMessage(message)
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     let hasError = false
-    try {
-      const result = this.validationSchemaObj.validateSync({ ...data }, { abortEarly: false })
-      console.warn(result)
-    } catch (error) {
-      hasError = true
-      if (error instanceof ValidationError) {
-        this.yupError = error
-        for (const item of Object.values(this.parentView)) {
-          if (item instanceof CsItem) {
-            let message = ""
-            message = this.yupError!.inner
-              .find(ve => ((ve.path?.split("[")[0] === item.key)))?.message ?? ""
-            if (item.setValidationMessage) {
-              item.setValidationMessage(message)
-            }
-          }
+    for (const item of Object.values(this.parentView)) {
+      if (item instanceof CsItem) {
+        const newValue = item.value
+        if (this.onValidateItemHasError(newValue, item)) {
+          hasError = true
         }
       }
     }
@@ -191,6 +200,10 @@ export class CsYupValidationEvent extends CsValidationEvent {
       itemSchema.validateSync(data)
       if (item.setValidationMessage) {
         item.setValidationMessage("")
+      }
+      // Custom validation is executed after standard validation
+      if (this.doCustomValidateItemHasError(newValue, item)) {
+        hasError = true
       }
     } catch (error) {
       hasError = true
@@ -213,22 +226,23 @@ export class CsYupValidationEvent extends CsValidationEvent {
   }
 
   resetError = (name?: string) => {
-    // Object.values(this.parentView).forEach((item) => {
-    //   if (item instanceof CsItem) {
-    //     if (item.setValidationMessage) {
-    //       if (name === undefined || name === item.key) {
-    //         item.setValidationMessage("")
-    //       }
-    //     }
-    //   }
-    // })
+    Object.values(this.parentView).forEach((item) => {
+      if (item instanceof CsItem) {
+        if (item.setValidationMessage) {
+          if (name === undefined || name === item.key) {
+            item.setValidationMessage("")
+          }
+        }
+      }
+    })
   }
 }
 
 export const useCsYupValidationEvent = <T extends CsView>(
-  instance: T
+  instance: T,
+  customValidationRules?: CustomValidationRules,
 ) => {
   const { validationSchemaObj, validateFieldMap } = createValidationSchema(instance)
-  const validationEvent = new CsYupValidationEvent(instance, validationSchemaObj, validateFieldMap)
+  const validationEvent = new CsYupValidationEvent(instance, validationSchemaObj, validateFieldMap, customValidationRules)
   return validationEvent
 }

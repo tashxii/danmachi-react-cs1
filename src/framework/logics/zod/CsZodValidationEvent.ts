@@ -4,7 +4,7 @@ import {
   CsNumberArrayItem, NumberValidationRule, CsNumberItem,
   CsStringArrayItem, StringArrayValidationRule,
   CsValidationEvent, CsNumberOptionsItem, CsNumberRangeItem,
-  CsStringArrayOptionsItem, CsStringOptionsItem, CsView
+  CsStringArrayOptionsItem, CsStringOptionsItem, CsView, CustomValidationRules
 } from ".."
 
 type ValueTypeZod = ZodString | ZodOptional<ZodString> | ZodNumber | ZodOptional<ZodNumber>
@@ -145,44 +145,54 @@ export class CsZodValidationEvent extends CsValidationEvent {
     validationSchemaObj: ZodObject<{
       [k: string]: ValueTypeZod;
     }>,
-    validateFieldMap: Map<string, string | number | string[] | undefined>
+    validateFieldMap: Map<string, string | number | string[] | undefined>,
+    customValidationRules?: CustomValidationRules
   ) {
-    super()
+    super(customValidationRules)
     this.parentView = view
     this.validationSchemaObj = validationSchemaObj
     this.validateFieldMap = validateFieldMap
   }
 
   onValidateHasError = (): boolean => {
-    const sourceMap = new Map<string, any>()
-    // Zod は "" を許容するため、任意の際の最小文字数の概念が扱いずらい
-    // "" の場合は undefined としてバリデーションする
-    for (const k of this.validateFieldMap.keys()) {
-      const value = this.validateFieldMap.get(k)
-      const newValue = (value === "") ? undefined : value
-      sourceMap.set(k, newValue)
-    }
-    const data = Object.fromEntries(sourceMap)
+    // const sourceMap = new Map<string, any>()
+    // // Zod は "" を許容するため、任意の際の最小文字数の概念が扱いずらい
+    // // "" の場合は undefined としてバリデーションする
+    // for (const k of this.validateFieldMap.keys()) {
+    //   const value = this.validateFieldMap.get(k)
+    //   const newValue = (value === "") ? undefined : value
+    //   sourceMap.set(k, newValue)
+    // }
+    // const data = Object.fromEntries(sourceMap)
+    // let hasError = false
+    // try {
+    //   this.validationSchemaObj.parse(data)
+    //   this.zodError = undefined
+    // } catch (error: any) {
+    //   hasError = true
+    //   this.zodError = error
+    // }
+    // Object.values(this.parentView).forEach((item) => {
+    //   if (item instanceof CsItem) {
+    //     let message = ""
+    //     if (this.zodError) {
+    //       message = this.zodError.issues
+    //         .find(i => (i.path.includes(item.key)))?.message ?? ""
+    //     }
+    //     if (item.setValidationMessage) {
+    //       item.setValidationMessage(message)
+    //     }
+    //   }
+    // })
     let hasError = false
-    try {
-      this.validationSchemaObj.parse(data)
-      this.zodError = undefined
-    } catch (error: any) {
-      hasError = true
-      this.zodError = error
-    }
-    Object.values(this.parentView).forEach((item) => {
+    for (const item of Object.values(this.parentView)) {
       if (item instanceof CsItem) {
-        let message = ""
-        if (this.zodError) {
-          message = this.zodError.issues
-            .find(i => (i.path.includes(item.key)))?.message ?? ""
-        }
-        if (item.setValidationMessage) {
-          item.setValidationMessage(message)
+        const newValue = item.value
+        if (this.onValidateItemHasError(newValue, item)) {
+          hasError = true
         }
       }
-    })
+    }
     return hasError
   }
 
@@ -198,9 +208,13 @@ export class CsZodValidationEvent extends CsValidationEvent {
       if (item.setValidationMessage) {
         item.setValidationMessage("")
       }
+      // Custom validation is executed after standard validation
+      if (this.doCustomValidateItemHasError(newValue, item)) {
+        hasError = true
+      }
     } catch (error) {
-      hasError = true
       if (error instanceof ZodError) {
+        hasError = true
         const zodError = error as ZodError
         const message = zodError.issues.find(i => i.path.includes(item.key))?.message
         if (item.setValidationMessage) {
@@ -229,9 +243,10 @@ export class CsZodValidationEvent extends CsValidationEvent {
 }
 
 export const useCsZodValidationEvent = <T extends CsView>(
-  instance: T
+  instance: T,
+  customValidationRules?: CustomValidationRules
 ) => {
   const { validationSchemaObj, validateFieldMap } = createValidationSchema(instance)
-  const validationEvent = new CsZodValidationEvent(instance, validationSchemaObj, validateFieldMap)
+  const validationEvent = new CsZodValidationEvent(instance, validationSchemaObj, validateFieldMap, customValidationRules)
   return validationEvent
 }

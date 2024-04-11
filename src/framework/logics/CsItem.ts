@@ -14,12 +14,40 @@ export abstract class CsItemBase {
     this.readonly = value
   }
 }
+type CustomValidator<T> = (newValue: T | undefined, item: CsItem<T>) => boolean
+
+type CustomValidateMessage<T> = ((label: string, value: T, item: CsItem<T>) => string) | string
+
+export class CustomValidationRule<T> {
+  validator: CustomValidator<T>
+  message: CustomValidateMessage<T>
+  constructor(validator: CustomValidator<T>, message: CustomValidateMessage<T>) {
+    this.validator = validator
+    this.message = message
+  }
+}
+
+export type CustomValidationRules = { [key: string]: CustomValidationRule<string> | CustomValidationRule<number> | CustomValidationRule<boolean> | CustomValidationRule<string[]> | CustomValidationRule<number[]> }
+
+
+export const createRegExpValidator = (pattern: RegExp): CustomValidator<string> => {
+  return (newValue: string | undefined, item: CsItem<string>) => pattern.test(newValue ?? "")
+}
+
+export const validationRule = <T>(validator: CustomValidator<T>, message: CustomValidateMessage<T>) => {
+  return new CustomValidationRule(validator, message)
+}
 
 // eslint-disable-next-line
 export class ValidationRule<T> {
   required: boolean = false
+  customRuleName?: string
   setRequired = (required: boolean = true) => {
     this.required = required
+    return this
+  }
+  setCustomRuleName = (name: string) => {
+    this.customRuleName = name
     return this
   }
 }
@@ -71,6 +99,11 @@ export class StringValidationRule extends ValidationRule<string> {
 export class StringArrayValidationRule extends ValidationRule<string[]> {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
   private identifier?: StringArrayValidationRule
+}
+
+export class NumberArrayValidationRule extends ValidationRule<number[]> {
+  //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
+  private identifier?: NumberArrayValidationRule
 }
 
 export type SetValueTypeRequired<T> = Dispatch<SetStateAction<T>>
@@ -207,11 +240,11 @@ export abstract class CsNumberArrayOptionsItem extends CsHasOptionsItem<string[]
 }
 
 export abstract class CsStringOptionsItem extends CsHasOptionsItem<string> {
-  private itemIdentifier?: CsStringArrayOptionsItem
+  private itemIdentifier?: CsStringOptionsItem
 }
 
 export abstract class CsNumberOptionsItem extends CsHasOptionsItem<number> {
-  private itemIdentifier?: CsStringArrayOptionsItem
+  private itemIdentifier?: CsNumberOptionsItem
 }
 
 export class CsMultiCheckBoxItem extends CsStringArrayOptionsItem {

@@ -6,13 +6,13 @@ import {
   CsInputNumberItem, CsCheckBoxItem, CsInputPasswordItem,
   CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
   useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
-  useInit, CsInputTextItem, useCsZodValidationEvent, useCsYupValidationEvent
+  useInit, CsInputTextItem, useCsZodValidationEvent, useCsRIValidationEvent, CustomValidationRules, validationRule, createRegExpValidator
 } from "../../framework/logics";
 import { CsMultiCheckBoxItem } from "../../framework/logics";
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics";
 import { CsView, useCsView } from "../../framework/logics";
 
-export default interface TestView extends CsView {
+export type TestView = CsView & {
   nameItem: CsInputTextItem
   password: CsInputPasswordItem
   adminCheck: CsCheckBoxItem
@@ -29,10 +29,73 @@ export default interface TestView extends CsView {
   otherA: CsInputTextItem
 }
 
+const globalValidationRules: CustomValidationRules = {
+  // regular expression
+  nameRule1: validationRule<string>(
+    createRegExpValidator(/^[A-Za-z ]*$/),
+    (label) => `${label}は、アルファベットと空白のみ使用可能です。`
+  ),
+  // complex logic
+  passwordRule1: validationRule<string>(
+    (newValue, item) => {
+      if (!newValue) {
+        return true;
+      }
+      let count = 0;
+      if (/[A-Z]/.test(newValue)) {
+        count++;
+      }
+      if (/[a-z]/.test(newValue)) {
+        count++;
+      }
+      if (/[0-9]/.test(newValue)) {
+        count++;
+      }
+      if (/[!-)+-/:-@[-`{-~]/.test(newValue)) {
+        count++;
+      }
+      return count >= 4;
+    },
+    (label, newValue, item) => {
+      let requireds = ["大文字", "小文字", "数字", "記号"]
+      if (/[A-Z]/.test(newValue)) {
+        requireds = requireds.filter(e => "大文字" !== e);
+      }
+      if (/[a-z]/.test(newValue)) {
+        requireds = requireds.filter(e => "小文字" !== e);
+      }
+      if (/[0-9]/.test(newValue)) {
+        requireds = requireds.filter(e => "数字" !== e);
+      }
+      if (/[!-)+-/:-@[-`{-~]/.test(newValue)) {
+        requireds = requireds.filter(e => "記号" !== e);
+      }
+      return `${label}は、${requireds.join("、")}を含めてください`
+    }
+  ),
+}
+
+const testViewValidationRules = {
+  // between multiple items
+  budgetRule: validationRule<number>(
+    (_, item) => {
+      const view = item.parentView as TestView
+      const min = (view.age.value ?? 0) * 1000;
+      const range = view.budget.value
+      return (range ? range[0] : 0) >= min
+    },
+    (label, newValue, item) => {
+      const view = item.parentView as TestView
+      const min = (view.age.value ?? 0) * 1000
+      return `予算の最低額は年齢によります。最低${min}です。`
+    }
+  )
+}
+
 export function useTestView(): TestView {
-  const view = useCsView<TestView>({
-    nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
-    password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
+  const view = useCsView({
+    nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
+    password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
     adminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
     genderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
       selectOptionStrings(["男性", "女性", "未回答"])),
@@ -43,16 +106,23 @@ export function useTestView(): TestView {
     snsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
     birth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
-    budget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
+    budget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 100000, "budgetRule")),
     other1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     other2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
     other3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),
     otherA: useCsInputTextItem("ほか亜", useInit("ほかあ"), stringRule(false, 1, 10), RW.Readonly),
-  })
+  },
+    {
+      customValidationRules: {
+        ...globalValidationRules,
+        ...testViewValidationRules
+      }
+    },
+    useCsRIValidationEvent)
   return view
 }
 
-export interface TestZodView extends CsView {
+export type TestZodView = CsView & {
   znameItem: CsInputTextItem
   zpassword: CsInputPasswordItem
   zadminCheck: CsCheckBoxItem
@@ -69,10 +139,26 @@ export interface TestZodView extends CsView {
   zotherA: CsInputTextItem
 }
 
+const testZodViewValidationRules = {
+  budgetRule: validationRule<number>(
+    (_, item) => {
+      console.log(item)
+      const view = item.parentView as TestZodView
+      const min = (view.zage.value ?? 0) * 1000;
+      const range = view.zbudget.value
+      return (range ? range[0] : 0) >= min
+    },
+    (label, newValue, item) => {
+      const view = item.parentView as TestZodView
+      const min = (view.zage.value ?? 0) * 1000
+      return `予算の最低額は年齢によります。最低${min}です。`
+    }
+  )
+}
 export function useTestZodView(): TestZodView {
-  const view = useCsView<TestZodView>({
-    znameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
-    zpassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
+  const view = useCsView({
+    znameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
+    zpassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
     zadminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
     zgenderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
       selectOptionStrings(["男性", "女性", "未回答"])),
@@ -83,16 +169,23 @@ export function useTestZodView(): TestZodView {
     zsnsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
     zbirth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
-    zbudget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
+    zbudget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 100000, "budgetRule")),
     zother1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     zother2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
     zother3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),
     zotherA: useCsInputTextItem("ほか亜", useInit("ほかあ"), stringRule(false, 1, 10), RW.Readonly),
-  }, useCsZodValidationEvent)
+  },
+    {
+      customValidationRules: {
+        ...globalValidationRules,
+        ...testZodViewValidationRules
+      }
+    },
+    useCsZodValidationEvent)
   return view
 }
 
-export interface TestYupView extends CsView {
+export type TestYupView = CsView & {
   ynameItem: CsInputTextItem
   ypassword: CsInputPasswordItem
   yadminCheck: CsCheckBoxItem
@@ -109,10 +202,29 @@ export interface TestYupView extends CsView {
   yotherA: CsInputTextItem
 }
 
+const testYupViewValidationRules = {
+  budgetRule: validationRule<number>(
+    (_, item) => {
+      console.log(item)
+      const view = item.parentView as TestYupView
+      const min = (view.yage.value ?? 0) * 1000;
+      const range = view.ybudget.value
+      console.log(view)
+      console.log(range)
+      return (range ? range[0] : 0) >= min
+    },
+    (label, newValue, item) => {
+      const view = item.parentView as TestYupView
+      const min = (view.yage.value ?? 0) * 1000
+      return `予算の最低額は年齢によります。最低${min}です。`
+    }
+  )
+}
+
 export function useTestYupView(): TestYupView {
-  const view = useCsView<TestYupView>({
-    ynameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30)),
-    ypassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16)),
+  const view = useCsView({
+    ynameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
+    ypassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
     yadminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
     ygenderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
       selectOptionStrings(["男性", "女性", "未回答"])),
@@ -123,12 +235,18 @@ export function useTestYupView(): TestYupView {
     ysnsWay: useCsMultiCheckBoxItem("SNS連絡手段", useInit(["SMS", "Twitter"]), stringArrayRule(true),
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
     ybirth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
-    ybudget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 10)),
+    ybudget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 100000, "budgetRule")),
     yother1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     yother2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
     yother3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),
     yotherA: useCsInputTextItem("ほか亜", useInit("ほかあ"), stringRule(false, 1, 10), RW.Readonly),
-  }, useCsYupValidationEvent)
+  }, {
+    customValidationRules: {
+      ...globalValidationRules,
+      ...testYupViewValidationRules
+    }
+  },
+  )
   return view
 }
 

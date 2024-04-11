@@ -10,6 +10,7 @@ import {
   StringArrayValidationRule, CsStringOptionsItem, CsNumberOptionsItem,
   CsStringArrayOptionsItem, CsNumberRangeItem, CsValidationEvent,
   CsView,
+  CustomValidationRules,
 } from ".."
 
 const createValidationSchema = <T extends CsView>(instance: T) => {
@@ -113,9 +114,10 @@ export class CsRIValidationEvent extends CsValidationEvent {
     error: ValidationError<AvailableFiledType>,
     validator: ConstraintValidators<AvailableFiledType>,
     resetError: (name?: string) => void,
-    handleSubmit: (value: AvailableFiledType, callback: ValidationCallback, onError?: ValidationCallback) => ValidationCallback
+    handleSubmit: (value: AvailableFiledType, callback: ValidationCallback, onError?: ValidationCallback) => ValidationCallback,
+    customValidationRules?: CustomValidationRules
   ) {
-    super()
+    super(customValidationRules)
     this.parentView = view
     this.validateFieldMap = validateFieldMap
     this.validationError = error
@@ -140,15 +142,29 @@ export class CsRIValidationEvent extends CsValidationEvent {
   /** XxButtonから呼び出すためのバリデーションメソッド
    *  エラーがあったか、なかったかをbooleanとして返す */
   onValidateHasError = (): boolean => {
-    const value = Object.fromEntries(this.validateFieldMap)
-    return this.validator.validateAll(value)
+    let hasError = false
+    for (const item of Object.values(this.parentView)) {
+      if (item instanceof CsItem) {
+        const newValue = item.value
+        if (this.onValidateItemHasError(newValue, item)) {
+          hasError = true
+        }
+      }
+    }
+    return hasError
   }
 
   onValidateItemHasError = <T>(newValue: T | undefined, item: CsItem<T>) => {
     const validator = this.validator.constraint[item.key]
-    const hasError = validator.validate(newValue)
+    let hasError = false
+    if (validator) {
+      hasError = validator.validate(newValue)
+    }
     if (!hasError) {
       this.resetError(item.key)
+    }
+    if (this.doCustomValidateItemHasError(newValue, item)) {
+      hasError = true
     }
     return hasError
   }
@@ -163,11 +179,12 @@ export class CsRIValidationEvent extends CsValidationEvent {
 }
 
 export const useCsRIValidationEvent = <T extends CsView>(
-  instance: T
+  instance: T,
+  customValidationRules?: CustomValidationRules,
 ) => {
   const { validationSchemaObj, validateFieldMap } = createValidationSchema<T>(instance)
   const { error, validator, resetError, handleSubmit } = useValidation(validationSchemaObj)
-  const validationEvent = new CsRIValidationEvent(instance, validateFieldMap, error, validator, resetError, handleSubmit)
+  const validationEvent = new CsRIValidationEvent(instance, validateFieldMap, error, validator, resetError, handleSubmit, customValidationRules)
   return validationEvent
 }
 

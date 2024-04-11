@@ -12,11 +12,11 @@ const TestTab: React.FC = () => {
   const colSize = useCsSelectNumberBoxItem("表示列数", useInit(2), numberRule(false),
     selectOptionNumbers([1, 2, 3, 4, 6]))
   const readonlyCheck = useCsCheckBoxItem("読み取り専用", useInit(false), "する")
-  const validationType = useCsRadioBoxItem("バリデーションタイプ", useInit("ri"), stringRule(true),
+  const validationType = useCsRadioBoxItem("バリデーションタイプ", useInit("yup"), stringRule(true),
     selectOptions([
-      { value: "ri", label: "参照実装" },
       { value: "yup", label: "Yup" },
       { value: "zod", label: "Zod" },
+      { value: "ri", label: "参照実装" },
     ]))
 
   const items: TabsProps["items"] = [

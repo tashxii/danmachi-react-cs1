@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Card, Col, Modal, Row, Table } from "antd"
 import { CxTableLayout } from "../../framework/components/cx"
-import { AxButton, AxMutateButton, AxQueryButton, AxInputText } from "../../framework/components/antd"
+import { AxButton, AxQueryButton, AxInputText } from "../../framework/components/antd"
 import {
   CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
-  CsInputTextItem, CsSelectBoxItem, CsView, useCsView,
+  CsInputTextItem, CsSelectBoxItem, CsView, useCsView
 } from "../../framework/logics"
 import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/logics"
 import { TestApi } from "./testApi"
@@ -14,7 +14,7 @@ import { CsSelectNumberBoxItem } from "../../framework/logics"
 import Link from "antd/es/typography/Link"
 import { City, CityCreateRequest, Clan, Chara } from "./testApiClasses"
 
-interface CitySearchView extends CsView {
+export type CitySearchView = CsView & {
   keyword: CsInputTextItem
   searchButton: CsRqQueryButtonClickEvent<City>
   makeButton: CsRqMutateButtonClickEvent<CityCreateRequest, City>
@@ -33,8 +33,7 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
     const [editingChara, setEditingChara] = useState<Chara>(new Chara())
 
     const keywordItem = useCsInputTextItem("検索キーワード", useInit(""), stringRule(false, 1, 100))
-    const searchView = useCsView<CitySearchView>({
-      readonly: false,
+    const searchView = useCsView({
       keyword: keywordItem,
       searchButton: useCsRqQueryButtonClickEvent(
         useQuery(
@@ -45,12 +44,12 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       ),
       makeButton: useCsRqMutateButtonClickEvent(useMutation(TestApi.createCity)),
     })
-    const clanView = useCsView<ClanMakeView>({
+    const clanView = useCsView({
       readonly: false,
       name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
       description: useCsInputTextItem("説明", useInit(""), stringRule(false, 1, 100)),
     })
-    const charaView = useCsView<CharaMakeView>({
+    const charaView = useCsView({
       readonly: false,
       name: useCsInputTextItem("名前", useInit(""), stringRule(true, 1, 16)),
       job: useCsSelectBoxItem("職業", useInit(""), stringRule(true),
@@ -304,7 +303,7 @@ interface ClanEditProps {
   //onClickHandler: () => boolean | void
 }
 
-interface ClanMakeView extends CsView {
+type ClanMakeView = CsView & {
   name: CsInputTextItem
   description: CsInputTextItem
 }
@@ -334,7 +333,7 @@ interface CharaEditProps {
   view: CharaMakeView
 }
 
-interface CharaMakeView extends CsView {
+type CharaMakeView = CsView & {
   name: CsInputTextItem
   job: CsSelectBoxItem
   clanKey: CsSelectNumberBoxItem
