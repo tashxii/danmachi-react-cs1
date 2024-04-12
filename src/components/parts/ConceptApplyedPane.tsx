@@ -1,6 +1,16 @@
-import React, { Dispatch, SetStateAction } from "react"
-import { CsCheckBoxItem, CsInputDateItem, CsInputNumberItem, CsInputPasswordItem, CsInputTextItem, CsMultiCheckBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsView, numberRule, selectOptions, selectOptionStrings, stringArrayRule, stringRule, StringValidationRule, useCsCheckBoxItem, useCsInputDateItem, useCsInputNumberItem, useCsInputPassword as useCsInputPasswordItem, useCsInputTextItem, useCsMultiCheckBoxItem, useCsRadioBoxItem, useCsSelectBoxItem, useCsTextAreaItem, useCsView, useInit } from "../../framework/logics"
-import { AxButton, AxCheckBox, AxInputDate, AxInputNumber, AxInputPassword, AxInputText, AxMultiCheckBox, AxRadioBox, AxSelectBox, AxTextArea } from "../../framework/components/antd"
+import React from "react"
+import {
+  CsCheckBoxItem, CsInputDateItem, CsInputNumberItem, CsInputPasswordItem, CsInputTextItem,
+  CsMultiCheckBoxItem, CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem, CsView,
+  numberRule, selectOptions, selectOptionStrings, stringArrayRule, stringRule,
+  useCsCheckBoxItem, useCsInputDateItem, useCsInputNumberItem, useCsInputPasswordItem,
+  useCsInputTextItem, useCsMultiCheckBoxItem, useCsRadioBoxItem, useCsSelectBoxItem, useCsTextAreaItem,
+  useCsView, useInit
+} from "../../framework/logics"
+import {
+  AxButton, AxCheckBox, AxInputDate, AxInputNumber, AxInputPassword,
+  AxInputText, AxMultiCheckBox, AxRadioBox, AxSelectBox, AxTextArea
+} from "../../framework/components/antd"
 import { CxTableLayout } from "../../framework/components/cx"
 import { Col, Row } from "antd"
 
@@ -47,48 +57,50 @@ export const ConceptApplyedPane: React.FC = () => {
         componentType="antd"
         colSize={2}
       />
-      <>
-        {/* <Row style={{ marginTop: "10px" }} >
-          <Col span={10} offset={1}>
-            <AxInputText item={view.nickname} />
-          </Col>
-          <Col span={10} offset={1}>
-            <AxInputPassword item={view.password} />
-          </Col>
-        </Row>
-        <Row style={{ marginTop: "10px" }} >
-          <Col span={10} offset={1}>
-            <AxInputText item={view.kananame} />
-          </Col>
-          <Col span={10} offset={1}>
-            <AxSelectBox item={view.job} />
-          </Col>
-        </Row>
-        <Row style={{ marginTop: "10px" }} >
-          <Col span={10} offset={1}>
-            <AxInputNumber item={view.moneyStone} />
-          </Col>
-          <Col span={10} offset={1}>
-            <AxTextArea item={view.selfPR} />
-          </Col>
-        </Row>
-        <Row style={{ marginTop: "10px" }} >
-          <Col span={10} offset={1}>
-            <AxInputDate item={view.birthDay} />
-          </Col>
-          <Col span={10} offset={1}>
-            <AxCheckBox item={view.charge} />
-          </Col>
-        </Row>
-        <Row style={{ marginTop: "10px" }} >
-          <Col span={10} offset={1}>
-            <AxRadioBox item={view.paymentMethod} />
-          </Col>
-          <Col span={10} offset={1}>
-            <AxMultiCheckBox item={view.connectSns} />
-          </Col>
-        </Row> */}
-      </>
+      {false && // 非表示：フラットに書く場合
+        <>
+          <Row style={{ marginTop: "10px" }} >
+            <Col span={10} offset={1}>
+              <AxInputText item={view.nickname} />
+            </Col>
+            <Col span={10} offset={1}>
+              <AxInputPassword item={view.password} />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: "10px" }} >
+            <Col span={10} offset={1}>
+              <AxInputText item={view.kananame} />
+            </Col>
+            <Col span={10} offset={1}>
+              <AxSelectBox item={view.job} />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: "10px" }} >
+            <Col span={10} offset={1}>
+              <AxInputNumber item={view.moneyStone} />
+            </Col>
+            <Col span={10} offset={1}>
+              <AxTextArea item={view.selfPR} />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: "10px" }} >
+            <Col span={10} offset={1}>
+              <AxInputDate item={view.birthDay} />
+            </Col>
+            <Col span={10} offset={1}>
+              <AxCheckBox item={view.charge} />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: "10px" }} >
+            <Col span={10} offset={1}>
+              <AxRadioBox item={view.paymentMethod} />
+            </Col>
+            <Col span={10} offset={1}>
+              <AxMultiCheckBox item={view.connectSns} />
+            </Col>
+          </Row>
+        </>
+      }
       <Row>
         <Col span={20}>
           <AxButton type="primary" validationViews={[view]} onClick={() => { }}>

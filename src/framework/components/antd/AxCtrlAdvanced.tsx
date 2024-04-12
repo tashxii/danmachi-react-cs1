@@ -1,4 +1,4 @@
-import { DatePicker, DatePickerProps, InputNumber, InputNumberProps, InputProps, InputRef } from "antd"
+import { DatePicker, DatePickerProps, InputNumber, InputNumberProps } from "antd"
 import dayjs, { Dayjs } from "dayjs"
 import React from "react"
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
@@ -13,17 +13,7 @@ export const AxInputDate = (props: AxInputDateProps) => {
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
-        <DatePicker className={getClassName(props, "fit-content")}
-          value={(item.value) ? dayjs(item.value) : undefined}
-          format={CsInputDateItem.dateDisplayFormat}
-          onChange={(value: Dayjs, dateString: string | string[]) => {
-            if (item.isReadonly()) return
-            const newValue = value?.format(CsInputDateItem.dateValueFormat)
-            item.setValue(newValue)
-            if (!item.validateWhenErrorExists(newValue ?? "")) {
-              setRefresh(true)
-            }
-          }}
+        <div
           onBlur={() => {
             if (item.parentView?.validateTrigger !== "onBlur") {
               return
@@ -32,8 +22,21 @@ export const AxInputDate = (props: AxInputDateProps) => {
               setRefresh(true)
             }
           }}
-          {...antdProps}
-        />
+        >
+          <DatePicker className={getClassName(props, "fit-content")}
+            value={(item.value) ? dayjs(item.value) : undefined}
+            format={CsInputDateItem.dateDisplayFormat}
+            onChange={(value: Dayjs, dateString: string | string[]) => {
+              if (item.isReadonly()) return
+              const newValue = value?.format(CsInputDateItem.dateValueFormat)
+              item.setValue(newValue)
+              if (!item.validateWhenErrorExists(newValue ?? "")) {
+                setRefresh(true)
+              }
+            }}
+            {...antdProps}
+          />
+        </div>
       )}
     /> // AxEditCtrl
   )
