@@ -24,6 +24,14 @@ export const AxInputDate = (props: AxInputDateProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...antdProps}
         />
       )}
@@ -57,6 +65,12 @@ export const AxInputNumberRange = (props: AxInputNumberRangeProps) => {
               if (item.upperValue && item.upperValue < item.lowerValue) {
                 item.setUpperValue(item.lowerValue)
               }
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
             }}
             {...antdPropsLower}
           />
@@ -76,8 +90,13 @@ export const AxInputNumberRange = (props: AxInputNumberRangeProps) => {
               if (item.lowerValue && item.lowerValue > item.upperValue) {
                 item.setLowerValue(item.upperValue)
               }
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
             }}
-
             {...antdPropsUpper}
           />
         </div>

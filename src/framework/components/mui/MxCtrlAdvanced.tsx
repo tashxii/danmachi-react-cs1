@@ -16,19 +16,30 @@ export const MxInputDate = (props: MxInputDateProps) => {
   return (
     <MxEditCtrl<string> mxProps={props}
       renderCtrl={(setRefresh) => (
-        <DatePicker className={getClassName(props)}
-          value={valueDayjs}
-          format={CsInputDateItem.dateDisplayFormat}
-          onChange={(value: dayjs.Dayjs | null) => {
-            const newValue = (!value || !(value.isValid())) ? undefined
-              : value.format(CsInputDateItem.dateValueFormat)
-            item.setValue(newValue)
-            if (!item.validateWhenErrorExists(newValue as string)) {
+        <div
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
-          {...muiProps}
-        />
+        >
+          <DatePicker className={getClassName(props)}
+            value={valueDayjs}
+            format={CsInputDateItem.dateDisplayFormat}
+            onChange={(value: dayjs.Dayjs | null) => {
+              const newValue = (!value || !(value.isValid())) ? undefined
+                : value.format(CsInputDateItem.dateValueFormat)
+              item.setValue(newValue)
+              if (!item.validateWhenErrorExists(newValue as string)) {
+                setRefresh(true)
+              }
+            }}
+            {...muiProps}
+          />
+        </div>
       )
       }
     /> // MxEditCtrl
@@ -67,6 +78,12 @@ export const MxInputNumberRange = (props: MxInputNumberRangeProps) => {
               if (item.upperValue && item.upperValue < item.lowerValue) {
                 item.setUpperValue(item.lowerValue)
               }
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
             }}
             {...muiPropsLower}
           />
@@ -91,6 +108,12 @@ export const MxInputNumberRange = (props: MxInputNumberRangeProps) => {
               if (!item.upperValue) return
               if (item.lowerValue && item.lowerValue > item.upperValue) {
                 item.setLowerValue(item.upperValue)
+              }
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
               }
             }}
             {...muiPropsUpper}

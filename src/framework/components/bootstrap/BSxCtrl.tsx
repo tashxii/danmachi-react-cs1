@@ -116,6 +116,14 @@ export const BSxInputText = (props: BSxInputTextProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...bsProps}
         />
       )}
@@ -143,6 +151,14 @@ export const BSxInputNumber = (props: BSxInputNumberProps) => {
             const newNumber = (newValue) ? Number(newValue) : undefined
             item.setValue(newNumber)
             if (!item.validateWhenErrorExists(newNumber as number)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -174,6 +190,14 @@ export const BSxInputPassword = (props: BSxInputPasswordProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...bsProps}
         />
       )} /> // BSxEditCtrl
@@ -198,6 +222,14 @@ export const BSxTextArea = (props: BSxTextAreaProps) => {
           onChange={(e) => {
             item.setValue(e.target.value)
             if (!item.validateWhenErrorExists(e.target.value)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -228,6 +260,14 @@ const BSxSelectBoxCommon = <V extends string | number,
             const newValue = e.target.value
             item.setValue(toValue(newValue))
             if (!item.validateWhenErrorExists(toValue(newValue) as V)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -286,6 +326,14 @@ export const BSxRadioBox = (props: BSxRadioBoxProps) => {
         <Form.Group className={getClassName(props, "fit-content checkbox-area")}
           {...bsProps}
           defaultValue={item.value}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
         >
           {item.options.map(o => {
             const value = o[item.optionValueKey]
@@ -320,8 +368,16 @@ export const BSxCheckBox = (props: BSxCheckBoxProps) => {
   const { item, bsProps } = props
   return (
     <BSxEditCtrl bsxProps={props}
-      renderCtrl={() => (
+      renderCtrl={(setRefresh) => (
         <Form.Group className={getClassName(props, "fit-content")}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...bsProps}
         >
           <Form.Check
@@ -348,7 +404,17 @@ export const BSxMultiCheckBox = (props: BSxMultiCheckBoxProps) => {
   return (
     <BSxEditCtrl bsxProps={props}
       renderCtrl={(setRefresh) => (
-        <Form.Group className={getClassName(props, "fit-content checkbox-area")}>
+        <Form.Group
+          className={getClassName(props, "fit-content checkbox-area")}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
+        >
           {item.options.map(o => {
             const value = o[item.optionValueKey]
             const text = o[item.optionLabelKey]

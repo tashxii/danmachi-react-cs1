@@ -29,12 +29,11 @@ export class CustomValidationRule<T> {
 
 export type CustomValidationRules = { [key: string]: CustomValidationRule<string> | CustomValidationRule<number> | CustomValidationRule<boolean> | CustomValidationRule<string[]> | CustomValidationRule<number[]> }
 
-
 export const createRegExpValidator = (pattern: RegExp): CustomValidator<string> => {
   return (newValue: string | undefined, item: CsItem<string>) => pattern.test(newValue ?? "")
 }
 
-export const validationRule = <T>(validator: CustomValidator<T>, message: CustomValidateMessage<T>) => {
+export const customValidationRule = <T>(validator: CustomValidator<T>, message: CustomValidateMessage<T>) => {
   return new CustomValidationRule(validator, message)
 }
 
@@ -154,10 +153,21 @@ export abstract class CsItem<T> extends CsItemBase {
     return this.parentView?.validationEvent?.validationErrorMessage(this) ?? ""
   }
 
-  validateWhenErrorExists = (newValue: T) => {
-    if (!this.hasValidationError) {
-      return
+  validate = (newValue: T | undefined) => {
+    if (!this.validationRule.required && !newValue) {
+      return false
     }
+    return this.validateAnytime(newValue)
+  }
+
+  validateWhenErrorExists = (newValue: T | undefined) => {
+    if (!this.hasValidationError) {
+      return false
+    }
+    return this.validateAnytime(newValue)
+  }
+
+  validateAnytime = (newValue: T | undefined) => {
     const validationEvent = this.parentView?.validationEvent
     if (validationEvent) {
       return validationEvent.onValidateItemHasError(newValue, this)
