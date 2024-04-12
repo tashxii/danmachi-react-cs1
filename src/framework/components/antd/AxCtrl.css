@@ -8,7 +8,7 @@
 }
 
 .label .ant-tag {
-  font-size: 40%;
+  font-size: 75%;
   vertical-align: top;
   margin-left: 10px;
   padding-inline: 4px;
@@ -20,6 +20,7 @@
   margin-right: 5px;
   margin-bottom: 5px;
   min-width: 40px;
+  min-height: 45px;
   border-color: #cccccc44;
   border-width: 1px;
   border-style: solid;
@@ -36,7 +37,7 @@
 }
 
 .antd-ctrl.input-number {
-  width: 35%;
+  width: 40%;
   min-width: 80px;
 }
 
@@ -53,6 +54,10 @@
 .readonly .ant-select-selector {
   background-color: #abafb783 !important;
   pointer-events: none;
+}
+
+.andt-ctrl.ant-select {
+  height: 120px !important;
 }
 
 .readonly .ant-input {

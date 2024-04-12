@@ -19,7 +19,7 @@ const getClassName = (props: AxEventProps, base: string): string => {
 }
 
 export interface AxButtonProps extends AxEventProps {
-  type?: "default" | "link" | "text" | "ghost" | "primary" | "dashed" | undefined
+  type?: "default" | "link" | "text" | "primary" | "dashed" | undefined
   onClick: (() => boolean) | (() => void)
   validationViews?: CsView[],
   successMessage?: string
@@ -77,7 +77,7 @@ export const AxButton = (props: AxButtonProps) => {
 }
 
 export interface AxMutateButtonProps<TApiRequest = unknown, TApiResponse = unknown> extends AxEventProps {
-  type?: "default" | "link" | "text" | "ghost" | "primary" | "dashed" | undefined
+  type?: "default" | "link" | "text" | "primary" | "dashed" | undefined
   event: CsRqMutateButtonClickEvent<TApiRequest, TApiResponse>
   validationViews?: CsView[],
   successMessage?: string
@@ -142,7 +142,7 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
 }
 
 export interface AxQueryButtonProps<TApiResponse = unknown> extends AxEventProps {
-  type?: "default" | "link" | "text" | "ghost" | "primary" | "dashed" | undefined
+  type?: "default" | "link" | "text" | "primary" | "dashed" | undefined
   event: CsRqQueryButtonClickEvent<TApiResponse>
   validationViews?: CsView[],
   successMessage?: string

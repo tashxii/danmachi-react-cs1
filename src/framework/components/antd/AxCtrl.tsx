@@ -293,7 +293,7 @@ export const AxSelectNumberBox = (props: AxSelectNumberBoxProps) => {
 }
 
 export interface AxRadioBoxProps extends AxProps<CsRadioBoxItem> {
-  antdProps?: RadioGroupProps & React.RefAttributes<HTMLDivElement>
+  antdProps?: RadioGroupProps
 }
 
 export const AxRadioBox = (props: AxRadioBoxProps) => {
@@ -335,7 +335,7 @@ export const AxRadioBox = (props: AxRadioBoxProps) => {
 }
 
 export interface AxCheckBoxProps extends AxProps<CsCheckBoxItem> {
-  antdProps?: CheckboxProps & React.RefAttributes<HTMLInputElement>
+  antdProps?: CheckboxProps
 }
 
 export const AxCheckBox = (props: AxCheckBoxProps) => {
@@ -358,7 +358,7 @@ export const AxCheckBox = (props: AxCheckBoxProps) => {
 }
 
 export interface AxMultiCheckBoxProps extends AxProps<CsMultiCheckBoxItem> {
-  antdProps?: CheckboxProps & React.RefAttributes<HTMLInputElement>
+  antdProps?: CheckboxProps
 }
 
 export const AxMultiCheckBox = (props: AxMultiCheckBoxProps) => {
