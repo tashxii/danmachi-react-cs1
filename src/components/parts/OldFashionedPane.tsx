@@ -141,9 +141,8 @@ export const OldFashionededPane: React.FC = () => {
                 value={job}
                 onChange={onChangeJob}
                 style={{ minWidth: "200px" }}
-                dropdownMatchSelectWidth={false}
               >
-                <Select.Option key="" value="" disabled>{ }</Select.Option>
+                <Select.Option key="" value="" disabled>&nbsp;</Select.Option>
                 <Select.Option key="free" value="free">無職</Select.Option>
                 <Select.Option key="player" value="player">遊び人</Select.Option>
                 <Select.Option key="gambler" value="gambler">ギャンブラー</Select.Option>

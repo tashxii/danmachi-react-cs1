@@ -115,7 +115,7 @@ export function useCsInputNumberItem(label: string,
   return useCsItem(CsInputNumberItem, label, state, rule, undefined, readonly);
 }
 
-export function useCsInputPassword(label: string,
+export function useCsInputPasswordItem(label: string,
   state: StateResult<string>,
   rule: StringValidationRule,
   readonly: RW = RW.Editable,

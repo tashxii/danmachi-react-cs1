@@ -2,7 +2,7 @@ import {
   stringRule, RW, useCsInputTextItem, useCsSelectBoxItem,
   useCsCheckBoxItem, numberRule, useCsInputNumberItem,
   useCsRadioBoxItem, useCsTextAreaItem, selectOptionStrings,
-  useCsMultiCheckBoxItem, useCsInputPassword, stringArrayRule,
+  useCsMultiCheckBoxItem, useCsInputPasswordItem, stringArrayRule,
   CsInputNumberItem, CsCheckBoxItem, CsInputPasswordItem,
   CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
   useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
@@ -95,7 +95,7 @@ const testViewValidationRules = {
 export function useTestView(validationTrigger: "onSubmit" | "onBlur"): TestView {
   const view = useCsView({
     nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
-    password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
+    password: useCsInputPasswordItem("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
     adminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
     genderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
       selectOptionStrings(["男性", "女性", "未回答"])),
@@ -159,7 +159,7 @@ const testZodViewValidationRules = {
 export function useTestZodView(validationTrigger: "onSubmit" | "onBlur"): TestZodView {
   const view = useCsView({
     znameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
-    zpassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
+    zpassword: useCsInputPasswordItem("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
     zadminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
     zgenderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
       selectOptionStrings(["男性", "女性", "未回答"])),
@@ -226,7 +226,7 @@ const testYupViewValidationRules = {
 export function useTestYupView(validationTrigger: "onSubmit" | "onBlur"): TestYupView {
   const view = useCsView({
     ynameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
-    ypassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
+    ypassword: useCsInputPasswordItem("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
     yadminCheck: useCsCheckBoxItem("管理者権限", useInit(false), "付与する"),
     ygenderSelect: useCsSelectBoxItem("性別", useInit(""), stringRule(true),
       selectOptionStrings(["男性", "女性", "未回答"])),
