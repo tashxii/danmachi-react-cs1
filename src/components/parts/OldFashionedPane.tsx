@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Button, Checkbox, Col, DatePicker, Input, InputNumber, Radio, RadioChangeEvent, Row, Select, Typography } from "antd"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { numberField, stringField, useValidation } from "../../framework/validation"
 import { ValidationError } from "../basics/ValidationError"
@@ -38,7 +38,7 @@ export const OldFashionededPane: React.FC = () => {
   const onChangeSelfPR = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSelfPR(e.target.value)
   }
-  const onChangeBirthDay = (value: dayjs.Dayjs | null, dateString: string) => {
+  const onChangeBirthDay = (value: Dayjs, dateString: string | string[]) => {
     const newValue = value?.format("YYYY-MM-DDTHHmmssZ")
     setbirthDay(newValue?.toString() ?? "")
   }

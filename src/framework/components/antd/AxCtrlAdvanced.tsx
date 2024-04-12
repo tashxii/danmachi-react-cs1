@@ -1,5 +1,5 @@
 import { DatePicker, DatePickerProps, InputNumber, InputNumberProps, InputProps, InputRef } from "antd"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import React from "react"
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
 import { AxProps, AxEditCtrl, getClassName } from "./AxCtrl"
@@ -16,7 +16,7 @@ export const AxInputDate = (props: AxInputDateProps) => {
         <DatePicker className={getClassName(props, "fit-content")}
           value={(item.value) ? dayjs(item.value) : undefined}
           format={CsInputDateItem.dateDisplayFormat}
-          onChange={(value: dayjs.Dayjs | null, dateString: string) => {
+          onChange={(value: Dayjs, dateString: string | string[]) => {
             if (item.isReadonly()) return
             const newValue = value?.format(CsInputDateItem.dateValueFormat)
             item.setValue(newValue)
