@@ -34,6 +34,14 @@ export const BSxInputDate = (props: BSxInputDateProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...bsProps}
         />
       )}
@@ -73,6 +81,12 @@ export const BSxInputNumberRange = (props: BSxInputNumberRangeProps) => {
               if (item.upperValue && item.upperValue < item.lowerValue) {
                 item.setUpperValue(item.lowerValue)
               }
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
             }}
             {...bsPropsLower}
           />
@@ -93,6 +107,12 @@ export const BSxInputNumberRange = (props: BSxInputNumberRangeProps) => {
               if (!item.upperValue) return
               if (item.lowerValue && item.lowerValue > item.upperValue) {
                 item.setLowerValue(item.upperValue)
+              }
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
               }
             }}
 

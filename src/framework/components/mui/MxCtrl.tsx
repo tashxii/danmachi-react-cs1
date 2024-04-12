@@ -117,6 +117,14 @@ export const MxInputText = (props: MxInputTextProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...muiProps}
         />
       )}
@@ -148,8 +156,15 @@ export const MxInputNumber = (props: MxInputNumberProps) => {
                 setRefresh(true)
               }
             }
-          }
-          }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...muiProps}
         />
       )}
@@ -175,6 +190,14 @@ export const MxInputPassword = (props: MxInputPasswordProps) => {
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
             item.setValue(e.target.value)
             if (!item.validateWhenErrorExists(e.target.value)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -208,6 +231,14 @@ export const MxTextArea = (props: MxTextAreaProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...muiProps}
         />
       )}
@@ -234,6 +265,14 @@ const MxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem
             const newValue = (e.target.value) ? e.target.value.toString() : ""
             item.setValue(toValue(newValue))
             if (!item.validateWhenErrorExists(toValue(newValue) as V)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -295,6 +334,14 @@ export const MxRadioBox = (props: MxRadioBoxProps) => {
                 setRefresh(true)
               }
             }}
+            onBlur={() => {
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
+            }}
             {...muiProps}
           >
             {item.options.map(o => {
@@ -324,9 +371,19 @@ export const MxCheckBox = (props: MxCheckBoxProps) => {
   const { item, muiProps } = props
   return (
     <MxEditCtrl mxProps={props}
-      renderCtrl={() => (
+      renderCtrl={(setRefresh) => (
         <div className={getClassName(props, "fit-content")}>
-          <FormGroup className="checkbox-item">
+          <FormGroup
+            className="checkbox-item"
+            onBlur={() => {
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
+            }}
+          >
             <FormControlLabel
               control={
                 <Checkbox className="checkbox-item"
@@ -357,7 +414,16 @@ export const MxMultiCheckBox = (props: MxMultiCheckBoxProps) => {
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
         <div className={getClassName(props, "fit-content")}>
-          <FormGroup className="checkbox-group">
+          <FormGroup
+            className="checkbox-group"
+            onBlur={() => {
+              if (item.parentView?.validateTrigger !== "onBlur") {
+                return
+              }
+              if (!item.validate(item.value)) {
+                setRefresh(true)
+              }
+            }}>
             {item.options.map(o => {
               const value = o[item.optionValueKey]
               const text = o[item.optionLabelKey]

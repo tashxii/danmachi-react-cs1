@@ -94,7 +94,6 @@ export const AxEditCtrl = <T,>(props: AxEditCtrlProps<CsItem<T>>) => {
     </div>
   )
 }
-
 export interface AxInputTextProps extends AxProps<CsInputTextItem> {
   antdProps?: InputProps & React.RefAttributes<InputRef>
 }
@@ -110,6 +109,14 @@ export const AxInputText = (props: AxInputTextProps) => {
           onChange={(e) => {
             item.setValue(e.target.value)
             if (!item.validateWhenErrorExists(e.target.value)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -140,6 +147,14 @@ export const AxInputNumber = (props: AxInputNumberProps) => {
               }
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...antdProps}
         />
       )}
@@ -162,6 +177,14 @@ export const AxInputPassword = (props: AxInputPasswordProps) => {
           onChange={(e) => {
             item.setValue(e.target.value)
             if (!item.validateWhenErrorExists(e.target.value)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -190,6 +213,14 @@ export const AxTextArea = (props: AxTextAreaProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...antdProps}
         />
       )}
@@ -214,6 +245,14 @@ const AxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem
           onChange={(value: V) => {
             item.setValue(value)
             if (!item.validateWhenErrorExists(value)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
               setRefresh(true)
             }
           }}
@@ -271,6 +310,14 @@ export const AxRadioBox = (props: AxRadioBoxProps) => {
               setRefresh(true)
             }
           }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
           {...antdProps}
         >
           {item.options.map(o => {
@@ -319,7 +366,17 @@ export const AxMultiCheckBox = (props: AxMultiCheckBoxProps) => {
   return (
     <AxEditCtrl axProps={props}
       renderCtrl={(setRefresh) => (
-        <div className={getClassName(props, "fit-content")}>
+        <div
+          className={getClassName(props, "fit-content")}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
+        >
           {item.options.map(o => {
             const value = o[item.optionValueKey]
             const text = o[item.optionLabelKey]

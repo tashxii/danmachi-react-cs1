@@ -6,7 +6,7 @@ import {
   CsInputNumberItem, CsCheckBoxItem, CsInputPasswordItem,
   CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
   useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
-  useInit, CsInputTextItem, useCsZodValidationEvent, useCsRIValidationEvent, CustomValidationRules, validationRule, createRegExpValidator
+  useInit, CsInputTextItem, useCsZodValidationEvent, useCsRIValidationEvent, CustomValidationRules, customValidationRule, createRegExpValidator
 } from "../../framework/logics";
 import { CsMultiCheckBoxItem } from "../../framework/logics";
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics";
@@ -31,12 +31,12 @@ export type TestView = CsView & {
 
 const globalValidationRules: CustomValidationRules = {
   // regular expression
-  nameRule1: validationRule<string>(
+  nameRule: customValidationRule<string>(
     createRegExpValidator(/^[A-Za-z ]*$/),
     (label) => `${label}は、アルファベットと空白のみ使用可能です。`
   ),
   // complex logic
-  passwordRule1: validationRule<string>(
+  passwordRule: customValidationRule<string>(
     (newValue, item) => {
       if (!newValue) {
         return true;
@@ -77,7 +77,7 @@ const globalValidationRules: CustomValidationRules = {
 
 const testViewValidationRules = {
   // between multiple items
-  budgetRule: validationRule<number>(
+  budgetRule: customValidationRule<number>(
     (_, item) => {
       const view = item.parentView as TestView
       const min = (view.age.value ?? 0) * 1000;
@@ -92,7 +92,7 @@ const testViewValidationRules = {
   )
 }
 
-export function useTestView(): TestView {
+export function useTestView(validationTrigger: "onSubmit" | "onBlur"): TestView {
   const view = useCsView({
     nameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
     password: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
@@ -116,7 +116,8 @@ export function useTestView(): TestView {
       customValidationRules: {
         ...globalValidationRules,
         ...testViewValidationRules
-      }
+      },
+      validationTrigger: validationTrigger,
     },
     useCsRIValidationEvent)
   return view
@@ -140,7 +141,7 @@ export type TestZodView = CsView & {
 }
 
 const testZodViewValidationRules = {
-  budgetRule: validationRule<number>(
+  budgetRule: customValidationRule<number>(
     (_, item) => {
       console.log(item)
       const view = item.parentView as TestZodView
@@ -155,7 +156,7 @@ const testZodViewValidationRules = {
     }
   )
 }
-export function useTestZodView(): TestZodView {
+export function useTestZodView(validationTrigger: "onSubmit" | "onBlur"): TestZodView {
   const view = useCsView({
     znameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
     zpassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
@@ -179,7 +180,8 @@ export function useTestZodView(): TestZodView {
       customValidationRules: {
         ...globalValidationRules,
         ...testZodViewValidationRules
-      }
+      },
+      validationTrigger,
     },
     useCsZodValidationEvent)
   return view
@@ -203,7 +205,7 @@ export type TestYupView = CsView & {
 }
 
 const testYupViewValidationRules = {
-  budgetRule: validationRule<number>(
+  budgetRule: customValidationRule<number>(
     (_, item) => {
       console.log(item)
       const view = item.parentView as TestYupView
@@ -221,7 +223,7 @@ const testYupViewValidationRules = {
   )
 }
 
-export function useTestYupView(): TestYupView {
+export function useTestYupView(validationTrigger: "onSubmit" | "onBlur"): TestYupView {
   const view = useCsView({
     ynameItem: useCsInputTextItem("名前", useInit(""), stringRule(true, 3, 30, "nameRule")),
     ypassword: useCsInputPassword("パスワード", useInit(""), stringRule(true, 8, 16, "passwordRule")),
@@ -244,7 +246,8 @@ export function useTestYupView(): TestYupView {
     customValidationRules: {
       ...globalValidationRules,
       ...testYupViewValidationRules
-    }
+    },
+    validationTrigger,
   },
   )
   return view

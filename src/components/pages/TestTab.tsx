@@ -3,8 +3,8 @@ import { Row, Tabs } from "antd"
 import type { TabsProps } from "antd"
 import { OldFashionededPane } from "../parts/OldFashionedPane"
 import { TestTabXPane } from "../parts/TestTabXPane"
-import { AxCheckBox, AxRadioBox, AxSelectNumberBox } from "../../framework/components/antd"
-import { numberRule, selectOptionNumbers, selectOptions, stringRule, useCsCheckBoxItem, useCsRadioBoxItem, useCsSelectNumberBoxItem, useInit } from "../../framework/logics"
+import { AxCheckBox, AxRadioBox, AxSelectBox, AxSelectNumberBox } from "../../framework/components/antd"
+import { numberRule, selectOptionNumbers, selectOptions, stringRule, useCsCheckBoxItem, useCsRadioBoxItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, useInit } from "../../framework/logics"
 import { TestEventPane } from "../parts/TestEventPane"
 import { ConceptApplyedPane } from "../parts/ConceptApplyedPane"
 
@@ -17,6 +17,11 @@ const TestTab: React.FC = () => {
       { value: "yup", label: "Yup" },
       { value: "zod", label: "Zod" },
       { value: "ri", label: "参照実装" },
+    ]))
+  const validationTrigger = useCsSelectBoxItem("バリデーションタイミング", useInit("onSubmit"), stringRule(true),
+    selectOptions([
+      { value: "onSubmit", label: "ボタンが押された時" },
+      { value: "onBlur", label: "カーソルが離れた時" },
     ]))
 
   const items: TabsProps["items"] = [
@@ -35,6 +40,7 @@ const TestTab: React.FC = () => {
       label: (<div>x列の自動デザイン<div>（Material UI）</div></div>),
       children: <TestTabXPane
         validationType={validationType.value ?? ""}
+        validationTrigger={validationTrigger.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="mui"
         readonly={readonlyCheck.value ?? false} />,
@@ -44,6 +50,7 @@ const TestTab: React.FC = () => {
       label: (<div>x列の自動デザイン<div>（Ant Design）</div></div>),
       children: <TestTabXPane
         validationType={validationType.value ?? ""}
+        validationTrigger={validationTrigger.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="antd"
         readonly={readonlyCheck.value ?? false} />,
@@ -53,6 +60,7 @@ const TestTab: React.FC = () => {
       label: (<div>x列の自動デザイン<div>（React-Bootstrap）</div></div>),
       children: <TestTabXPane
         validationType={validationType.value ?? ""}
+        validationTrigger={validationTrigger.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="bootstrap"
         readonly={readonlyCheck.value ?? false} />,
@@ -71,6 +79,7 @@ const TestTab: React.FC = () => {
         <AxSelectNumberBox item={colSize} />
         <AxCheckBox item={readonlyCheck} />
         <AxRadioBox item={validationType} />
+        <AxSelectBox item={validationTrigger} />
       </Row>
       <Tabs defaultActiveKey="1" items={items} />
     </div>

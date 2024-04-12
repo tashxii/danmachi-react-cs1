@@ -7,15 +7,17 @@ import { AxButton } from "../../framework/components/antd"
 
 interface TestTabXPaneProp {
   colSize: number,
-  componentType: "standard" | "antd" | "mui" | "bootstrap",
+  componentType: "standard" | "antd" | "mui" | "bootstrap"
   readonly: boolean
   validationType: string
+  validationTrigger: string
 }
 export const TestTabXPane: React.FC<TestTabXPaneProp> = (props: TestTabXPaneProp) => {
-  const { validationType } = props
-  const riView = useTestView()
-  const zodView = useTestZodView()
-  const yupView = useTestYupView()
+  const { validationType, validationTrigger } = props
+  const mode = validationTrigger === "onBlur" ? "onBlur" : "onSubmit"
+  const riView = useTestView(mode)
+  const zodView = useTestZodView(mode)
+  const yupView = useTestYupView(mode)
   const view = (validationType === "zod") ? zodView
     : (validationType === "yup") ? yupView : riView
   view.readonly = props.readonly
