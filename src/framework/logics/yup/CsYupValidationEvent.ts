@@ -128,9 +128,9 @@ const createNumberArrayConstraint = (
 }
 
 type YupObject = ObjectSchema<{
-  [x: string]: string | number | (string | undefined)[] | (number | undefined)[] | undefined;
+  [x: string]: string | number | (string | undefined)[] | (number | undefined)[] | undefined
 }, yup.AnyObject, {
-  [x: string]: "" | undefined;
+  [x: string]: "" | undefined
 }, "">
 
 export class CsYupValidationEvent extends CsValidationEvent {
@@ -152,32 +152,6 @@ export class CsYupValidationEvent extends CsValidationEvent {
   }
 
   onValidateHasError = (): boolean => {
-    // const sourceMap = new Map<string, any>()
-    // for (const k of this.validateFieldMap.keys()) {
-    //   const value = this.validateFieldMap.get(k)
-    //   const newValue = (value === "") ? undefined : value
-    //   sourceMap.set(k, newValue)
-    // }
-    // const data = Object.fromEntries(sourceMap)
-    // let hasError = false
-    // try {
-    //   this.validationSchemaObj.validateSync({ ...data }, { abortEarly: false })
-    // } catch (error) {
-    //   hasError = true
-    //   if (error instanceof ValidationError) {
-    //     this.yupError = error
-    //     for (const item of Object.values(this.parentView)) {
-    //       if (item instanceof CsItem) {
-    //         let message = ""
-    //         message = this.yupError!.inner
-    //           .find(ve => ((ve.path?.split("[")[0] === item.key)))?.message ?? ""
-    //         if (item.setValidationMessage) {
-    //           item.setValidationMessage(message)
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
     let hasError = false
     for (const item of Object.values(this.parentView)) {
       if (item instanceof CsItem) {

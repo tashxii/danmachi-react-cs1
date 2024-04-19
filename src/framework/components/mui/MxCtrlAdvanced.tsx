@@ -63,7 +63,7 @@ export const MxInputNumberRange = (props: MxInputNumberRangeProps) => {
               readOnly: item.isReadonly(),
             }}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-              const re = /^-?[0-9]+$/g;
+              const re = /^-?[0-9]+$/g
               const newValue = (e.target.value.length === 0) ? undefined : e.target.value
               if (newValue === undefined || re.test(newValue)) {
                 const newNumber = (newValue) ? Number(newValue) : undefined
@@ -94,7 +94,7 @@ export const MxInputNumberRange = (props: MxInputNumberRangeProps) => {
               readOnly: item.isReadonly(),
             }}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-              const re = /^-?[0-9]+$/g;
+              const re = /^-?[0-9]+$/g
               const newValue = (e.target.value.length === 0) ? undefined : e.target.value
               if (newValue === undefined || re.test(newValue)) {
                 const newNumber = (newValue) ? Number(newValue) : undefined

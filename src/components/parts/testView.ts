@@ -6,11 +6,11 @@ import {
   CsInputNumberItem, CsCheckBoxItem, CsInputPasswordItem,
   CsRadioBoxItem, CsSelectBoxItem, CsTextAreaItem,
   useCsInputDateItem, useCsInputNumberRangeItem, useRangeInit,
-  useInit, CsInputTextItem, useCsZodValidationEvent, useCsRIValidationEvent, CustomValidationRules, customValidationRule, createRegExpValidator
-} from "../../framework/logics";
-import { CsMultiCheckBoxItem } from "../../framework/logics";
-import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics";
-import { CsView, useCsView } from "../../framework/logics";
+  useInit, CsInputTextItem, useCsZodValidationEvent, useCsRIValidationEvent, CustomValidationRules, customValidationRule, createRegExpValidator, CsInputDateRangeItem, useCsInputDateRangeItem
+} from "../../framework/logics"
+import { CsMultiCheckBoxItem } from "../../framework/logics"
+import { CsInputDateItem, CsInputNumberRangeItem } from "../../framework/logics"
+import { CsView, useCsView } from "../../framework/logics"
 
 export type TestView = CsView & {
   nameItem: CsInputTextItem
@@ -39,36 +39,36 @@ const globalValidationRules: CustomValidationRules = {
   passwordRule: customValidationRule<string>(
     (newValue, item) => {
       if (!newValue) {
-        return true;
+        return true
       }
-      let count = 0;
+      let count = 0
       if (/[A-Z]/.test(newValue)) {
-        count++;
+        count++
       }
       if (/[a-z]/.test(newValue)) {
-        count++;
+        count++
       }
       if (/[0-9]/.test(newValue)) {
-        count++;
+        count++
       }
       if (/[!-)+-/:-@[-`{-~]/.test(newValue)) {
-        count++;
+        count++
       }
-      return count >= 4;
+      return count >= 4
     },
     (label, newValue, item) => {
       let requireds = ["大文字", "小文字", "数字", "記号"]
       if (/[A-Z]/.test(newValue)) {
-        requireds = requireds.filter(e => "大文字" !== e);
+        requireds = requireds.filter(e => "大文字" !== e)
       }
       if (/[a-z]/.test(newValue)) {
-        requireds = requireds.filter(e => "小文字" !== e);
+        requireds = requireds.filter(e => "小文字" !== e)
       }
       if (/[0-9]/.test(newValue)) {
-        requireds = requireds.filter(e => "数字" !== e);
+        requireds = requireds.filter(e => "数字" !== e)
       }
       if (/[!-)+-/:-@[-`{-~]/.test(newValue)) {
-        requireds = requireds.filter(e => "記号" !== e);
+        requireds = requireds.filter(e => "記号" !== e)
       }
       return `${label}は、${requireds.join("、")}を含めてください`
     }
@@ -80,7 +80,7 @@ const testViewValidationRules = {
   budgetRule: customValidationRule<number>(
     (_, item) => {
       const view = item.parentView as TestView
-      const min = (view.age.value ?? 0) * 1000;
+      const min = (view.age.value ?? 0) * 1000
       const range = view.budget.value
       return (range ? range[0] : 0) >= min
     },
@@ -143,9 +143,8 @@ export type TestZodView = CsView & {
 const testZodViewValidationRules = {
   budgetRule: customValidationRule<number>(
     (_, item) => {
-      console.log(item)
       const view = item.parentView as TestZodView
-      const min = (view.zage.value ?? 0) * 1000;
+      const min = (view.zage.value ?? 0) * 1000
       const range = view.zbudget.value
       return (range ? range[0] : 0) >= min
     },
@@ -202,17 +201,15 @@ export type TestYupView = CsView & {
   yother2: CsInputTextItem
   yother3: CsInputTextItem
   yotherA: CsInputTextItem
+  yPeriod: CsInputDateRangeItem
 }
 
 const testYupViewValidationRules = {
   budgetRule: customValidationRule<number>(
     (_, item) => {
-      console.log(item)
       const view = item.parentView as TestYupView
-      const min = (view.yage.value ?? 0) * 1000;
+      const min = (view.yage.value ?? 0) * 1000
       const range = view.ybudget.value
-      console.log(view)
-      console.log(range)
       return (range ? range[0] : 0) >= min
     },
     (label, newValue, item) => {
@@ -238,6 +235,7 @@ export function useTestYupView(validationTrigger: "onSubmit" | "onBlur"): TestYu
       selectOptionStrings(["SMS", "Line", "Twitter", "Facebook"])),
     ybirth: useCsInputDateItem("生年月日", useInit(), stringRule(true)),
     ybudget: useCsInputNumberRangeItem("予算範囲", useRangeInit<number>(), numberRule(false, 1, 100000, "budgetRule")),
+    yPeriod: useCsInputDateRangeItem("課金有効期間", useInit(["2020/1/1", "2030/12/31"]), stringRule(true)),
     yother1: useCsInputTextItem("ほか１", useInit("ほか１"), stringRule(false, 1, 10)),
     yother2: useCsInputTextItem("ほか２", useInit("ほか２"), stringRule(false, 1, 10)),
     yother3: useCsInputTextItem("ほか３", useInit("ほか３"), stringRule(false, 1, 10)),

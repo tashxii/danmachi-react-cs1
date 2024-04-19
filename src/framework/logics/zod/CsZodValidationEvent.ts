@@ -143,7 +143,7 @@ export class CsZodValidationEvent extends CsValidationEvent {
   constructor(
     view: CsView,
     validationSchemaObj: ZodObject<{
-      [k: string]: ValueTypeZod;
+      [k: string]: ValueTypeZod
     }>,
     validateFieldMap: Map<string, string | number | string[] | undefined>,
     customValidationRules?: CustomValidationRules

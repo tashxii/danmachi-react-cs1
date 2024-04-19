@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ValueType, SetValueTypeOptional, SetValueTypeRequired } from ".";
+import { useState } from "react"
+import { ValueType, SetValueTypeOptional, SetValueTypeRequired } from "."
 
 export abstract class CsEvent {
 }

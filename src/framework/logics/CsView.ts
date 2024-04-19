@@ -10,7 +10,7 @@ export abstract class CsView {
 export abstract class CsValidationEvent {
   private customRules?: { [key: string]: CustomValidationRule<string> }
   constructor(customRules?: { [key: string]: CustomValidationRule<any> }) {
-    this.customRules = customRules;
+    this.customRules = customRules
   }
 
   /** XxButtonから呼び出すためのバリデーションメソッド
@@ -35,42 +35,42 @@ export abstract class CsValidationEvent {
   doCustomValidateItemHasError<T>(
     newValue: T | undefined, item: CsItem<T>
   ): boolean {
-    const customRuleName = item.validationRule?.customRuleName;
+    const customRuleName = item.validationRule?.customRuleName
     if (!customRuleName) {
       return false
     }
     if (!this.customRules) {
       if (item.setValidationMessage) {
-        item.setValidationMessage(`カスタムルールの定義(customValidationRules)が指定されていないのに、カスタムバリデーションルールが指定されています。${customRuleName}`);
+        item.setValidationMessage(`カスタムルールの定義(customValidationRules)が指定されていないのに、カスタムバリデーションルールが指定されています。${customRuleName}`)
       }
-      return true;
+      return true
     }
-    const rule: CustomValidationRule<any> | undefined = this.customRules[customRuleName];
+    const rule: CustomValidationRule<any> | undefined = this.customRules[customRuleName]
     if (!rule) {
       if (item.setValidationMessage) {
-        item.setValidationMessage(`カスタムバリデーションルールが登録されていません。${customRuleName}`);
+        item.setValidationMessage(`カスタムバリデーションルールが登録されていません。${customRuleName}`)
       }
-      return true;
+      return true
     }
 
-    const isOk = rule.validator(newValue, item);
+    const isOk = rule.validator(newValue, item)
     if (isOk) {
       if (item.setValidationMessage) {
-        item.setValidationMessage("");
+        item.setValidationMessage("")
       }
-      return false;
+      return false
     }
-    const makeMessage = rule.message;
+    const makeMessage = rule.message
     if (typeof makeMessage === "string") {
       if (item.setValidationMessage) {
-        item.setValidationMessage(makeMessage);
+        item.setValidationMessage(makeMessage)
       }
     } else {
       if (item.setValidationMessage) {
-        item.setValidationMessage(makeMessage(item.label, newValue, item));
+        item.setValidationMessage(makeMessage(item.label, newValue, item))
       }
     }
-    return true;
+    return true
   }
 }
 
@@ -91,7 +91,7 @@ export const executeValidation = (validationViews: CsView[] | undefined) => {
 export const useCsView = <D extends CsViewDefinition, AppValidationRules extends CustomValidationRules>(
   definitions: D,
   options: {
-    readonly?: boolean;
+    readonly?: boolean
     customValidationRules?: AppValidationRules
     validationTrigger?: "onSubmit" | "onBlur"
   }
