@@ -9,9 +9,8 @@ import {
 } from "../../framework/logics"
 import {
   AxButton, AxCheckBox, AxInputDate, AxInputNumber, AxInputPassword,
-  AxInputText, AxMultiCheckBox, AxRadioBox, AxSelectBox, AxTextArea
+  AxInputText, AxMultiCheckBox, AxRadioBox, AxSelectBox, AxTableLayout, AxTextArea
 } from "../../framework/components/antd"
-import { CxTableLayout } from "../../framework/components/cx"
 import { Col, Row } from "antd"
 
 // Viewの定義
@@ -52,9 +51,8 @@ export const ConceptApplyedPane: React.FC = () => {
   })
   return (
     <>
-      <CxTableLayout
+      <AxTableLayout
         view={view}
-        componentType="antd"
         colSize={2}
       />
       {false && // 非表示：フラットに書く場合
