@@ -8,7 +8,7 @@ export abstract class CsItemBase {
   private readonly: boolean = false
   parentView?: CsView
   isReadonly() {
-    return (this.readonly) ? this.readonly : this.parentView?.readonly ?? false;
+    return (this.readonly) ? this.readonly : this.parentView?.readonly ?? false
   }
   setReadonly = (value: boolean) => {
     this.readonly = value
@@ -225,7 +225,7 @@ export class CsCheckBoxItem extends CsBooleanItem {
     this.checkBoxText = checkBoxText
   }
   isChecked(): boolean {
-    return this.value ?? false;
+    return this.value ?? false
   }
 }
 

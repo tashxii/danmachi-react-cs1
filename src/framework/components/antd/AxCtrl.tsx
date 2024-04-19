@@ -15,6 +15,9 @@ const { Text } = Typography
 
 export interface AxProps<I extends CsItemBase> {
   item: I
+  hideLabel?: boolean
+  labelPlacement?: "top" | "left"
+  labelWidth?: 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50
   showRequiredTag?: "both" | "required" | "optional" | "none"
   addClassNames?: string[]
 }
@@ -78,6 +81,9 @@ export interface AxEditCtrlProps<T extends CsItemBase> {
 export const AxEditCtrl = <T,>(props: AxEditCtrlProps<CsItem<T>>) => {
   const { axProps, renderCtrl } = props
   const { item, showRequiredTag } = axProps
+  const hideLabel = axProps.hideLabel ?? false
+  const labelPlacement = axProps.labelPlacement ?? "top"
+  const labelWidth = axProps.labelWidth ?? 30
   const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
@@ -85,13 +91,33 @@ export const AxEditCtrl = <T,>(props: AxEditCtrlProps<CsItem<T>>) => {
       setRefresh(false)
     }
   }, [item.hasValidationError, refresh])
-
   return (
-    <div>
-      <AxLabel label={getLabel(item, showRequiredTag)}></AxLabel>
-      {renderCtrl(setRefresh)}
-      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
-    </div>
+    (labelPlacement === "left") ? (
+      <div>
+        <div className={"input-container"}>
+          {hideLabel ? (
+            <div style={{ width: "100%" }}>{renderCtrl(setRefresh)}</div>
+          ) : (
+            <>
+              <div style={{ width: labelWidth + "%" }}>
+                <AxLabel label={getLabel(item, showRequiredTag)}></AxLabel>
+              </div>
+              <div style={{ width: 100 - labelWidth + "%" }}>{renderCtrl(setRefresh)}</div>
+            </>
+          )}
+        </div>
+        <div className={"input-container"}>
+          <div style={{ width: hideLabel ? 0 : labelWidth + "%" }}></div>
+          <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
+        </div>
+      </div>
+    ) : (
+      <div>
+        {!hideLabel && <AxLabel label={getLabel(item, showRequiredTag)}></AxLabel>}
+        {renderCtrl(setRefresh)}
+        <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
+      </div>
+    )
   )
 }
 export interface AxInputTextProps extends AxProps<CsInputTextItem> {

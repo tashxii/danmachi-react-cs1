@@ -104,7 +104,7 @@ export function useCsInputTextItem(label: string,
   rule: StringValidationRule,
   readonly: RW = RW.Editable,
 ): CsInputTextItem {
-  return useCsItem(CsInputTextItem, label, state, rule, undefined, readonly);
+  return useCsItem(CsInputTextItem, label, state, rule, undefined, readonly)
 }
 
 export function useCsInputNumberItem(label: string,
@@ -112,7 +112,7 @@ export function useCsInputNumberItem(label: string,
   rule: NumberValidationRule,
   readonly: RW = RW.Editable,
 ): CsInputNumberItem {
-  return useCsItem(CsInputNumberItem, label, state, rule, undefined, readonly);
+  return useCsItem(CsInputNumberItem, label, state, rule, undefined, readonly)
 }
 
 export function useCsInputPasswordItem(label: string,
@@ -120,7 +120,7 @@ export function useCsInputPasswordItem(label: string,
   rule: StringValidationRule,
   readonly: RW = RW.Editable,
 ): CsInputPasswordItem {
-  return useCsItem(CsInputPasswordItem, label, state, rule, undefined, readonly);
+  return useCsItem(CsInputPasswordItem, label, state, rule, undefined, readonly)
 }
 
 export function useCsTextAreaItem(label: string,
@@ -128,14 +128,14 @@ export function useCsTextAreaItem(label: string,
   rule: StringValidationRule,
   readonly: RW = RW.Editable,
 ): CsTextAreaItem {
-  return useCsItem(CsTextAreaItem, label, state, rule, undefined, readonly);
+  return useCsItem(CsTextAreaItem, label, state, rule, undefined, readonly)
 }
 
 export function useCsCheckBoxItem(label: string,
   state: StateResult<boolean>,
   checkBoxText: string, readonly: RW = RW.Editable,
 ): CsCheckBoxItem {
-  const item = useCsItem(CsCheckBoxItem, label, state, undefined, undefined, readonly);
+  const item = useCsItem(CsCheckBoxItem, label, state, undefined, undefined, readonly)
   item.setCheckBoxText(checkBoxText)
   return item
 }
@@ -145,7 +145,7 @@ export function useCsSelectBoxItem(label: string,
   rule: StringValidationRule, selOpt: SelectOptions | undefined,
   readonly: RW = RW.Editable,
 ): CsSelectBoxItem {
-  return useCsItem(CsSelectBoxItem, label, state, rule, selOpt, readonly);
+  return useCsItem(CsSelectBoxItem, label, state, rule, selOpt, readonly)
 }
 
 export function useCsSelectNumberBoxItem(label: string,
@@ -153,7 +153,7 @@ export function useCsSelectNumberBoxItem(label: string,
   rule: NumberValidationRule, selOpt: SelectOptions | undefined,
   readonly: RW = RW.Editable,
 ): CsSelectNumberBoxItem {
-  return useCsItem(CsSelectNumberBoxItem, label, state, rule, selOpt, readonly);
+  return useCsItem(CsSelectNumberBoxItem, label, state, rule, selOpt, readonly)
 }
 
 export function useCsRadioBoxItem(label: string,
@@ -161,7 +161,7 @@ export function useCsRadioBoxItem(label: string,
   rule: StringValidationRule, selOpt: SelectOptions | undefined,
   readonly: RW = RW.Editable,
 ): CsRadioBoxItem {
-  return useCsItem(CsRadioBoxItem, label, state, rule, selOpt, readonly);
+  return useCsItem(CsRadioBoxItem, label, state, rule, selOpt, readonly)
 }
 
 export function useCsMultiCheckBoxItem(label: string,
@@ -170,5 +170,5 @@ export function useCsMultiCheckBoxItem(label: string,
   selOpt: SelectOptions | undefined,
   readonly: RW = RW.Editable,
 ): CsMultiCheckBoxItem {
-  return useCsItem(CsMultiCheckBoxItem, label, state, rule, selOpt, readonly);
+  return useCsItem(CsMultiCheckBoxItem, label, state, rule, selOpt, readonly)
 }

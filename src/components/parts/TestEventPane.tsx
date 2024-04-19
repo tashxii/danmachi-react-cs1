@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { Card, Col, Modal, Row, Table } from "antd"
-import { CxTableLayout } from "../../framework/components/cx"
-import { AxButton, AxQueryButton, AxInputText } from "../../framework/components/antd"
+import { AxButton, AxQueryButton, AxInputText, AxTableLayout } from "../../framework/components/antd"
 import {
   CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent,
   useCsRqMutateButtonClickEvent, useCsRqQueryButtonClickEvent,
@@ -318,10 +317,9 @@ export const ClanEditForm: React.FC<ClanEditProps> = (props: ClanEditProps) => {
 
   return (
     <>
-      <CxTableLayout
+      <AxTableLayout
         colSize={1}
         view={view}
-        componentType="antd"
       />
     </>
   )
@@ -350,10 +348,9 @@ export const CharaEditForm: React.FC<CharaEditProps> = (props: CharaEditProps) =
 
   return (
     <>
-      <CxTableLayout
+      <AxTableLayout
         colSize={1}
         view={view}
-        componentType="antd"
       />
     </>
   )
