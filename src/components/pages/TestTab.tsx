@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Row, Tabs } from "antd"
 import type { TabsProps } from "antd"
 import { OldFashionededPane } from "../parts/OldFashionedPane"
@@ -23,7 +23,23 @@ const TestTab: React.FC = () => {
       { value: "onSubmit", label: "ボタンが押された時" },
       { value: "onBlur", label: "カーソルが離れた時" },
     ]))
+  const labelType = useCsRadioBoxItem("ラベル位置", useInit("top"), stringRule(true),
+    selectOptions([
+      { value: "top", label: "上(top)" },
+      { value: "left", label: "左(left)" },
+      { value: "hidden", label: "ラベルなし" },
+    ]))
+  const labelWidth = useCsSelectNumberBoxItem("ラベル幅(位置が「左」のみ有効)", useInit(30), numberRule(true),
+    selectOptionNumbers([5, 10, 15, 20, 25, 30, 35, 40, 45, 50]))
 
+  const [activeKey, setActiveKey] = useState("1")
+  const isReadonly = activeKey !== "3" && activeKey !== "4" && activeKey !== "5"
+  colSize.setReadonly(isReadonly)
+  readonlyCheck.setReadonly(isReadonly)
+  validationType.setReadonly(isReadonly)
+  validationTrigger.setReadonly(isReadonly)
+  labelType.setReadonly(isReadonly)
+  labelWidth.setReadonly(isReadonly || labelType.value !== "left")
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -43,6 +59,8 @@ const TestTab: React.FC = () => {
         validationTrigger={validationTrigger.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="mui"
+        labelType={labelType.value ?? "top"}
+        labelWidth={labelWidth.value ?? 30}
         readonly={readonlyCheck.value ?? false} />,
     },
     {
@@ -53,6 +71,8 @@ const TestTab: React.FC = () => {
         validationTrigger={validationTrigger.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="antd"
+        labelType={labelType.value ?? "top"}
+        labelWidth={labelWidth.value ?? 30}
         readonly={readonlyCheck.value ?? false} />,
     },
     {
@@ -63,6 +83,8 @@ const TestTab: React.FC = () => {
         validationTrigger={validationTrigger.value ?? ""}
         colSize={colSize.value ?? 1}
         componentType="bootstrap"
+        labelType={labelType.value ?? "top"}
+        labelWidth={labelWidth.value ?? 30}
         readonly={readonlyCheck.value ?? false} />,
     },
     {
@@ -80,8 +102,12 @@ const TestTab: React.FC = () => {
         <AxCheckBox item={readonlyCheck} />
         <AxRadioBox item={validationType} />
         <AxSelectBox item={validationTrigger} />
+        <AxRadioBox item={labelType} />
+        {true && <AxSelectNumberBox item={labelWidth} />}
       </Row>
-      <Tabs defaultActiveKey="1" items={items} />
+      <Tabs defaultActiveKey="1" items={items} onChange={(key) => {
+        setActiveKey(key)
+      }} />
     </div>
   )
 }

@@ -1,8 +1,11 @@
-import { DatePicker, DatePickerProps, InputNumber, InputNumberProps } from "antd"
+import { DatePicker, DatePickerProps, GetProps, InputNumber, InputNumberProps } from "antd"
 import dayjs, { Dayjs } from "dayjs"
 import React from "react"
-import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
+import { CsInputDateItem, CsInputDateRangeItem, CsInputNumberRangeItem } from "../../logics"
 import { AxProps, AxEditCtrl, getClassName } from "./AxCtrl"
+
+const { RangePicker } = DatePicker
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>
 
 export interface AxInputDateProps extends AxProps<CsInputDateItem> {
   antdProps?: DatePickerProps
@@ -25,10 +28,10 @@ export const AxInputDate = (props: AxInputDateProps) => {
         >
           <DatePicker className={getClassName(props, "fit-content")}
             value={(item.value) ? dayjs(item.value) : undefined}
-            format={CsInputDateItem.dateDisplayFormat}
+            format={item.displayFormat}
             onChange={(value: Dayjs, dateString: string | string[]) => {
               if (item.isReadonly()) return
-              const newValue = value?.format(CsInputDateItem.dateValueFormat)
+              const newValue = value?.format(item.valueFormat)
               item.setValue(newValue)
               if (!item.validateWhenErrorExists(newValue ?? "")) {
                 setRefresh(true)
@@ -37,6 +40,50 @@ export const AxInputDate = (props: AxInputDateProps) => {
             {...antdProps}
           />
         </div>
+      )}
+    /> // AxEditCtrl
+  )
+}
+
+export interface AxInputDateRangeProp extends AxProps<CsInputDateRangeItem> {
+  antdProps?: RangePickerProps
+}
+
+export const AxInputDateRange = (props: AxInputDateRangeProp) => {
+  const { item, antdProps } = props
+  const from = item.value?.at(0) ? dayjs(item.lowerValue) : undefined
+  const to = item.value?.at(1) ? dayjs(item.upperValue) : undefined
+  return (
+    <AxEditCtrl
+      axProps={props}
+      renderCtrl={(setRefresh) => (
+        <RangePicker
+          className={getClassName(props, "fit-content")}
+          onCalendarChange={(dates, _, __) => {
+            if (item.isReadonly()) {
+              return
+            }
+            const newFrom = dates && dates.length === 2 ? dates[0]?.format(item.valueFormat) : undefined
+            const newTo = dates && dates.length === 2 ? dates[1]?.format(item.valueFormat) : undefined
+            const newValue = [newFrom ?? "", newTo ?? ""]
+            item.setValue(newValue)
+            if (!item.validateWhenErrorExists(newValue)) {
+              setRefresh(true)
+            }
+          }}
+          onBlur={() => {
+            if (item.parentView?.validateTrigger !== "onBlur") {
+              return
+            }
+            if (!item.validate(item.value)) {
+              setRefresh(true)
+            }
+          }}
+          allowClear={!item.validationRule.required}
+          defaultValue={[from, to] as [dayjs.Dayjs, dayjs.Dayjs]}
+          format={item.displayFormat}
+          {...antdProps}
+        />
       )}
     /> // AxEditCtrl
   )

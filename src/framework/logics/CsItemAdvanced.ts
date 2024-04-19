@@ -1,4 +1,4 @@
-import { CsItem, CsStringItem } from ".";
+import { CsItem, CsStringItem } from "."
 
 export class CsInputDateItem extends CsStringItem {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
@@ -8,6 +8,9 @@ export class CsInputDateItem extends CsStringItem {
   static dateDisplayFormat: string = "YYYY/MM/DD"
   static dateTimeValueFormat: string = "YYYY-MM-DDTHH:mm:ssZ"
   static dateTimeDisplayFormt: string = "YYYY/MM/DD HH:mm:ss"
+
+  displayFormat: string = CsInputDateItem.dateDisplayFormat
+  valueFormat: string = CsInputDateItem.dateValueFormat
 }
 
 export abstract class CsRangeItem<V extends string | number, T extends V[]> extends CsItem<T> {
@@ -54,4 +57,7 @@ export class CsStringRangeItem extends CsRangeItem<string, string[]> {
 export class CsInputDateRangeItem extends CsStringRangeItem {
   //Genericの型変数だけで一致した場合でも、同一型とみなされるための回避用の識別子
   private identifier?: CsInputNumberRangeItem
+
+  displayFormat: string = CsInputDateItem.dateDisplayFormat
+  valueFormat: string = CsInputDateItem.dateValueFormat
 }
