@@ -9,7 +9,7 @@ import "./MxCtrl.css"
 import { ValidationError } from "../../../components/basics/ValidationError"
 import {
   Checkbox, CheckboxProps, FormControl, FormControlLabel, FormGroup,
-  Radio, RadioGroup, RadioGroupProps, Select, SelectProps, Typography
+  Radio, RadioGroup, RadioGroupProps, Select, SelectProps, TextareaAutosize, TextareaAutosizeProps, Typography
 } from "@mui/material"
 import Chip from "@mui/material/Chip"
 import TextField, { TextFieldProps } from "@mui/material/TextField"
@@ -19,6 +19,9 @@ import { CsHasOptionsItem, CsSelectNumberBoxItem } from "../../logics"
 
 export interface MxProps<I extends CsItemBase> {
   item: I
+  hideLabel?: boolean
+  labelPlacement?: "top" | "left"
+  labelWidth?: 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50
   showRequiredTag?: "both" | "required" | "optional" | "none"
   addClassNames?: string[]
 }
@@ -82,6 +85,9 @@ export interface MxEditCtrlProps<T extends CsItemBase> {
 export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T>>) => {
   const { mxProps, renderCtrl } = props
   const { item, showRequiredTag } = mxProps
+  const hideLabel = mxProps.hideLabel ?? false
+  const labelPlacement = mxProps.labelPlacement ?? "top"
+  const labelWidth = mxProps.labelWidth ?? 30
   const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
@@ -91,11 +97,32 @@ export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T>>) => {
   }, [item.hasValidationError, refresh])
 
   return (
-    <>
-      <MxLabel label={getLabel(item, showRequiredTag)}></MxLabel>
-      {renderCtrl(setRefresh)}
-      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
-    </>
+    (labelPlacement === "left") ? (
+      <div>
+        <div className={"input-container"}>
+          {hideLabel ? (
+            <div style={{ width: "100%" }}>{renderCtrl(setRefresh)}</div>
+          ) : (
+            <>
+              <div style={{ width: labelWidth + "%" }}>
+                <MxLabel label={getLabel(item, showRequiredTag)}></MxLabel>
+              </div>
+              <div style={{ width: 100 - labelWidth + "%" }}>{renderCtrl(setRefresh)}</div>
+            </>
+          )}
+        </div>
+        <div className={"input-container"}>
+          <div style={{ width: hideLabel ? 0 : labelWidth + "%" }}></div>
+          <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
+        </div>
+      </div>
+    ) : (
+      <>
+        {!hideLabel && <MxLabel label={getLabel(item, showRequiredTag)}></MxLabel>}
+        {renderCtrl(setRefresh)}
+        <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
+      </>
+    )
   )
 }
 
@@ -147,7 +174,7 @@ export const MxInputNumber = (props: MxInputNumberProps) => {
             readOnly: item.isReadonly(),
           }}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-            const re = /^-?[0-9]+$/g;
+            const re = /^-?[0-9]+$/g
             const newValue = (e.target.value.length === 0) ? undefined : e.target.value
             if (newValue === undefined || re.test(newValue)) {
               const newNumber = (newValue) ? Number(newValue) : undefined
@@ -221,10 +248,13 @@ export const MxTextArea = (props: MxTextAreaProps) => {
           value={item.value}
           inputProps={{
             readOnly: item.isReadonly(),
+            // https://github.com/mui/base-ui/issues/167
+            inputComponent: "textarea",
           }}
-          multiline
+          // Do not use multiline till this issue fixed ... https://github.com/mui/base-ui/issues/167
+          // multiline
+          // minRows={4}
           variant="outlined"
-          minRows={4}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
             item.setValue(e.target.value)
             if (!item.validateWhenErrorExists(e.target.value)) {

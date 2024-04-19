@@ -171,3 +171,9 @@
 .mui-ctrl .button.bottom {
   bottom: 15px;
 }
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

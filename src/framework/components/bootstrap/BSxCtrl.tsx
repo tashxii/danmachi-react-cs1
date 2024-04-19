@@ -15,6 +15,9 @@ import { CsHasOptionsItem } from "../../logics"
 
 export interface BSxProps<I extends CsItemBase> {
   item: I
+  hideLabel?: boolean
+  labelPlacement?: "top" | "left"
+  labelWidth?: 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50
   showRequiredTag?: "both" | "required" | "optional" | "none"
   addClassNames?: string[]
 }
@@ -78,6 +81,9 @@ export interface BSxEditCtrlProps<T extends CsItemBase> {
 export const BSxEditCtrl = <T,>(props: BSxEditCtrlProps<CsItem<T>>) => {
   const { bsxProps, renderCtrl } = props
   const { item, showRequiredTag } = bsxProps
+  const hideLabel = bsxProps.hideLabel ?? false
+  const labelPlacement = bsxProps.labelPlacement ?? "top"
+  const labelWidth = bsxProps.labelWidth ?? 30
   const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
@@ -87,11 +93,32 @@ export const BSxEditCtrl = <T,>(props: BSxEditCtrlProps<CsItem<T>>) => {
   }, [item.hasValidationError, refresh])
 
   return (
-    <div>
-      <BSxLabel label={getLabel(item, showRequiredTag)}></BSxLabel>
-      {renderCtrl(setRefresh)}
-      <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
-    </div>
+    (labelPlacement === "left") ? (
+      <div>
+        <div className={"input-container"}>
+          {hideLabel ? (
+            <div style={{ width: "100%" }}>{renderCtrl(setRefresh)}</div>
+          ) : (
+            <>
+              <div style={{ width: labelWidth + "%" }}>
+                <BSxLabel label={getLabel(item, showRequiredTag)}></BSxLabel>
+              </div>
+              <div style={{ width: 100 - labelWidth + "%" }}>{renderCtrl(setRefresh)}</div>
+            </>
+          )}
+        </div>
+        <div className={"input-container"}>
+          <div style={{ width: hideLabel ? 0 : labelWidth + "%" }}></div>
+          <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
+        </div>
+      </div>
+    ) : (
+      <div>
+        {!hideLabel && <BSxLabel label={getLabel(item, showRequiredTag)}></BSxLabel>}
+        {renderCtrl(setRefresh)}
+        <ValidationError key={"validation-error-" + item.key} message={item.validationErrorMessage} />
+      </div>
+    )
   )
 }
 
