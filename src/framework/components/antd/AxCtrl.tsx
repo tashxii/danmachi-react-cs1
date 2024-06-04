@@ -154,7 +154,9 @@ export const AxInputText = (props: AxInputTextProps) => {
 }
 
 export interface AxInputNumberProps extends AxProps<CsInputNumberItem> {
-  antdProps?: InputNumberProps
+  antdProps?: InputNumberProps & {
+    children?: React.ReactNode;
+  } & React.RefAttributes<HTMLInputElement>
 }
 
 export const AxInputNumber = (props: AxInputNumberProps) => {
