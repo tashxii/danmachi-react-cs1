@@ -3,7 +3,8 @@ import {
   CsNumberArrayItem, NumberValidationRule, CsNumberItem,
   CsStringArrayItem, StringArrayValidationRule, CsView,
   CsValidationEvent, CsNumberOptionsItem, CsNumberRangeItem,
-  CsStringArrayOptionsItem, CsStringOptionsItem, CustomValidationRule, CustomValidationRules
+  CsStringArrayOptionsItem, CsStringOptionsItem, CustomValidationRules,
+  CsValidationItemBase
 } from ".."
 import * as yup from "yup"
 import { AnyObject, ArraySchema, NumberSchema, ObjectSchema, StringSchema, ValidationError } from "yup"
@@ -164,7 +165,7 @@ export class CsYupValidationEvent extends CsValidationEvent {
     return hasError
   }
 
-  onValidateItemHasError = <T>(newValue: T | undefined, item: CsItem<T>) => {
+  onValidateItemHasError = <T>(newValue: T | undefined, item: CsValidationItemBase<T>) => {
     const itemSchema = this.validationSchemaObj.pick([item.key])
     let hasError = false
     try {

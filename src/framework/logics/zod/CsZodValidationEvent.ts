@@ -4,7 +4,8 @@ import {
   CsNumberArrayItem, NumberValidationRule, CsNumberItem,
   CsStringArrayItem, StringArrayValidationRule,
   CsValidationEvent, CsNumberOptionsItem, CsNumberRangeItem,
-  CsStringArrayOptionsItem, CsStringOptionsItem, CsView, CustomValidationRules
+  CsStringArrayOptionsItem, CsStringOptionsItem, CsView, CustomValidationRules,
+  CsValidationItemBase
 } from ".."
 
 type ValueTypeZod = ZodString | ZodOptional<ZodString> | ZodNumber | ZodOptional<ZodNumber>
@@ -196,7 +197,7 @@ export class CsZodValidationEvent extends CsValidationEvent {
     return hasError
   }
 
-  onValidateItemHasError = <T>(newValue: T | undefined, item: CsItem<T>) => {
+  onValidateItemHasError = <T>(newValue: T | undefined, item: CsValidationItemBase<T>) => {
     const itemRule = this.validationSchemaObj.shape[item.key]
     const itemSchema = z.object({ [item.key]: itemRule })
     let hasError = false

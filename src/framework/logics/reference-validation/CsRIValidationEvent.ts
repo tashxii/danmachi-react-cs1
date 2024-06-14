@@ -11,6 +11,7 @@ import {
   CsStringArrayOptionsItem, CsNumberRangeItem, CsValidationEvent,
   CsView,
   CustomValidationRules,
+  CsValidationItemBase,
 } from ".."
 
 const createValidationSchema = <T extends CsView>(instance: T) => {
@@ -154,7 +155,7 @@ export class CsRIValidationEvent extends CsValidationEvent {
     return hasError
   }
 
-  onValidateItemHasError = <T>(newValue: T | undefined, item: CsItem<T>) => {
+  onValidateItemHasError = <T>(newValue: T | undefined, item: CsValidationItemBase<T>) => {
     const validator = this.validator.constraint[item.key]
     let hasError = false
     if (validator) {

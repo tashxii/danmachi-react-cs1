@@ -1,4 +1,4 @@
-import { CsEvent, CsItem, CsItemBase, CustomValidationRule, CustomValidationRules, useCsYupValidationEvent } from "."
+import { CsEvent, CsItem, CsItemBase, CsValidationItemBase, CustomValidationRule, CustomValidationRules, useCsYupValidationEvent } from "."
 
 export type CsViewDefinition = Record<string, CsItemBase | CsEvent>
 export abstract class CsView {
@@ -25,7 +25,7 @@ export abstract class CsValidationEvent {
    * @param item 項目
    */
   abstract onValidateItemHasError<T>(
-    newValue: T | undefined, item: CsItem<T>
+    newValue: T | undefined, item: CsValidationItemBase<T>
   ): boolean
 
   abstract validationErrorMessage(item: CsItem<any>): string
@@ -33,7 +33,7 @@ export abstract class CsValidationEvent {
   abstract resetError(name?: string): void
 
   doCustomValidateItemHasError<T>(
-    newValue: T | undefined, item: CsItem<T>
+    newValue: T | undefined, item: CsValidationItemBase<T>
   ): boolean {
     const customRuleName = item.validationRule?.customRuleName
     if (!customRuleName) {
