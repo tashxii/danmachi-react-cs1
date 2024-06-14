@@ -8,13 +8,11 @@ import {
   CsInputNumberRangeItem,
   CsInputPasswordItem,
   CsInputTextItem,
-  CsItemBase,
   CsMultiCheckBoxItem,
   CsRadioBoxItem,
   CsSelectBoxItem,
   CsSelectNumberBoxItem,
   CsTextAreaItem,
-  CsView,
 } from "../../logics"
 
 import {
@@ -25,113 +23,131 @@ import {
   MxInputNumberRange,
   MxInputPassword,
   MxInputText,
+  MxLabel,
   MxMultiCheckBox,
   MxProps,
   MxRadioBox,
   MxSelectBox,
   MxSelectNumberBox,
   MxTextArea,
+  getLabel,
 } from "."
-import { Grid } from "@mui/material"
+import { Button, Grid } from "@mui/material"
+import { CsArrayDataItem, CsArrayDataView } from "../../logics/CsArrayDataView"
 
-export interface MxTableLayoutProps {
-  view: CsView
-  colSize: 1 | 2 | 3 | 4 | 6 | 12
-  labelPlacement?: "top" | "left"
-  labelWidth?: 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50
+export interface MxArrayDataTableProps {
+  view: CsArrayDataView
   hideLabel?: boolean
+  showDeleteAction?: boolean
+  showRequiredTag?: "both" | "required" | "optional" | "none"
 }
 
-export const MxTableLayout = (props: MxTableLayoutProps) => {
+export const MxArrayDataTable = (props: MxArrayDataTableProps) => {
   const v = props.view
-  const items: CsItemBase[] = []
+  const showRequiredTag = props.showRequiredTag ?? "both"
+  const hideLabel = props.hideLabel === false ? false : true
+  const showDeleteAction = props.showDeleteAction === false ? false : true
+  const items: CsArrayDataItem[] = []
   for (const value of Object.values(v)) {
-    if (value instanceof CsItemBase) {
+    if (value instanceof CsArrayDataItem) {
       items.push(value)
     }
   }
-  const rowLimit = Math.floor(items.length / props.colSize + (items.length % props.colSize === 0 ? 0 : 1))
-  const rows: Array<number> = new Array(rowLimit)
-  rows.fill(0) // fill by 0 because map/forEach ignores undefined elements
-  const cols: Array<number> = new Array(props.colSize)
-  cols.fill(0) // ditto
-
-  const colSpan = 12 / props.colSize
-  let x = 0
-  let j = 0
   let k = 0
+  let j = 0
+  const rows = v.rows
   return (
     <Grid container>
-      {rows.map((row) => {
-        return (
-          <Grid container key={j++}>
-            {cols.map((col) => {
-              return (
-                <Grid item key={k++} xs={colSpan}>
-                  <SelectComponent key={items[x]?.key}
-                    item={items[x++]}
-                    labelPlacement={props.labelPlacement}
-                    labelWidth={props.labelWidth}
-                    hideLabel={props.hideLabel} />
-                </Grid>
-              )
-            })}
+      {/* ヘッダー */}
+      <Grid container>
+        {v.headerItems.map((item) => (
+          <Grid item key={k++} style={{ width: v.getWidthOfKey(item.key) }}>
+            <MxLabel label={getLabel(item, showRequiredTag)}></MxLabel>
+          </Grid>)
+        )}
+        {showDeleteAction && (
+          <Grid item key={-1} style={{ width: "auto", alignContent: "center" }}>
+            <MxLabel label={"操作"} />
           </Grid>
-        )
-      })}
-    </Grid>
+        )}
+      </Grid>
+      {/* 配列 */}
+      {
+        rows.map((row) => {
+          return (
+            <Grid container key={j++}>
+              {row.colItems.map((col) => {
+                return (
+                  <Grid item key={k++} style={{ width: v.getWidthOfKey(col.headerItem.key) }}>
+                    <SelectComponent key={`${row.rowIndex}-${col.key}`}
+                      item={col}
+                      hideLabel={hideLabel} />
+                  </Grid>
+                )
+              })}
+              {showDeleteAction && (
+                <Grid item key={row.rowIndex} style={{ width: "auto", alignContent: "center" }}>
+                  <Button variant="outlined" style={{ color: "orange", borderColor: "red" }} onClick={() => { props.view.deleteRow(row.rowIndex) }}>行の削除</Button>
+                </Grid>
+              )}
+            </Grid>
+          )
+        })
+      }
+    </Grid >
   )
 }
 
-export const selectComponent = (item: CsItemBase, hideLabel?: boolean, labelPlacement?: "top" | "left", labelWidth?: 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50): JSX.Element => {
-  if (item instanceof CsInputTextItem) {
-    const props: MxProps<CsInputTextItem> = { item, hideLabel, labelPlacement, labelWidth }
+export const selectComponent = (item: CsArrayDataItem, hideLabel?: boolean): JSX.Element => {
+  const defItem = item.headerItem
+  if (defItem instanceof CsInputTextItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxInputText {...props} />
   }
-  if (item instanceof CsInputNumberItem) {
-    const props: MxProps<CsInputNumberItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsInputNumberItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxInputNumber {...props} />
   }
-  if (item instanceof CsTextAreaItem) {
-    const props: MxProps<CsTextAreaItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsTextAreaItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxTextArea {...props} />
   }
-  if (item instanceof CsCheckBoxItem) {
-    const props: MxProps<CsCheckBoxItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsCheckBoxItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxCheckBox {...props} />
   }
-  if (item instanceof CsInputPasswordItem) {
-    const props: MxProps<CsInputPasswordItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsInputPasswordItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxInputPassword {...props} />
   }
-  if (item instanceof CsRadioBoxItem) {
-    const props: MxProps<CsRadioBoxItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsRadioBoxItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxRadioBox {...props} />
   }
-  if (item instanceof CsSelectNumberBoxItem) {
-    const props: MxProps<CsSelectNumberBoxItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsSelectNumberBoxItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxSelectNumberBox {...props} />
   }
-  if (item instanceof CsSelectBoxItem) {
-    const props: MxProps<CsSelectBoxItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsSelectBoxItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxSelectBox {...props} />
   }
-  if (item instanceof CsMultiCheckBoxItem) {
-    const props: MxProps<CsMultiCheckBoxItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsMultiCheckBoxItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxMultiCheckBox {...props} />
   }
-  if (item instanceof CsInputDateItem) {
-    const props: MxProps<CsInputDateItem> = { item, hideLabel, labelPlacement, labelWidth }
+  if (defItem instanceof CsInputDateItem) {
+    const props: MxProps<CsArrayDataItem> = { item, hideLabel }
     return <  MxInputDate {...props} />
   }
-  if (item instanceof CsInputNumberRangeItem) {
-    const props: MxProps<CsInputNumberRangeItem> = { item, hideLabel, labelPlacement, labelWidth }
-    return <  MxInputNumberRange {...props} />
+  if (defItem instanceof CsInputNumberRangeItem) {
+    // Not supported
+    return <NullElement />
   }
-  // if (item instanceof CsInputDateRangeItem) {
-  //   const props:  MxProps<CsInputDateRangeItem> = { item, hideLabel, labelPlacement, labelWidth }
-  //   return <  MxInputDateRange {...props} />
-  // }
+  if (defItem instanceof CsInputDateRangeItem) {
+    // Not supported
+    return <NullElement />
+  }
   return <NullElement />
 }
 
@@ -140,10 +156,8 @@ const NullElement = () => {
 }
 
 const SelectComponent: React.FC<{
-  item: CsItemBase
+  item: CsArrayDataItem
   hideLabel?: boolean
-  labelPlacement?: "top" | "left"
-  labelWidth?: 5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50
 }> = (props) => {
-  return selectComponent(props.item, props.hideLabel, props.labelPlacement, props.labelWidth,)
+  return selectComponent(props.item, props.hideLabel)
 }

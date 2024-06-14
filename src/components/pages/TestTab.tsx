@@ -7,6 +7,7 @@ import { AxCheckBox, AxRadioBox, AxSelectBox, AxSelectNumberBox } from "../../fr
 import { numberRule, selectOptionNumbers, selectOptions, stringRule, useCsCheckBoxItem, useCsRadioBoxItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, useInit } from "../../framework/logics"
 import { TestEventPane } from "../parts/TestEventPane"
 import { ConceptApplyedPane } from "../parts/ConceptApplyedPane"
+import PetInfoTable from "../parts/TestArrayDataView"
 
 const TestTab: React.FC = () => {
   const colSize = useCsSelectNumberBoxItem("表示列数", useInit(2), numberRule(false),
@@ -33,7 +34,7 @@ const TestTab: React.FC = () => {
     selectOptionNumbers([5, 10, 15, 20, 25, 30, 35, 40, 45, 50]))
 
   const [activeKey, setActiveKey] = useState("1")
-  const isReadonly = activeKey !== "3" && activeKey !== "4" && activeKey !== "5"
+  const isReadonly = activeKey !== "3" && activeKey !== "4" && activeKey !== "5" && activeKey !== "7"
   colSize.setReadonly(isReadonly)
   readonlyCheck.setReadonly(isReadonly)
   validationType.setReadonly(isReadonly)
@@ -93,6 +94,11 @@ const TestTab: React.FC = () => {
       children: <TestEventPane
         colSize={colSize.value ?? 1}
         componentType="antd" />,
+    },
+    {
+      key: "7",
+      label: (<div><div>配列データテーブル</div>（ArrayDataTable）</div>),
+      children: <PetInfoTable validationTrigger={validationTrigger.value ?? ""} />,
     },
   ]
   return (
