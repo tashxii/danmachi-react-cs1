@@ -14,9 +14,9 @@ export abstract class CsItemBase {
     this.readonly = value
   }
 }
-type CustomValidator<T> = (newValue: T | undefined, item: CsItem<T>) => boolean
+type CustomValidator<T> = (newValue: T | undefined, item: CsValidationItemBase<T>) => boolean
 
-type CustomValidateMessage<T> = ((label: string, value: T, item: CsItem<T>) => string) | string
+type CustomValidateMessage<T> = ((label: string, value: T, item: CsValidationItemBase<T>) => string) | string
 
 export class CustomValidationRule<T> {
   validator: CustomValidator<T>
@@ -30,7 +30,7 @@ export class CustomValidationRule<T> {
 export type CustomValidationRules = { [key: string]: CustomValidationRule<string> | CustomValidationRule<number> | CustomValidationRule<boolean> | CustomValidationRule<string[]> | CustomValidationRule<number[]> }
 
 export const createRegExpValidator = (pattern: RegExp): CustomValidator<string> => {
-  return (newValue: string | undefined, item: CsItem<string>) => pattern.test(newValue ?? "")
+  return (newValue: string | undefined, item: CsValidationItemBase<string>) => pattern.test(newValue ?? "")
 }
 
 export const customValidationRule = <T>(validator: CustomValidator<T>, message: CustomValidateMessage<T>) => {
@@ -109,12 +109,28 @@ export type SetValueTypeRequired<T> = Dispatch<SetStateAction<T>>
 export type SetValueTypeOptional<T> = Dispatch<SetStateAction<T | undefined>>
 export type ValueType<T> = T | undefined
 
-export abstract class CsItem<T> extends CsItemBase {
+export abstract class CsValidationItemBase<T = any> extends CsItemBase {
+  abstract get hasValidationError(): boolean
+  abstract get validationErrorMessage(): string
+
+  abstract validate(newValue: T | undefined): boolean
+  abstract validateWhenErrorExists(newValue: T | undefined): boolean
+  abstract validateAnytime(newValue: T | undefined): boolean
+  abstract get validationRule(): ValidationRule<T>
+  abstract setValidationMessage(message: string): void
+
+}
+export abstract class CsItem<T = any> extends CsValidationItemBase<T> {
   value: T | undefined = undefined
   protected setValueOpt: SetValueTypeOptional<T> = {} as SetValueTypeOptional<T>
   validationRule: ValidationRule<T> = new ValidationRule<T>()
   validationMessage?: string
-  setValidationMessage?: SetValueTypeRequired<string>
+  setValidationMessage: (message: string) => void
+  constructor() {
+    super()
+    this.setValidationMessage = (message: string) => { }
+  }
+
   init = (label: string, readonly: boolean = false) => {
     this.label = label
     this.setReadonly(readonly)
@@ -130,7 +146,7 @@ export abstract class CsItem<T> extends CsItemBase {
   // vallidationTypeがZodやYupの場合のみ利用。RIでは不要
   setValidation = (state: StateResultRequired<string>) => {
     this.validationMessage = state[0]
-    this.setValidationMessage = state[1]
+    this.setValidationMessage = (message: string) => { state[1](message) }
   }
 
   setValue = (value?: T) => {
@@ -153,21 +169,21 @@ export abstract class CsItem<T> extends CsItemBase {
     return this.parentView?.validationEvent?.validationErrorMessage(this) ?? ""
   }
 
-  validate = (newValue: T | undefined) => {
+  validate = (newValue: T | undefined): boolean => {
     if (!this.validationRule.required && !newValue) {
       return false
     }
     return this.validateAnytime(newValue)
   }
 
-  validateWhenErrorExists = (newValue: T | undefined) => {
+  validateWhenErrorExists = (newValue: T | undefined): boolean => {
     if (!this.hasValidationError) {
       return false
     }
     return this.validateAnytime(newValue)
   }
 
-  validateAnytime = (newValue: T | undefined) => {
+  validateAnytime = (newValue: T | undefined): boolean => {
     const validationEvent = this.parentView?.validationEvent
     if (validationEvent) {
       return validationEvent.onValidateItemHasError(newValue, this)
@@ -229,7 +245,7 @@ export class CsCheckBoxItem extends CsBooleanItem {
   }
 }
 
-export abstract class CsHasOptionsItem<T> extends CsItem<T> {
+export abstract class CsHasOptionsItem<T = any> extends CsItem<T> {
   options: any[] = []
   optionValueKey: string = "value"
   optionLabelKey: string = "label"
