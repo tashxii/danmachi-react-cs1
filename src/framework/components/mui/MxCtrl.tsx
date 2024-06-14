@@ -16,6 +16,7 @@ import TextField, { TextFieldProps } from "@mui/material/TextField"
 import { SelectChangeEvent } from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import { CsHasOptionsItem, CsSelectNumberBoxItem } from "../../logics"
+import { CsArrayDataItem } from "../../logics/CsArrayDataView"
 
 export interface MxProps<I extends CsItemBase> {
   item: I
@@ -38,7 +39,7 @@ export const MxLabel = (props: MxLabelProp) => {
   )
 }
 
-export const getClassName = <T,>(props: MxProps<CsItem<T>>, add?: string): string => {
+export const getClassName = <T,>(props: MxProps<CsItem<T> | CsArrayDataItem>, add?: string): string => {
   let names = ["mui-ctrl"]
   const item = props.item
   if (add) {
@@ -56,7 +57,7 @@ export const getClassName = <T,>(props: MxProps<CsItem<T>>, add?: string): strin
   return names.join(" ")
 }
 
-export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
+export const getLabel = <T,>(item: CsItem<T> | CsArrayDataItem, showRequiredTag?: "both" | "required" | "optional" | "none"): ReactNode => {
   const required = item.validationRule?.required ?? false
   const showTag = showRequiredTag ?? ((item.parentView) ? "both" : "none")
   const requiredTag = () => {
@@ -77,12 +78,12 @@ export const getLabel = <T,>(item: CsItem<T>, showRequiredTag?: "both" | "requir
   )
 }
 
-export interface MxEditCtrlProps<T extends CsItemBase> {
+export interface MxEditCtrlProps<T extends CsItemBase | CsArrayDataItem> {
   mxProps: MxProps<T>
   renderCtrl: (setRefresh: React.Dispatch<React.SetStateAction<boolean>>) => ReactNode
 }
 
-export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T>>) => {
+export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T> | CsArrayDataItem>) => {
   const { mxProps, renderCtrl } = props
   const { item, showRequiredTag } = mxProps
   const hideLabel = mxProps.hideLabel ?? false
@@ -126,7 +127,7 @@ export const MxEditCtrl = <T,>(props: MxEditCtrlProps<CsItem<T>>) => {
   )
 }
 
-export interface MxInputTextProps extends MxProps<CsInputTextItem> {
+export interface MxInputTextProps extends MxProps<CsInputTextItem | CsArrayDataItem> {
   muiProps?: TextFieldProps
 }
 
@@ -159,7 +160,7 @@ export const MxInputText = (props: MxInputTextProps) => {
   )
 }
 
-export interface MxInputNumberProps extends MxProps<CsInputNumberItem> {
+export interface MxInputNumberProps extends MxProps<CsInputNumberItem | CsArrayDataItem> {
   muiProps?: TextFieldProps
 }
 
@@ -199,7 +200,7 @@ export const MxInputNumber = (props: MxInputNumberProps) => {
   )
 }
 
-export interface MxInputPasswordProps extends MxProps<CsInputPasswordItem> {
+export interface MxInputPasswordProps extends MxProps<CsInputPasswordItem | CsArrayDataItem> {
   muiProps?: TextFieldProps
 }
 
@@ -235,7 +236,7 @@ export const MxInputPassword = (props: MxInputPasswordProps) => {
   )
 }
 
-export interface MxTextAreaProps extends MxProps<CsTextAreaItem> {
+export interface MxTextAreaProps extends MxProps<CsTextAreaItem | CsArrayDataItem> {
   muiProps?: TextFieldProps
 }
 
@@ -276,16 +277,17 @@ export const MxTextArea = (props: MxTextAreaProps) => {
   )
 }
 
-interface MxSelectBoxCommonProps<V extends string | number, T extends CsHasOptionsItem<V>>
+interface MxSelectBoxCommonProps<V extends string | number, T extends CsHasOptionsItem<V> | CsArrayDataItem>
   extends MxProps<T> {
   muiProps?: SelectProps<V>
 }
 
-const MxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem<V>>(
+const MxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem<V> | CsArrayDataItem>(
   props: MxSelectBoxCommonProps<V, T>,
   toValue: (value: string) => V | undefined
 ) => {
   const { item, muiProps } = props
+
   return (
     <MxEditCtrl mxProps={props}
       renderCtrl={(setRefresh) => (
@@ -324,26 +326,26 @@ const MxSelectBoxCommon = <V extends string | number, T extends CsHasOptionsItem
   )
 }
 export interface MxSelectBoxProps
-  extends MxSelectBoxCommonProps<string, CsSelectBoxItem> {
+  extends MxSelectBoxCommonProps<string, CsSelectBoxItem | CsArrayDataItem> {
   muiProps?: SelectProps<string>
 }
 
 export const MxSelectBox = (props: MxSelectBoxProps) => {
-  return (MxSelectBoxCommon<string, CsSelectBoxItem>(
+  return (MxSelectBoxCommon<string, CsSelectBoxItem | CsArrayDataItem>(
     props, (value: string) => (value)))
 }
 
 export interface MxSelectNumberBoxProps
-  extends MxSelectBoxCommonProps<number, CsSelectNumberBoxItem> {
+  extends MxSelectBoxCommonProps<number, CsSelectNumberBoxItem | CsArrayDataItem> {
   muiProps?: SelectProps<number>
 }
 
 export const MxSelectNumberBox = (props: MxSelectNumberBoxProps) => {
-  return (MxSelectBoxCommon<number, CsSelectNumberBoxItem>(
+  return (MxSelectBoxCommon<number, CsSelectNumberBoxItem | CsArrayDataItem>(
     props, (value: string) => (Number(value))))
 }
 
-export interface MxRadioBoxProps extends MxProps<CsRadioBoxItem> {
+export interface MxRadioBoxProps extends MxProps<CsRadioBoxItem | CsArrayDataItem> {
   muiProps?: RadioGroupProps & React.RefAttributes<HTMLDivElement>
 }
 
@@ -393,7 +395,7 @@ export const MxRadioBox = (props: MxRadioBoxProps) => {
   )
 }
 
-export interface MxCheckBoxProps extends MxProps<CsCheckBoxItem> {
+export interface MxCheckBoxProps extends MxProps<CsCheckBoxItem | CsArrayDataItem> {
   muiProps?: CheckboxProps
 }
 
@@ -434,7 +436,7 @@ export const MxCheckBox = (props: MxCheckBoxProps) => {
   )
 }
 
-export interface MxMultiCheckBoxProps extends MxProps<CsMultiCheckBoxItem> {
+export interface MxMultiCheckBoxProps extends MxProps<CsMultiCheckBoxItem | CsArrayDataItem> {
   muiProps?: CheckboxProps
 }
 
@@ -470,7 +472,8 @@ export const MxMultiCheckBox = (props: MxMultiCheckBoxProps) => {
                         if (checked) {
                           newValue = (item.value) ? item.value?.concat(value) : []
                         } else {
-                          newValue = (item.value) ? item.value?.filter(v => v !== value) : []
+                          const values: string[] = item.value as string[]
+                          newValue = (values) ? values.filter((v: string) => v !== value) : []
                         }
                         item.setValue(newValue)
                         if (!item.validateWhenErrorExists(newValue)) {

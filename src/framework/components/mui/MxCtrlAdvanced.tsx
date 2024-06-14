@@ -4,8 +4,9 @@ import dayjs from "dayjs"
 import React from "react"
 import { CsInputDateItem, CsInputNumberRangeItem } from "../../logics"
 import { getClassName, MxEditCtrl, MxProps } from "./MxCtrl"
+import { CsArrayDataItem } from "../../logics/CsArrayDataView"
 
-export interface MxInputDateProps extends MxProps<CsInputDateItem> {
+export interface MxInputDateProps extends MxProps<CsInputDateItem | CsArrayDataItem> {
   muiProps?: DatePickerProps<dayjs.Dayjs>
 }
 
