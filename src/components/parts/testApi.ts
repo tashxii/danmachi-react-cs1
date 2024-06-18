@@ -3,19 +3,19 @@ import { City, CityCreateRequest } from "./testApiClasses"
 export type TestApiError = { code: number, message: string }
 export class TestApi {
   static getCity = async (name: string) => {
-    const foundCity = (name && name !== "") ? City.cities.find(c => (c.name.indexOf(name) !== -1)) : undefined
-    await TestApi.doSomething(foundCity)
-    return foundCity
+    let foundCity = (name && name !== "") ? City.cities.find(c => (c.name.indexOf(name) !== -1)) || new City("南九州") : new City("北九州")
+    await TestApi.doSomething<City>(foundCity)
+    return Promise.resolve(foundCity)
   }
   static createCity = async (request: CityCreateRequest) => {
-    const callback = (request: CityCreateRequest) => {
-      City.register(request.city)
-      return request.city
+    const callback = (city: City) => {
+      City.register(city)
+      return city
     }
-    await TestApi.doSomething(request, callback).then((value) => (value))
-    return request.city
+    await TestApi.doSomething<City>(request.city, callback).then((value) => (value))
+    return Promise.resolve(request.city)
   }
-  private static async doSomething(resolveValue: any, callback?: (resolveValue: any) => any) {
+  private static async doSomething<T>(resolveValue: T, callback?: (resolveValue: T) => T) {
     return new Promise((resolve, reject) => {
       setTimeout(
         () => {

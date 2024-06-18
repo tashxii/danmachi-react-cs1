@@ -1,7 +1,7 @@
-import React, { ReactNode, useEffect, useState } from "react"
+import React, { ReactNode, useState } from "react"
 import { Alert, Button, ButtonProps, Tooltip } from "antd"
 import { useCallback } from "react"
-import { CsRqMutateButtonClickEvent, CsRqQueryButtonClickEvent } from "../../logics"
+import { CsQueryButtonClickEvent, CsMutateButtonClickEvent } from "../../logics"
 import "./AxCtrl.css"
 import { CsView } from "../../logics"
 import { executeValidation } from "../../logics"
@@ -78,7 +78,7 @@ export const AxButton = (props: AxButtonProps) => {
 
 export interface AxMutateButtonProps<TApiRequest = unknown, TApiResponse = unknown> extends AxEventProps {
   type?: "default" | "link" | "text" | "primary" | "dashed" | undefined
-  event: CsRqMutateButtonClickEvent<TApiRequest, TApiResponse>
+  event: CsMutateButtonClickEvent<TApiRequest, TApiResponse>
   validationViews?: CsView[],
   successMessage?: string
   errorMessage?: string
@@ -93,17 +93,6 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
 ) => {
   const { event, validationViews, antdProps } = props
   const [showStatus, setShowStatus] = useState<string>()
-
-  useEffect(() => {
-    if (!event.isLoading) {
-      if (event.isSuccess) {
-        event.setResponse()
-      } else if (event.isError) {
-        event.setError()
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event.isLoading, event.isSuccess, event.isError])
 
   const onClick = useCallback(async () => {
     const validationOk = executeValidation(validationViews)
@@ -121,9 +110,9 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
 
   return (
     <div className={getClassName(props, "button-area")}>
-      {(event.result.isSuccess && props.successMessage) &&
+      {(event.isSuccess && props.successMessage) &&
         <Alert className="button-alert" message={props.successMessage} type="success" showIcon closable />}
-      {(event.result.isError && props.errorMessage) &&
+      {(event.isError && props.errorMessage) &&
         <Alert className="button-alert" message={props.errorMessage} type="error" showIcon closable />}
       {(showStatus === "validation" && props.validateErrorMessage) &&
         <Alert className="button-alert" message={props.validateErrorMessage}
@@ -143,7 +132,7 @@ export const AxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
 
 export interface AxQueryButtonProps<TApiResponse = unknown> extends AxEventProps {
   type?: "default" | "link" | "text" | "primary" | "dashed" | undefined
-  event: CsRqQueryButtonClickEvent<TApiResponse>
+  event: CsQueryButtonClickEvent<TApiResponse>
   validationViews?: CsView[],
   successMessage?: string
   errorMessage?: string
@@ -159,18 +148,6 @@ export const AxQueryButton = <TApiResponse = unknown>(
   const { event, validationViews, antdProps } = props
   const [showStatus, setShowStatus] = useState<string>()
 
-  useEffect(() => {
-    if (!event.isRefetching) {
-      if (event.isSuccess) {
-        event.setResponse()
-      } else if (event.isError) {
-        event.setError()
-      }
-    }
-    // 検索キーワードなどもeventに含まれるため、3つの属性のみを依存関係とする
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event.isRefetching, event.isSuccess, event.isError])
-
   const onClick = useCallback(async () => {
     const validationOk = executeValidation(validationViews)
     setShowStatus("")
@@ -183,14 +160,14 @@ export const AxQueryButton = <TApiResponse = unknown>(
 
   return (
     <div className={getClassName(props, "button-area")}>
-      {(event.result.isSuccess && props.successMessage) &&
+      {(event.isSuccess && props.successMessage) &&
         <Alert className="button-alert" message={props.successMessage} type="success" showIcon closable />}
-      {(event.result.isError && props.errorMessage) &&
+      {(event.isError && props.errorMessage) &&
         <Alert className="button-alert" message={props.errorMessage} type="error" showIcon closable />}
       {(showStatus === "validation" && props.validateErrorMessage) &&
         <Alert className="button-alert" message={props.validateErrorMessage}
           type="warning" showIcon closable onClose={() => setShowStatus(undefined)} />}
-      <Button className={getClassName(props, "button")} type={props.type} loading={event.isRefetching}
+      <Button className={getClassName(props, "button")} type={props.type} loading={event.isLoading}
         onClick={() => { onClick() }}
         {...antdProps}>
         {props.children}

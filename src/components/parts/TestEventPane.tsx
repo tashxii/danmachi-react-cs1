@@ -8,7 +8,7 @@ import {
 } from "../../framework/logics"
 import { stringRule, selectOptionStrings, useCsInputTextItem, useCsSelectBoxItem, useCsSelectNumberBoxItem, numberRule, selectOptions, useInit } from "../../framework/logics"
 import { TestApi } from "./testApi"
-import { useMutation, useQuery } from "react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { CsSelectNumberBoxItem } from "../../framework/logics"
 import Link from "antd/es/typography/Link"
 import { City, CityCreateRequest, Clan, Chara } from "./testApiClasses"
@@ -36,12 +36,13 @@ export const TestEventPane: React.FC<{ colSize: number, componentType: "standard
       keyword: keywordItem,
       searchButton: useCsRqQueryButtonClickEvent(
         useQuery(
-          "getCity",
-          () => TestApi.getCity(keywordItem.value ?? ""),
-          { enabled: false, refetchOnWindowFocus: false, retry: 2 }
+          {
+            queryKey: ["getCity"], enabled: false, refetchOnWindowFocus: false, retry: 2,
+            queryFn: () => { return TestApi.getCity(keywordItem.value ?? "") },
+          },
         )
       ),
-      makeButton: useCsRqMutateButtonClickEvent(useMutation(TestApi.createCity)),
+      makeButton: useCsRqMutateButtonClickEvent(useMutation({ mutationFn: TestApi.createCity })),
     })
     const clanView = useCsView({
       readonly: false,
