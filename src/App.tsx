@@ -3,7 +3,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import ja_JP from "antd/locale/ja_JP"
 import React from "react"
-import { QueryClient, QueryClientProvider } from "react-query"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import TestTab from "./components/pages/TestTab"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css"
