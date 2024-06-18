@@ -1,10 +1,11 @@
-import { CsEvent, CsItem, CsItemBase, CustomValidationRule, CustomValidationRules, useCsYupValidationEvent } from "."
+import { CsEvent, CsItem, CsItemBase, CsLoadEvent, CustomValidationRule, CustomValidationRules, useCsYupValidationEvent } from "."
 
 export type CsViewDefinition = Record<string, CsItemBase | CsEvent>
 export abstract class CsView {
   readonly?: boolean = false
   validateTrigger?: "onSubmit" | "onBlur" = "onSubmit"
   validationEvent?: CsValidationEvent
+  abstract get isLoading(): boolean
 }
 
 export abstract class CsValidationEvent {
@@ -106,6 +107,17 @@ export const useCsView = <D extends CsViewDefinition, AppValidationRules extends
     ...definitions,
     readonly: options.readonly ?? false,
     validateTrigger: options.validationTrigger,
+    get isLoading() {
+      for (let value of Object.values(definitions)) {
+        if (value instanceof CsLoadEvent) {
+          const event = value as CsLoadEvent
+          if (event.isLoading) {
+            return true
+          }
+        }
+      }
+      return false
+    }
   }
   instance.validationEvent = validationEventHook(instance, options.customValidationRules)
   Object.entries(definitions).forEach(([key, value]) => {

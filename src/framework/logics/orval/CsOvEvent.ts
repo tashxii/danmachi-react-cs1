@@ -1,37 +1,39 @@
-import { UseMutationResult, UseQueryResult } from "@tanstack/react-query"
-import { CsMutateButtonClickEvent, CsMutateLoadEvent, CsQueryButtonClickEvent, CsQueryLoadEvent } from "../CsEvent"
+import { QueryKey, UseMutationResult, UseQueryResult } from "@tanstack/react-query"
+import { AxiosResponse } from "axios"
 import { useEffect, useMemo, useState } from "react"
+import { CsEvent, CsLoadEvent, CsMutateButtonClickEvent } from ".."
 
-export class CsRqMutateButtonClickEvent<
+type OvMutationResult<TApiResponse, TApiError = unknown, TApiRequest = unknown, TContext = unknown>
+  = UseMutationResult<AxiosResponse<TApiResponse, any>, TApiError, TApiRequest, TContext>
+
+export class CsOvMutateButtonClickEvent<
   TApiRequest, TApiResponse, TApiError = unknown, TContext = unknown
 > extends CsMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError> {
-  private mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>
-  constructor(
-    mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
-  ) {
+  private mutationResult: OvMutationResult<TApiResponse, TApiError, TApiRequest, TContext>
+  constructor(mutationResult: OvMutationResult<TApiResponse, TApiError, TApiRequest, TContext>) {
     super()
     this.mutationResult = mutationResult
   }
 
-  get isLoading(): boolean {
+  get isLoading() {
     // https://tanstack.com/query/v5/docs/framework/react/guides/migrating-to-v5
     // For mutations as well the status has been changed from loading to pending and the isLoading flag has been changed to isPending.
     return this.mutationResult.isPending
   }
 
-  get isError(): boolean {
+  get isError() {
     return this.mutationResult.isError
   }
 
-  get isSuccess(): boolean {
+  get isSuccess() {
     return this.mutationResult.isSuccess
   }
 
-  get response(): TApiResponse | undefined {
-    return this.mutationResult.data
+  get response() {
+    return this.mutationResult.data?.data
   }
 
-  get error(): TApiError | null {
+  get error() {
     return this.mutationResult.error
   }
 
@@ -42,36 +44,34 @@ export class CsRqMutateButtonClickEvent<
   }
 }
 
-export class CsRqQueryButtonClickEvent<
-  TApiResponse, TApiError = unknown,
-> extends CsQueryButtonClickEvent<TApiResponse, TApiError> {
-  private queryResult: UseQueryResult<TApiResponse, TApiError>
+export type OvQueryResult<TApiResponse, TApiError = unknown> = UseQueryResult<AxiosResponse<TApiResponse, any>, TApiError> & { queryKey: QueryKey }
 
-  constructor(
-    queryResult: UseQueryResult<TApiResponse, TApiError>,
-  ) {
+export class CsOvQueryButtonClickEvent<TApiResponse, TApiError = unknown> extends CsEvent {
+  private queryResult: OvQueryResult<TApiResponse, TApiError>
+
+  constructor(queryResult: OvQueryResult<TApiResponse, TApiError>) {
     super()
     this.queryResult = queryResult
   }
 
-  get isLoading(): boolean {
+  get isLoading() {
     return this.queryResult.isRefetching
   }
 
-  get isError(): boolean {
+  get isError() {
     return this.queryResult.isError
   }
 
-  get isSuccess(): boolean {
+  get isSuccess() {
     return this.queryResult.isSuccess
-  }
-
-  get response(): TApiResponse | undefined {
-    return this.queryResult.data
   }
 
   get error(): TApiError | null {
     return this.queryResult.error
+  }
+
+  get response(): TApiResponse | undefined {
+    return this.queryResult.data?.data
   }
 
   onClick = async () => {
@@ -79,14 +79,16 @@ export class CsRqQueryButtonClickEvent<
   }
 }
 
-export class CsRqQueryLoadEvent<
-  TApiResponse, TApiError = unknown
-> extends CsQueryLoadEvent<TApiResponse, TApiError> {
-  private queryResult: UseQueryResult<TApiResponse, TApiError>
+export class CsOvQueryLoadEvent<TApiResponse, TApiError = unknown> extends CsLoadEvent {
+  private queryResult: OvQueryResult<TApiResponse, TApiError>
 
-  constructor(queryResult: UseQueryResult<TApiResponse, TApiError>) {
+  constructor(queryResult: OvQueryResult<TApiResponse, TApiError>) {
     super()
     this.queryResult = queryResult
+  }
+
+  get queryKey(): QueryKey {
+    return this.queryResult.queryKey
   }
 
   get isLoading(): boolean {
@@ -102,7 +104,7 @@ export class CsRqQueryLoadEvent<
   }
 
   get response(): TApiResponse | undefined {
-    return this.queryResult.data
+    return this.queryResult.data?.data
   }
 
   get error(): TApiError | null {
@@ -114,12 +116,10 @@ export class CsRqQueryLoadEvent<
   }
 }
 
-export class CsRqMutateLoadEvent<
-  TApiRequest, TApiResponse, TApiError = unknown, TContext = unknown
-> extends CsMutateLoadEvent<TApiResponse, TApiError> {
-  private mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>
+export class CsOvMutateLoadEvent<TApiRequest, TApiResponse, TApiError = unknown, TContext = unknown> extends CsLoadEvent {
+  private mutationResult: OvMutationResult<TApiResponse, TApiError, TApiRequest, TContext>
   apiRequest?: TApiRequest
-  constructor(mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>) {
+  constructor(mutationResult: OvMutationResult<TApiResponse, TApiError, TApiRequest, TContext>) {
     super()
     this.mutationResult = mutationResult
   }
@@ -143,7 +143,7 @@ export class CsRqMutateLoadEvent<
   }
 
   get response(): TApiResponse | undefined {
-    return this.mutationResult.data
+    return this.mutationResult.data?.data
   }
 
   get error(): TApiError | null {
@@ -157,32 +157,24 @@ export class CsRqMutateLoadEvent<
   }
 }
 
-export function useCsRqMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>
-  (
-    mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
-  )
-  : CsMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError> {
-  return new CsRqMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext>(
-    mutationResult
-  )
+export function useCsOvMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>(
+  mutationResult: OvMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
+): CsOvMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext> {
+  return new CsOvMutateButtonClickEvent<TApiRequest, TApiResponse, TApiError, TContext>(mutationResult)
 }
 
-export function useCsRqQueryButtonClickEvent<TApiResponse, TApiError>
-  (
-    queryResult: UseQueryResult<TApiResponse, TApiError>,
-  )
-  : CsQueryButtonClickEvent<TApiResponse, TApiError> {
-  return new CsRqQueryButtonClickEvent<TApiResponse, TApiError>(
-    queryResult,
-  )
+export function useCsOvQueryButtonClickEvent<TApiResponse>(
+  queryResult: OvQueryResult<TApiResponse>
+): CsOvQueryButtonClickEvent<TApiResponse> {
+  return new CsOvQueryButtonClickEvent<TApiResponse>(queryResult)
 }
 
 export function useCsOvMutateLoadEvent<TApiRequest, TApiResponse, TApiError, TContext = unknown>(
-  mutationResult: UseMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
+  mutationResult: OvMutationResult<TApiResponse, TApiError, TApiRequest, TContext>,
   request: TApiRequest,
-): CsMutateLoadEvent<TApiResponse, TApiError> {
+): CsOvMutateLoadEvent<TApiRequest, TApiResponse, TApiError, TContext> {
   const mutateLoadEvent = useMemo(() => {
-    return new CsRqMutateLoadEvent<TApiRequest, TApiResponse, TApiError, TContext>(mutationResult)
+    return new CsOvMutateLoadEvent<TApiRequest, TApiResponse, TApiError, TContext>(mutationResult)
   }, [mutationResult])
   const [init, setInit] = useState(false)
   mutateLoadEvent.setRequest(request)
@@ -198,8 +190,8 @@ export function useCsOvMutateLoadEvent<TApiRequest, TApiResponse, TApiError, TCo
 }
 
 export function useCsOvQueryLoadEvent<TApiResponse>(
-  queryResult: UseQueryResult<TApiResponse>
-): CsRqQueryLoadEvent<TApiResponse> {
-  const queryLoadEvent = new CsRqQueryLoadEvent<TApiResponse>(queryResult)
+  queryResult: OvQueryResult<TApiResponse>
+): CsOvQueryLoadEvent<TApiResponse> {
+  const queryLoadEvent = new CsOvQueryLoadEvent<TApiResponse>(queryResult)
   return queryLoadEvent
 }
