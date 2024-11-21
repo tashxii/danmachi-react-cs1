@@ -5,15 +5,14 @@ import {
   CsView,
   executeValidation,
 } from "../../logics";
-import "./BSxCtrl.css";
-import { ButtonVariant } from "react-bootstrap/esm/types";
-import { Alert, Button, ButtonProps, Modal, OverlayTrigger, Spinner, Tooltip, TooltipProps } from "react-bootstrap";
+import "./MxCtrl.css";
+import { Alert, Box, Button, ButtonProps, CircularProgress, Dialog, Tooltip, TooltipProps, Typography } from "@mui/material";
 
-export interface BSxEventProps {
+export interface MxEventProps {
   addClassNames?: string[];
 }
 
-const getClassName = (props: BSxEventProps, base: string): string => {
+const getClassName = (props: MxEventProps, base: string): string => {
   let names = [base];
   if (props.addClassNames) {
     names = names.concat(props.addClassNames);
@@ -30,8 +29,8 @@ const isPromise = (obj: any): obj is Promise<any> => {
   );
 };
 
-export interface BSxButtonProps extends BSxEventProps {
-  type?: ButtonVariant | undefined;
+export interface MxButtonProps extends MxEventProps {
+  type?: "text" | "contained" | "outlined" | undefined;
   onClick: (() => boolean) | (() => void);
   validationViews?: CsView[];
   successMessage?: string;
@@ -46,7 +45,7 @@ export interface BSxButtonProps extends BSxEventProps {
   onAfterClickError?: () => void | Promise<void>;
 }
 
-export const BSxButton = (props: BSxButtonProps) => {
+export const MxButton = (props: MxButtonProps) => {
   const { onClick, validationViews, bsProps, confirmOption } = props;
   const [showStatus, setShowStatus] = useState<string>();
 
@@ -92,42 +91,37 @@ export const BSxButton = (props: BSxButtonProps) => {
   }, [onClick, props]);
 
   return (
-    <div className={getClassName(props, "bsx-button-area")}>
+    <div className={getClassName(props, "button-area")}>
       {showStatus === "success" && props.successMessage && (
-        <Alert className="bsx-button-alert" variant="success" dismissible
+        <Alert className="mui-button-alert" severity="success" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.successMessage}
         </Alert>
       )}
       {showStatus === "error" && props.errorMessage && (
-        <Alert className="bsx-button-alert" variant="danger" dismissible
+        <Alert className="mui-button-alert" severity="error" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.errorMessage}
         </Alert>
       )}
       {showStatus === "validation" && props.validateErrorMessage && (
-        <Alert className="bsx-button-alert" variant="warning" dismissible
+        <Alert className="mui-button-alert" severity="warning" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.validateErrorMessage}
         </Alert>
       )}
-      <OverlayTrigger
+      <Tooltip
         placement="top"
-        trigger="hover"
-        show={showTooltip}
-        overlay={
-          <Tooltip
-            {...props.disabledTooltipProps}
-          >
-            {props.disabledReason}
-          </Tooltip>
-        }
+        open={showTooltip}
+        {...props.disabledTooltipProps}
+        title={props.disabledReason}
+        arrow
       >
         <span
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <BSxButtonWithConfrim
+          <MxButtonWithConfrim
             className={getClassName(props, "button")}
             variant={props.type}
             precheckClick={beforeOnClick}
@@ -138,9 +132,9 @@ export const BSxButton = (props: BSxButtonProps) => {
             {...bsProps}
           >
             {props.children}
-          </BSxButtonWithConfrim>
+          </MxButtonWithConfrim>
         </span>
-      </OverlayTrigger>
+      </Tooltip>
     </div>
   );
 };
@@ -154,9 +148,9 @@ interface ConfirmOption {
   cancelButtonProps?: ButtonProps;
 }
 
-export interface BSxButtonWithConfrimProps {
+export interface MxButtonWithConfrimProps {
   className?: string;
-  variant?: ButtonVariant;
+  variant?: "text" | "contained" | "outlined" | undefined;
   disabled?: boolean;
   precheckClick?: () => boolean;
   onButtonClick: (() => void) | (() => Promise<void>);
@@ -166,7 +160,7 @@ export interface BSxButtonWithConfrimProps {
   bsProps?: ButtonProps;
 }
 
-export const BSxButtonWithConfrim = (props: BSxButtonWithConfrimProps) => {
+export const MxButtonWithConfrim = (props: MxButtonWithConfrimProps) => {
   const { className, variant, precheckClick, onButtonClick, confirmOption, isLoading, bsProps } = props;
   const disabled = bsProps?.disabled ?? props.disabled;
   const [showConfirm, setShowConfirm] = useState(false);
@@ -193,7 +187,7 @@ export const BSxButtonWithConfrim = (props: BSxButtonWithConfrimProps) => {
         {...bsProps}
       >
         <>
-          {isLoading && isLoading() ? <Spinner size="sm" /> : null}
+          {isLoading && isLoading() ? <CircularProgress size="sm" /> : null}
           {props.children}
         </>
       </Button>
@@ -217,55 +211,59 @@ export const BSxButtonWithConfrim = (props: BSxButtonWithConfrimProps) => {
         disabled={disabled}
         {...bsProps}
       >
-        {isLoading && isLoading() ? <Spinner size="sm" /> : null}
+        {isLoading && isLoading() ? <CircularProgress size={"sm"} /> : null}
         {props.children}
       </Button>
-      <Modal
-        size="sm"
-        show={showConfirm}
-        centered
+      <Dialog
+        open={showConfirm}
+        onClose={() => { setShowConfirm(false); }}
+        // aria-labelledby="parent-modal-title"
+        // aria-describedby="parent-modal-description"
+        maxWidth="sm"
       >
-        <Modal.Header>
-          <Modal.Title>
+        <Box className="mui-button-confirm-modal">
+          <Typography id="modal-modal-title" variant="h6" component="h2" className="mui-button-confirm-modal-title">
             {confirmOption.title}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {confirmOption.content}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            onClick={() => { setShowConfirm(false); }}
-            {...confirmOption.cancelButtonProps}
-          >
-            {confirmOption.cancelText ?? "キャンセル"}
-          </Button>
-          <Button
-            onClick={async () => {
-              if (isPromise(onButtonClick)) {
-                await onButtonClick();
-              } else {
-                onButtonClick();
-              }
-              setShowConfirm(false);
-            }}
-            {...confirmOption.okButtonProps}
-          >
-            <>
-              {confirmOption.okText}
-            </>
-          </Button>
-        </Modal.Footer>
-      </Modal >
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }} className="mui-button-confirm-modal-content">
+            {confirmOption.content}
+          </Typography>
+          <Box className="mui-button-confirm-modal-footer">
+            <Button
+              // className="mui-button-confirm-modal-footer-button"
+              onClick={() => { setShowConfirm(false); }}
+              {...confirmOption.cancelButtonProps}
+            >
+              {confirmOption.cancelText ?? "キャンセル"}
+            </Button>
+            <Button
+              // className="mui-button-confirm-modal-footer-button"
+              onClick={async () => {
+                if (isPromise(onButtonClick)) {
+                  await onButtonClick();
+                } else {
+                  onButtonClick();
+                }
+                setShowConfirm(false);
+              }}
+              {...confirmOption.okButtonProps}
+            >
+              <>
+                {confirmOption.okText}
+              </>
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
     </>
   );
 }
 
-export interface BSxMutateButtonProps<
+export interface MxMutateButtonProps<
   TApiRequest = unknown,
   TApiResponse = unknown,
-> extends BSxEventProps {
-  type?: ButtonVariant | undefined;
+> extends MxEventProps {
+  type?: "text" | "contained" | "outlined" | undefined;
   event: CsMutateButtonClickEvent<TApiRequest, TApiResponse>;
   validationViews?: CsView[];
   successMessage?: string;
@@ -297,8 +295,8 @@ export interface BSxMutateButtonProps<
   ) => Promise<void>);
 }
 
-export const BSxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
-  props: BSxMutateButtonProps<TApiRequest, TApiResponse>,
+export const MxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
+  props: MxMutateButtonProps<TApiRequest, TApiResponse>,
 ) => {
   const { event, validationViews, bsProps, confirmOption } = props;
   const [showStatus, setShowStatus] = useState<string>();
@@ -378,48 +376,43 @@ export const BSxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
   }, [event, props]);
 
   return (
-    <div className={getClassName(props, "bsx-button-area")}>
+    <div className={getClassName(props, "button-area")}>
       {showStatus === "success" && props.successMessage && (
-        <Alert className="bsx-button-alert" variant="success" dismissible
+        <Alert className="mui-button-alert" severity="success" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.successMessage}
         </Alert>
       )}
       {showStatus === "error" && props.errorMessage && (
-        <Alert className="bsx-button-alert" variant="danger" dismissible
+        <Alert className="mui-button-alert" severity="error" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.errorMessage}
         </Alert>
       )}
       {showStatus === "validation" && props.validateErrorMessage && (
-        <Alert className="bsx-button-alert" variant="danger" dismissible
+        <Alert className="mui-button-alert" severity="error" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.validateErrorMessage}
         </Alert>
       )}
       {showStatus === "noRequest" && props.validationViews && (
-        <Alert className="bsx-button-alert" variant="warning" dismissible
+        <Alert className="mui-button-alert" severity="warning" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           リクエストがありません
         </Alert>
       )}
-      <OverlayTrigger
+      <Tooltip
         placement="top"
-        trigger="hover"
-        show={showTooltip}
-        overlay={
-          <Tooltip
-            {...props.disabledTooltipProps}
-          >
-            {props.disabledReason}
-          </Tooltip>
-        }
+        open={showTooltip}
+        {...props.disabledTooltipProps}
+        title={props.disabledReason}
+        arrow
       >
         <span
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <BSxButtonWithConfrim
+          <MxButtonWithConfrim
             className={getClassName(props, "button")}
             variant={props.type}
             precheckClick={beforeOnClick}
@@ -430,15 +423,15 @@ export const BSxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
             {...bsProps}
           >
             {props.children}
-          </BSxButtonWithConfrim>
+          </MxButtonWithConfrim>
         </span>
-      </OverlayTrigger>
-    </div>
+      </Tooltip>
+    </div >
   );
 };
-export interface BSxQueryButtonProps<TApiResponse = unknown>
-  extends BSxEventProps {
-  type?: ButtonVariant | undefined;
+export interface MxQueryButtonProps<TApiResponse = unknown>
+  extends MxEventProps {
+  type?: "text" | "contained" | "outlined" | undefined;
   event: CsQueryButtonClickEvent<TApiResponse>;
   validationViews?: CsView[];
   successMessage?: string;
@@ -462,8 +455,8 @@ export interface BSxQueryButtonProps<TApiResponse = unknown>
   | ((event: CsQueryButtonClickEvent<TApiResponse>) => Promise<void>);
 }
 
-export const BSxQueryButton = <TApiResponse = unknown,>(
-  props: BSxQueryButtonProps<TApiResponse>,
+export const MxQueryButton = <TApiResponse = unknown,>(
+  props: MxQueryButtonProps<TApiResponse>,
 ) => {
   const { event, validationViews, bsProps, confirmOption } = props;
   const [showStatus, setShowStatus] = useState<string>();
@@ -536,41 +529,36 @@ export const BSxQueryButton = <TApiResponse = unknown,>(
   }, [event, props]);
 
   return (
-    <div className={getClassName(props, "bsx-button-area")}>
+    <div className={getClassName(props, "button-area")}>
       {showStatus === "success" && props.successMessage && (
-        <Alert className="bsx-button-alert" variant="success" dismissible
+        <Alert className="mui-button-alert" severity="success" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.successMessage}
         </Alert>
       )}
       {showStatus === "error" && props.errorMessage && (
-        <Alert className="bsx-button-alert" variant="danger" dismissible
+        <Alert className="mui-button-alert" severity="error" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.errorMessage}
         </Alert>)}
       {showStatus === "validation" && props.validateErrorMessage && (
-        <Alert className="bsx-button-alert" variant="danger" dismissible
+        <Alert className="mui-button-alert" severity="error" variant="outlined"
           onClose={() => setShowStatus(undefined)}>
           {props.validateErrorMessage}
         </Alert>
       )}
-      <OverlayTrigger
+      <Tooltip
         placement="top"
-        trigger="hover"
-        show={showTooltip}
-        overlay={
-          <Tooltip
-            {...props.disabledTooltipProps}
-          >
-            {props.disabledReason}
-          </Tooltip>
-        }
+        open={showTooltip}
+        {...props.disabledTooltipProps}
+        title={props.disabledReason}
+        arrow
       >
         <span
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <BSxButtonWithConfrim
+          <MxButtonWithConfrim
             className={getClassName(props, "button")}
             variant={props.type}
             precheckClick={beforeOnClick}
@@ -580,9 +568,9 @@ export const BSxQueryButton = <TApiResponse = unknown,>(
             {...bsProps}
           >
             {props.children}
-          </BSxButtonWithConfrim>
+          </MxButtonWithConfrim>
         </span>
-      </OverlayTrigger>
+      </Tooltip>
     </div>
   );
 };
