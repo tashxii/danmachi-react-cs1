@@ -92,21 +92,21 @@ export const BSxButton = (props: BSxButtonProps) => {
   }, [onClick, props]);
 
   return (
-    <div className={getClassName(props, "button-area")}>
+    <div className={getClassName(props, "bsx-button-area")}>
       {showStatus === "success" && props.successMessage && (
-        <Alert className="button-alert" variant="success" dismissible
+        <Alert className="bsx-button-alert" variant="success" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.successMessage}
         </Alert>
       )}
       {showStatus === "error" && props.errorMessage && (
-        <Alert className="button-alert" variant="danger" dismissible
+        <Alert className="bsx-button-alert" variant="danger" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.errorMessage}
         </Alert>
       )}
       {showStatus === "validation" && props.validateErrorMessage && (
-        <Alert className="button-alert" variant="warning" dismissible
+        <Alert className="bsx-button-alert" variant="warning" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.validateErrorMessage}
         </Alert>
@@ -378,27 +378,27 @@ export const BSxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
   }, [event, props]);
 
   return (
-    <div className={getClassName(props, "button-area")}>
+    <div className={getClassName(props, "bsx-button-area")}>
       {showStatus === "success" && props.successMessage && (
-        <Alert className="button-alert" variant="success" dismissible
+        <Alert className="bsx-button-alert" variant="success" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.successMessage}
         </Alert>
       )}
       {showStatus === "error" && props.errorMessage && (
-        <Alert className="button-alert" variant="danger" dismissible
+        <Alert className="bsx-button-alert" variant="danger" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.errorMessage}
         </Alert>
       )}
       {showStatus === "validation" && props.validateErrorMessage && (
-        <Alert className="button-alert" variant="danger" dismissible
+        <Alert className="bsx-button-alert" variant="danger" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.validateErrorMessage}
         </Alert>
       )}
       {showStatus === "noRequest" && props.validationViews && (
-        <Alert className="button-alert" variant="warning" dismissible
+        <Alert className="bsx-button-alert" variant="warning" dismissible
           onClose={() => setShowStatus(undefined)}>
           リクエストがありません
         </Alert>
@@ -536,20 +536,20 @@ export const BSxQueryButton = <TApiResponse = unknown,>(
   }, [event, props]);
 
   return (
-    <div className={getClassName(props, "button-area")}>
+    <div className={getClassName(props, "bsx-button-area")}>
       {showStatus === "success" && props.successMessage && (
-        <Alert className="button-alert" variant="success" dismissible
+        <Alert className="bsx-button-alert" variant="success" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.successMessage}
         </Alert>
       )}
       {showStatus === "error" && props.errorMessage && (
-        <Alert className="button-alert" variant="danger" dismissible
+        <Alert className="bsx-button-alert" variant="danger" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.errorMessage}
         </Alert>)}
       {showStatus === "validation" && props.validateErrorMessage && (
-        <Alert className="button-alert" variant="danger" dismissible
+        <Alert className="bsx-button-alert" variant="danger" dismissible
           onClose={() => setShowStatus(undefined)}>
           {props.validateErrorMessage}
         </Alert>

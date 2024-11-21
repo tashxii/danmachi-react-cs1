@@ -106,7 +106,7 @@
   min-width: 120px;
 }
 
-.button-area {
+.bsx-button-area {
   padding: 3px;
   min-height: 100%;
   width: 100%;
@@ -118,35 +118,26 @@
   justify-content: flex-end;
 }
 
-.button-area.left {
+.bsx-button-area.left {
   align-items: flex-start;
 }
 
-.button-area.middle {
+.bsx-button-area.middle {
   justify-content: center;
 }
 
-.button-area.bottom {
+.bsx-button-area.bottom {
   justify-content: flex-end;
 }
 
-.button-alert {
+.bsx-button-alert {
   position: absolute;
   width: fit-content;
   white-space: nowrap;
   bottom: 10px;
-  margin-left: calc(-55%);
+  margin-left: calc(-45%);
 }
 
-.button {
-  position: relative;
-  flex-wrap: wrap;
-  width: fit-content;
-}
-
-.button.bottom {
-  bottom: 15px;
-}
 
 .input-container {
   display: flex;
