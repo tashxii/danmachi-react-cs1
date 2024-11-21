@@ -134,7 +134,7 @@
   position: absolute;
   width: fit-content;
   white-space: nowrap;
-  bottom: 60px;
+  bottom: 10px;
   margin-left: calc(-55%);
 }
 
