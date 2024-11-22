@@ -39,20 +39,20 @@ export interface MxButtonProps extends MxEventProps {
   disabledReason?: string;
   disabledTooltipProps?: TooltipProps;
   children?: ReactNode | undefined;
-  bsProps?: ButtonProps;
+  muiProps?: ButtonProps;
   confirmOption?: ConfirmOption;
   onAfterClickSuccess?: () => void | Promise<void>;
   onAfterClickError?: () => void | Promise<void>;
 }
 
 export const MxButton = (props: MxButtonProps) => {
-  const { onClick, validationViews, bsProps, confirmOption } = props;
+  const { onClick, validationViews, muiProps, confirmOption } = props;
   const [showStatus, setShowStatus] = useState<string>();
 
   const isShowDisableReason = () => {
     const disabledReason =
       props.disabledTooltipProps?.title ?? props.disabledReason;
-    return bsProps?.disabled === true && !!disabledReason;
+    return muiProps?.disabled === true && !!disabledReason;
   };
 
   const [showTooltip, setShowTooltip] = useState(false);
@@ -129,7 +129,7 @@ export const MxButton = (props: MxButtonProps) => {
               onClickWrap();
             }}
             confirmOption={confirmOption}
-            {...bsProps}
+            muiProps={muiProps}
           >
             {props.children}
           </MxButtonWithConfrim>
@@ -157,12 +157,12 @@ export interface MxButtonWithConfrimProps {
   confirmOption?: ConfirmOption;
   isLoading?: () => boolean;
   children?: ReactNode;
-  bsProps?: ButtonProps;
+  muiProps?: ButtonProps;
 }
 
 export const MxButtonWithConfrim = (props: MxButtonWithConfrimProps) => {
-  const { className, variant, precheckClick, onButtonClick, confirmOption, isLoading, bsProps } = props;
-  const disabled = bsProps?.disabled ?? props.disabled;
+  const { className, variant, precheckClick, onButtonClick, confirmOption, isLoading, muiProps } = props;
+  const disabled = muiProps?.disabled ?? props.disabled;
   const [showConfirm, setShowConfirm] = useState(false);
   if (!confirmOption) {
     // 確認オプションが無い場合は、そのままボタンを表示
@@ -184,7 +184,7 @@ export const MxButtonWithConfrim = (props: MxButtonWithConfrimProps) => {
           }
         }}
         disabled={disabled}
-        {...bsProps}
+        {...muiProps}
       >
         <>
           {isLoading && isLoading() ? <CircularProgress size="sm" /> : null}
@@ -209,7 +209,7 @@ export const MxButtonWithConfrim = (props: MxButtonWithConfrimProps) => {
           setShowConfirm(true);// モーダルの表示
         }}
         disabled={disabled}
-        {...bsProps}
+        {...muiProps}
       >
         {isLoading && isLoading() ? <CircularProgress size={"sm"} /> : null}
         {props.children}
@@ -272,7 +272,7 @@ export interface MxMutateButtonProps<
   disabledReason?: string;
   disabledTooltipProps?: TooltipProps;
   children?: ReactNode | undefined;
-  bsProps?: ButtonProps;
+  muiProps?: ButtonProps;
   confirmOption?: ConfirmOption;
   onBeforeApiCall?:
   | ((event: CsMutateButtonClickEvent<TApiRequest, TApiResponse>) => boolean)
@@ -298,13 +298,13 @@ export interface MxMutateButtonProps<
 export const MxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
   props: MxMutateButtonProps<TApiRequest, TApiResponse>,
 ) => {
-  const { event, validationViews, bsProps, confirmOption } = props;
+  const { event, validationViews, muiProps, confirmOption } = props;
   const [showStatus, setShowStatus] = useState<string>();
   const [clicked, setClicked] = useState(false);
 
   const isShowDisableReason = () => {
     const disabledReason = props.disabledTooltipProps?.title ?? props.disabledReason;
-    return bsProps?.disabled === true && !!disabledReason;
+    return muiProps?.disabled === true && !!disabledReason;
   };
 
   const [showTooltip, setShowTooltip] = useState(false);
@@ -420,7 +420,7 @@ export const MxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
             confirmOption={confirmOption}
             disabled={event.apiRequest === undefined}
             isLoading={() => (event.isLoading)}
-            {...bsProps}
+            muiProps={muiProps}
           >
             {props.children}
           </MxButtonWithConfrim>
@@ -440,7 +440,7 @@ export interface MxQueryButtonProps<TApiResponse = unknown>
   disabledReason?: string;
   disabledTooltipProps?: TooltipProps;
   children?: ReactNode | undefined;
-  bsProps?: ButtonProps;
+  muiProps?: ButtonProps;
   confirmOption?: ConfirmOption;
   onBeforeApiCall?:
   | ((event: CsQueryButtonClickEvent<TApiResponse>) => boolean)
@@ -458,13 +458,13 @@ export interface MxQueryButtonProps<TApiResponse = unknown>
 export const MxQueryButton = <TApiResponse = unknown,>(
   props: MxQueryButtonProps<TApiResponse>,
 ) => {
-  const { event, validationViews, bsProps, confirmOption } = props;
+  const { event, validationViews, muiProps, confirmOption } = props;
   const [showStatus, setShowStatus] = useState<string>();
   const [clicked, setClicked] = useState(false);
 
   const isShowDisableReason = () => {
     const disabledReason = props.disabledTooltipProps?.title ?? props.disabledReason;
-    return bsProps?.disabled === true && !!disabledReason;
+    return muiProps?.disabled === true && !!disabledReason;
   };
   const [showTooltip, setShowTooltip] = useState(false);
   const handleMouseEnter = () => setShowTooltip(isShowDisableReason());
@@ -565,7 +565,7 @@ export const MxQueryButton = <TApiResponse = unknown,>(
             onButtonClick={onClickWrap}
             confirmOption={confirmOption}
             isLoading={() => (event.isLoading)}
-            {...bsProps}
+            muiProps={muiProps}
           >
             {props.children}
           </MxButtonWithConfrim>

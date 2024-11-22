@@ -135,7 +135,7 @@ export const BSxButton = (props: BSxButtonProps) => {
               onClickWrap();
             }}
             confirmOption={confirmOption}
-            {...bsProps}
+            bsProps={bsProps}
           >
             {props.children}
           </BSxButtonWithConfrim>
@@ -427,7 +427,7 @@ export const BSxMutateButton = <TApiRequest = unknown, TApiResponse = unknown>(
             confirmOption={confirmOption}
             disabled={event.apiRequest === undefined}
             isLoading={() => (event.isLoading)}
-            {...bsProps}
+            bsProps={bsProps}
           >
             {props.children}
           </BSxButtonWithConfrim>
@@ -577,7 +577,7 @@ export const BSxQueryButton = <TApiResponse = unknown,>(
             onButtonClick={onClickWrap}
             confirmOption={confirmOption}
             isLoading={() => (event.isLoading)}
-            {...bsProps}
+            bsProps={bsProps}
           >
             {props.children}
           </BSxButtonWithConfrim>
